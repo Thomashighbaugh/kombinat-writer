@@ -1,25 +1,30 @@
 /** @jsxImportSource @opentui/solid */
 import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
-import { statusIcon } from '../utils/format.js'
+import { statusIcon, BOLD } from '../utils/format.js'
 
 export function SidebarFooter(props: { session_id: string; state: SidebarState }) {
   const summary = props.state.gateSummary
 
   return (
-    <box flexDirection="row" justifyContent="space-between">
-      <text style={{ fg: 'gray' }}>
-        1:Dash 2:Gates 3:Diff 4:Viz
-      </text>
-      <Show when={summary().total > 0}>
-        <text>
-          <text style={{ fg: 'green' }}>{statusIcon('pass')} {summary().passed}</text>
-          {'  '}
-          <text style={{ fg: 'red' }}>{statusIcon('block')} {summary().blocked}</text>
-          {'  '}
-          <text style={{ fg: 'yellow' }}>{statusIcon('warn')} {summary().warnings}</text>
+    <box flexDirection="column">
+      <box flexDirection="row" justifyContent="space-between">
+        <text style={{ fg: 'gray' }}>
+          1:Dash 2:Gates 3:Diff 4:Viz
         </text>
-      </Show>
+        <Show when={summary().total > 0}>
+          <text>
+            <text style={{ fg: 'green' }}>{statusIcon('pass')} {summary().passed}</text>
+            {'  '}
+            <text style={{ fg: 'red' }}>{statusIcon('block')} {summary().blocked}</text>
+            {'  '}
+            <text style={{ fg: 'yellow' }}>{statusIcon('warn')} {summary().warnings}</text>
+          </text>
+        </Show>
+      </box>
+      <text style={{ fg: 'cyan', attributes: BOLD }}>
+        Ctrl+K Focus · /kombinat Menu
+      </text>
     </box>
   )
 }

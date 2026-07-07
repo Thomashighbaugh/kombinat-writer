@@ -11,7 +11,7 @@
  */
 
 import type { TuiPlugin, TuiPluginApi, TuiPluginMeta, TuiDialogSelectOption } from '@opencode-ai/plugin/tui'
-import { createSignal } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 import { SidebarTitle } from './components/sidebar-title.js'
 import { SidebarContent } from './components/sidebar-content.js'
 import { SidebarFooter } from './components/sidebar-footer.js'
@@ -58,6 +58,16 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
   })
 
   const sidebarState = useProjectState(projectRoot, activeTab, setActiveTab)
+
+  // Show a launch toast so the user knows the sidebar exists and how to focus it
+  onMount(() => {
+    api.ui.toast({
+      title: 'Kombinat Writer',
+      message: 'Sidebar ready — press Ctrl+K to focus, 1-4 to switch tabs, or type /kombinat for the menu',
+      duration: 8000,
+      variant: 'info',
+    })
+  })
 
   // Register keybinds for tab switching (1-4)
   useKeybinds(api, setActiveTab)
