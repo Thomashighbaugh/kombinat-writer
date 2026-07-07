@@ -11,40 +11,11 @@ guided, constitute, specify, clarify, research, outline, task-manager, draft, cr
 ## Routing Logic
 
 ### Case 1: $ARGUMENTS is empty or whitespace only
-The user wants a menu. Use the `question` tool to present these options:
+The user typed `/kombinat` without a subcommand. If the Kombinat sidebar plugin is installed, the instant DialogSelect menu appeared and routed them here with a subcommand. If you reach this case (no subcommand provided), briefly tell the user:
 
-```
-question: "Which phase do you want to run?"
-header: "Kombinat Writer"
-options:
-  - label: "guided", description: "Assess project state and recommend next phase (Recommended)"
-  - label: "constitute", description: "Establish creative or intellectual principles"
-  - label: "specify", description: "Build story specification with premise stress-test and knowledge map"
-  - label: "clarify", description: "Resolve specification ambiguities"
-  - label: "research", description: "Active research — sources, annotation, literature review"
-  - label: "outline", description: "Chapter structure, pacing, arc design"
-  - label: "task-manager", description: "Break outline into tracked tasks"
-  - label: "draft", description: "Batch draft (default) — all planned chapters or up to 6. Single-chapter with explicit number."
-  - label: "critique", description: "Batch critique (default) — all [FR] chapters or up to 6. Modes: alpha, beta, peer, sensitivity, cold-read, comprehensive. Single with explicit number."
-  - label: "revise", description: "Batch revise (default) — all chapters with critique feedback or up to 6. Revision-verify gate. --depth full for 3-pass revision."
-  - label: "edit", description: "Three-pass editing: line-edit, copy-edit, proofread. Subtext, purple-prose, cliche, rhythm gates. Batch (default)."
-  - label: "review", description: "Broad project QA — continuity scan, structural analyses, readiness check"
-  - label: "cite", description: "Citation management — add, format, validate, bibliography"
-  - label: "publish", description: "Export via pandoc — EPUB, DOCX, LaTeX, PDF, web. Post-export verification."
-  - label: "track", description: "Unified tracking — characters, plots, timelines, sources"
-  - label: "timeline", description: "Chronological consistency verification"
-  - label: "meta", description: "Bibliographic metadata management"
-  - label: "drafter", description: "Loose draft jumpstart from raw ideas"
-  - label: "verify", description: "Run quality gates on demand — voice, continuity, style"
-  - label: "resume", description: "Resume interrupted session from checkpoint"
-  - label: "cycle", description: "Batch editorial cycle (default) — all pending or up to 6: draft→critique→revise→edit→done"
-  - label: "pacing-audit", description: "Analyze pacing distribution across chapters, find saggy sections"
-  - label: "hook-review", description: "Check each chapter's opening and closing hooks"
-  - label: "read-through", description: "Full read-through as a reader — immersion audit, trust accounting, engagement"
-  - label: "series", description: "Series infrastructure — init, sync, audit, register, status"
-```
+"Type `/kombinat` and select a phase from the menu, or run `/kombinat <phase>` directly (e.g. `/kombinat guided`, `/kombinat draft`)."
 
-When the user selects an option, proceed to Case 2 with that subcommand.
+Then list the available subcommands from the list above. Do NOT use the `question` tool — it causes a ~30s delay. The plugin handles the menu.
 
 ### Case 2: $ARGUMENTS starts with a valid subcommand
 1. Extract the first word as `subcommand`. Everything after the first space is `phaseArgs`.
