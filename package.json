@@ -9,6 +9,8 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:sidebar": "bun build src/plugins/kombinat-sidebar.tsx --outdir dist/plugins --target bun --minify",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p src/plugins/tsconfig.json",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -37,8 +39,10 @@
   },
   "devDependencies": {
     "@opencode-ai/plugin": "^1.17.13",
+    "@opentui/solid": "^0.4.3",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.0.0",
+    "solid-js": "^1.9.12",
     "typescript": "^5.7.0"
   },
   "files": [
@@ -48,6 +52,8 @@
     "src/templates/",
     "src/commands/",
     "src/lib/",
+    "src/plugins/",
+    "dist/plugins/",
     "SKILL.md",
     "ATTRIBUTION.md",
     "README.md",

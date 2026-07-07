@@ -2,6 +2,7 @@
 node_modules/
 
 # Build output
+dist/
 *.js
 !bin/install.mjs
 !src/tools/*.js

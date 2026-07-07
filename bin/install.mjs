@@ -168,6 +168,46 @@ function copyTemplates(track) {
     success('Templates copied');
 }
 
+// ─── Sidebar Plugin ──────────────────────────────────────────────────────────
+async function copySidebarPlugin(overwriteAll, skipAll) {
+    const srcDir = path.join(SRC_DIR, 'plugins');
+    const destDir = path.join(DEST_DIR, 'plugins');
+    if (!fs.existsSync(srcDir)) { log('No sidebar plugin source — skipping'); return { overwriteAll, skipAll, copied: 0 }; }
+    fs.ensureDirSync(destDir);
+    let copied = 0, newOverwriteAll = overwriteAll, newSkipAll = skipAll;
+
+    // Copy the entire plugins directory recursively (entry, components, hooks, utils)
+    const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+    for (const entry of entries) {
+        const src = path.join(srcDir, entry.name);
+        const dest = path.join(destDir, entry.name);
+        if (entry.isDirectory()) {
+            // components/, hooks/, utils/
+            fs.copySync(src, dest, { overwrite: true });
+            copied += fs.readdirSync(src).length;
+        } else if (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts')) {
+            if (newSkipAll) continue;
+            if (fs.existsSync(dest) && !newOverwriteAll) {
+                const action = await resolveConflict(dest);
+                if (action === 'skip' || action === 'skip-all') {
+                    if (action === 'skip-all') newSkipAll = true;
+                    continue;
+                }
+                if (action === 'overwrite-all') newOverwriteAll = true;
+            }
+            fs.copySync(src, dest, { overwrite: true });
+            copied++;
+        }
+    }
+    // Also copy the plugin tsconfig.json
+    const tsconfigSrc = path.join(srcDir, 'tsconfig.json');
+    if (fs.existsSync(tsconfigSrc)) {
+        fs.copySync(tsconfigSrc, path.join(destDir, 'tsconfig.json'), { overwrite: true });
+    }
+    success(`${copied} sidebar plugin files copied`);
+    return { overwriteAll: newOverwriteAll, skipAll: newSkipAll, copied };
+}
+
 // ─── Project Init ───────────────────────────────────────────────────────────
 async function initProjectStructure(track) {
     const projectRoot = process.cwd();
@@ -230,6 +270,9 @@ async function main() {
 
     copyTemplates(track);
 
+    const pluginResult = await copySidebarPlugin(overwriteAll, skipAll);
+    overwriteAll = pluginResult.overwriteAll; skipAll = pluginResult.skipAll;
+
     header('Installation Complete');
     log('');
     log('  Installed to .opencode/:');
@@ -237,6 +280,7 @@ async function main() {
     log(`    ${chalk.green('\u2713')} tools/ (incl. hubs/kombinat/ + lib/)`);
     log(`    ${chalk.green('\u2713')} commands/kombinat.md`);
     log(`    ${chalk.green('\u2713')} templates/`);
+    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar.tsx (+ components/)`);
     log('');
     log('  Next steps:');
     log('    1. Open your project in OpenCode');
