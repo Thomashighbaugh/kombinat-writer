@@ -1,0 +1,30 @@
+{
+  "formats": ["manuscript", "epub", "docx", "latex", "pdf", "web"],
+  "pandoc": {
+    "enabled": true,
+    "options": [],
+    "pdfEngine": "auto",
+    "standalone": true,
+    "toc": true,
+    "tocDepth": 2
+  },
+  "epub": {
+    "splitLevel": 1,
+    "embedFonts": false
+  },
+  "docx": {
+    "numberedSections": false
+  },
+  "latex": {
+    "documentClass": "book",
+    "citationStyle": "apa7",
+    "fontSize": 12,
+    "paperSize": "a4"
+  },
+  "metadata": {
+    "title": "Untitled",
+    "author": "Unknown Author",
+    "language": "en",
+    "license": "All Rights Reserved"
+  }
+}

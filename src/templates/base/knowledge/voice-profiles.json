@@ -1,0 +1,22 @@
+{
+  "characters": {},
+  "narration": {
+    "register": "",
+    "sentenceLengthDistribution": {
+      "short": 0,
+      "medium": 0,
+      "long": 0
+    },
+    "sensoryDensity": 0,
+    "dialogueToProseRatio": 0,
+    "emotionalRegister": [],
+    "commonPatterns": [],
+    "atmosphere": "",
+    "samplePassages": []
+  },
+  "metadata": {
+    "generatedFrom": [],
+    "generatedAt": "",
+    "chapterCount": 0
+  }
+}
