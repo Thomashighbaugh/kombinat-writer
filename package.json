@@ -1,7 +1,7 @@
 {
   "name": "kombinat-writer",
   "version": "0.1.0",
-  "description": "Professional-grade book writing workflow for OpenCode — fiction, non-fiction, and mixed projects. Research ingestion, structured critique, revision cycles, citation management, and multi-format publishing. A substantial expansion of novel-writer-english.",
+  "description": "Professional-grade book writing workflow for OpenCode — 25-subcommand slash command router, 26 hard-block quality gates, 8 HITL features, XML-structured drafting, per-character voice profiles, series lorebook infrastructure, and an OpenCode TUI sidebar plugin.",
   "type": "module",
   "main": "bin/install.mjs",
   "bin": {
@@ -11,26 +11,45 @@
     "build": "tsc",
     "build:sidebar": "bun build src/plugins/kombinat-sidebar.tsx --outdir dist/plugins --target bun --minify",
     "typecheck": "tsc --noEmit && tsc --noEmit -p src/plugins/tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build"
   },
   "keywords": [
-    "writing",
-    "novel",
-    "non-fiction",
-    "book",
     "opencode",
-    "agent",
-    "workflow",
-    "publishing",
-    "citation",
-    "research",
+    "ai-writing",
+    "novel-writing",
+    "book-authoring",
+    "writing-workflow",
+    "tui-sidebar",
+    "quality-gates",
+    "human-in-the-loop",
+    "xml-structuring",
+    "voice-profiling",
+    "series-lorebook",
+    "creative-writing",
+    "fiction",
+    "non-fiction",
+    "revision-cycles",
+    "solidjs",
+    "opentui",
+    "typescript",
+    "slash-commands",
+    "multi-format-publishing",
     "kombinat"
   ],
-  "author": "Based on the work of JeroTan and wordflowlab; substantially expanded and re-architected.",
+  "author": "Thomas Highbaugh <https://github.com/Thomashighbaugh>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/kombinat-writer.git"
+    "url": "git+https://github.com/Thomashighbaugh/kombinat-writer.git"
+  },
+  "homepage": "https://github.com/Thomashighbaugh/kombinat-writer#readme",
+  "bugs": {
+    "url": "https://github.com/Thomashighbaugh/kombinat-writer/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Thomashighbaugh"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0",
