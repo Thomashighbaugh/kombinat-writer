@@ -39,6 +39,7 @@ import path from 'path';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
+/** Supported lorebook source format identifiers. */
 export type ImportFormat = 'sillytavern' | 'janitorai' | 'characterai' | 'auto';
 
 export interface ImportOptions {
@@ -56,6 +57,7 @@ export interface ImportOptions {
   minWorldEntryLength?: number;
 }
 
+/** Result of a lorebook import operation with per-category counts. */
 export interface ImportResult {
   format: ImportFormat;
   detected: ImportFormat;
@@ -71,6 +73,7 @@ export interface ImportResult {
 
 // ─── Format Detection ────────────────────────────────────────────────────
 
+/** Auto-detect the import format from file content inspection. */
 export function detectFormat(inputPath: string): ImportFormat {
   const content = fs.readFileSync(inputPath, 'utf-8');
 
@@ -123,6 +126,7 @@ interface SillyTavernWorldInfo {
   entries: Record<string, SillyTavernEntry>;
 }
 
+/** Parse a SillyTavern world-info JSON file into categorized lorebook entries. */
 export function parseSillyTavern(inputPath: string): {
   characters: CharacterEntry[];
   worldEntries: WorldEntry[];
@@ -241,6 +245,7 @@ interface JanitorAICharacter {
   extensions?: Record<string, any>;
 }
 
+/** Parse a JanitorAI character card JSON into a character entry and world entries. */
 export function parseJanitorAI(inputPath: string): {
   characters: CharacterEntry[];
   worldEntries: WorldEntry[];
@@ -330,6 +335,7 @@ interface CharacterAICharacter {
   version?: string;
 }
 
+/** Parse a CharacterAI character definition JSON into a character entry. */
 export function parseCharacterAI(inputPath: string): {
   characters: CharacterEntry[];
   worldEntries: WorldEntry[];
@@ -659,6 +665,7 @@ function formatCharacterEntry(char: CharacterEntry, tag: string): string {
 
 // ─── Main Import Function ────────────────────────────────────────────────
 
+/** Main entry point: detect parse and write lorebook entries from an external file. */
 export function importLorebook(
   projectRoot: string,
   format: ImportFormat,
@@ -711,6 +718,7 @@ export function importLorebook(
 
 // ─── Import Report ───────────────────────────────────────────────────────
 
+/** Format an import result as a markdown report with breakdown and warnings. */
 export function formatImportReport(result: ImportResult): string {
   const lines: string[] = [];
   lines.push('# Lorebook Import Report');

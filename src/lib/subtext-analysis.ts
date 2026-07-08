@@ -12,6 +12,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Per-chapter report of dialogue subtext vs on-the-nose speech. */
 export interface SubtextReport {
   chapter: number;
   dialogueBlocks: DialogueAnalysis[];
@@ -35,6 +36,7 @@ interface DialogueAnalysis {
 
 const ON_THE_NOSE_THRESHOLD = 0.4;  // >40% on-the-nose = warning
 
+/** Scan XML dialogue blocks for subtext depth and flag on-the-nose passages. */
 export function analyzeSubtext(
   xmlContent: string,
   chapterNumber: number
@@ -141,6 +143,7 @@ export function analyzeSubtext(
   };
 }
 
+/** Convert a subtext report into the generic GateResult format. */
 export function subtextToGateResult(report: SubtextReport): GateResult {
   return {
     gate: 'subtext',

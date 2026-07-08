@@ -8,6 +8,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Parameters for a research search query. */
 export interface SearchQuery {
   question: string;
   kombinate: string;
@@ -15,12 +16,14 @@ export interface SearchQuery {
   sources: string[];
 }
 
+/** A single claim extracted from a source, with page reference and relevance. */
 export interface SourceClaim {
   claim: string;
   page: string;
   relevance: string;
 }
 
+/** Structured research source note with metadata, claims, and credibility assessment. */
 export interface SourceNote {
   key: string;
   title: string;

@@ -14,12 +14,14 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Result of analyzing all character arcs for completeness across the book. */
 export interface CharacterArcReport {
   characters: CharacterArc[];
   incompleteArcs: CharacterArc[];
   evidence: string[];
 }
 
+/** A single character's arc stages across the book. */
 export interface CharacterArc {
   name: string;
   stages: ArcStage[];
@@ -35,6 +37,7 @@ interface ArcStage {
   evidence: string;
 }
 
+/** Scan character profiles and XML drafts to classify each character's arc stages. */
 export function analyzeCharacterArcs(
   projectRoot: string
 ): CharacterArcReport {
@@ -170,6 +173,7 @@ function classifyArcStages(name: string, states: Array<{ chapter: number; field:
   return stages;
 }
 
+/** Format a character arc report as a readable markdown document. */
 export function formatCharacterArcReport(report: CharacterArcReport): string {
   const lines: string[] = [];
   lines.push('# Character Arc Verification');

@@ -13,6 +13,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Directed graph of chapter dependencies built from outline setup/payoff chains. */
 export interface DependencyGraph {
   nodes: GraphNode[];
   edges: GraphEdge[];
@@ -34,6 +35,7 @@ interface GraphEdge {
   description: string;
 }
 
+/** Parse the outline to build nodes edges adjacency maps and detect cycles. */
 export function buildDependencyGraph(
   projectRoot: string
 ): DependencyGraph {
@@ -180,6 +182,7 @@ function detectCycles(adjacency: Record<number, number[]>, allNodes: number[]): 
   return cycles;
 }
 
+/** Format dependency graph as a markdown document with adjacency and edge details. */
 export function formatDependencyGraph(graph: DependencyGraph): string {
   const lines: string[] = [];
   lines.push('# Chapter Dependency Graph');
@@ -220,6 +223,7 @@ export function formatDependencyGraph(graph: DependencyGraph): string {
   return lines.join('\n');
 }
 
+/** Trace downstream chapters that would be affected by revising a given chapter. */
 export function getRevisionImpact(
   graph: DependencyGraph,
   chapterToRevise: number

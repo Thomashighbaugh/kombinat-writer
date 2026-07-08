@@ -10,6 +10,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Report of reader promises: declared, kept, and broken. */
 export interface PromiseReport {
   promises: ReaderPromise[];
   kept: ReaderPromise[];
@@ -17,6 +18,7 @@ export interface PromiseReport {
   evidence: string[];
 }
 
+/** A single promise made to the reader — genre, tone, structural, etc. */
 export interface ReaderPromise {
   id: string;
   type: 'genre' | 'tone' | 'structural' | 'thematic' | 'mystery' | 'romantic' | 'content-warning';
@@ -27,6 +29,7 @@ export interface ReaderPromise {
   evidence: string;
 }
 
+/** Scan the book's constitution and content for declared and fulfilled reader promises. */
 export function auditPromises(
   projectRoot: string
 ): PromiseReport {
@@ -216,6 +219,7 @@ export function auditPromises(
   return { promises, kept, broken, evidence };
 }
 
+/** Format the promise audit as a markdown report. */
 export function formatPromiseReport(report: PromiseReport): string {
   const lines: string[] = [];
   lines.push('# Promise Keeping Audit');

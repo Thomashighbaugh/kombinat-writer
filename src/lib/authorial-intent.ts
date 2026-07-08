@@ -16,8 +16,10 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Writing phase that the intent applies to. */
 export type IntentPhase = 'draft' | 'revise' | 'edit' | 'critique';
 
+/** Record of an author's stated intent for a phase chapter, with verification status. */
 export interface AuthorialIntent {
   phase: IntentPhase;
   chapter?: number;
@@ -28,6 +30,7 @@ export interface AuthorialIntent {
   driftNotes?: string;
 }
 
+/** Fallback intent used when the author provides no explicit direction. */
 export const GENERIC_INTENT = 'Produce the best possible output consistent with the outline and constitution.';
 
 // ─── Capture ────────────────────────────────────────────────────────────────
@@ -117,6 +120,7 @@ function extractIntentKeywords(intent: string): string[] {
 
 // ─── Persistence ────────────────────────────────────────────────────────────
 
+/** Persist an intent record to `book/intents/` as JSON. */
 export function saveIntent(projectRoot: string, intent: AuthorialIntent): void {
   const dir = path.join(projectRoot, 'book', 'intents');
   fs.ensureDirSync(dir);
@@ -124,6 +128,7 @@ export function saveIntent(projectRoot: string, intent: AuthorialIntent): void {
   fs.writeJsonSync(path.join(dir, filename), intent, { spaces: 2 });
 }
 
+/** Load the most recent intent for the given phase and optional chapter. Returns null if none exist. */
 export function loadLatestIntent(
   projectRoot: string,
   phase: IntentPhase,
@@ -143,6 +148,7 @@ export function loadLatestIntent(
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Build a markdown prompt asking the author to state their intent for a phase. */
 export function formatIntentPrompt(phase: IntentPhase, chapter?: number): string {
   const chStr = chapter ? ` Chapter ${chapter}` : '';
   return [
@@ -159,6 +165,7 @@ export function formatIntentPrompt(phase: IntentPhase, chapter?: number): string
   ].join('\n');
 }
 
+/** Format an intent record as a human-readable markdown block. */
 export function formatIntentForDisplay(intent: AuthorialIntent): string {
   const lines: string[] = [
     `## Authorial Intent`,

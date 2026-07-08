@@ -3,6 +3,7 @@ import { Show } from 'solid-js'
 import type { GateRunResult } from '../hooks/use-project-state.js'
 import { statusIcon, statusColor, BOLD } from '../utils/format.js'
 
+/** Renders a single quality gate as a selectable card with status icon and detail preview. */
 export function GateCard(props: { result: () => GateRunResult | undefined; gateName: string; gateId: string; onSelect: () => void }) {
   const r = props.result
   return (

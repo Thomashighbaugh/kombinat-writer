@@ -11,6 +11,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { GateResult } from './quality-gates.js';
 
+/** Comparison report between planned outline beats and actual draft beats. */
 export interface ReverseOutlineReport {
   chapter: number;
   plannedBeats: PlannedBeat[];
@@ -50,6 +51,7 @@ interface BeatDrift {
   drift: string;
 }
 
+/** Compare planned outline beats against actual XML draft beats for a chapter. */
 export function generateReverseOutline(
   projectRoot: string,
   chapterNumber: number
@@ -257,6 +259,7 @@ function similarity(a: string, b: string): number {
   return (common / Math.max(aWords.size, bWords.size));
 }
 
+/** Convert a reverse outline report into the generic GateResult format. */
 export function reverseOutlineToGateResult(report: ReverseOutlineReport): GateResult {
   return {
     gate: 'reverse-outline',

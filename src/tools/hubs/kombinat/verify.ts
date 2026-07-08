@@ -119,6 +119,7 @@ Run a specific quality gate on demand:
 | \`subtext\` | On-the-nose dialogue detection |
 | \`purple-prose\` | Overwriting, excessive modifiers, metaphor overload |
 | \`cliche\` | Clichéd phrases and genre-trope overuse |
+| \`ai-slop\` | AI writing patterns — ozone smell, stock sensory clichés, structural tells, hollow emotional beats |
 | \`rhythm\` | Sentence length variety, monotony detection |
 | \`immersion\` | Anachronisms, authorial intrusion, meta-references, logic breaks |
 | \`trust\` | Coincidences, deus ex machina, plot armor, stupid-for-plot |
@@ -143,6 +144,7 @@ Run a specific quality gate on demand:
 - \`/kombinat verify gates revision-verify 1\` — run revision-verify gate on critique round 1
 - \`/kombinat verify gates thread-matrix\` — generate thread tracking matrix
 - \`/kombinat verify gates dependency-graph\` — generate chapter dependency graph
+- \`/kombinat verify gates ai-slop Chapter 3\` — scan for AI writing slop patterns (ozone, stock clichés, structural tells)
 
 ## Execution
 

@@ -2,8 +2,10 @@ import { createSignal, createMemo, onMount } from 'solid-js'
 import { detectState, type ProjectState } from '../../lib/project-state.js'
 import { runGate, type GateResult } from '../../lib/quality-gates.js'
 
+/** Active sidebar tab identifier. */
 export type Tab = 'dashboard' | 'gates' | 'diff' | 'viz'
 
+/** Result of running a single quality gate. */
 export interface GateRunResult {
   gateId: string
   gateName: string
@@ -13,6 +15,7 @@ export interface GateRunResult {
   fixHint?: string
 }
 
+/** Complete sidebar state and actions exposed to UI components. */
 export interface SidebarState {
   projectRoot: string
   project: () => ProjectState | null
@@ -32,6 +35,7 @@ export interface SidebarState {
   injectCommand: (cmd: string) => void
 }
 
+/** A single diff hunk with before/after lines and approval status. */
 export interface DiffHunk {
   id: string
   startLine: number
@@ -42,6 +46,7 @@ export interface DiffHunk {
   severity?: string
 }
 
+/** Pending diff data for a file with hunk-level approval tracking. */
 export interface DiffData {
   file: string
   hunks: DiffHunk[]
@@ -51,6 +56,7 @@ export interface DiffData {
   pending: number
 }
 
+/** Author vs AI contribution breakdown for manuscript provenance tracking. */
 export interface ProvenanceSummary {
   totalLines: number
   author: number
@@ -62,6 +68,7 @@ export interface ProvenanceSummary {
   percentages: { author: number; ai: number }
 }
 
+/** Visualization data including pacing, threads, provenance, cognitive load, and escalation. */
 export interface VizData {
   pacing: { chapter: number; intensity: number }[]
   threads: { threadId: string; threadName: string; chapters: number[] }[]
@@ -80,6 +87,7 @@ const [vizData, setVizData] = createSignal<VizData | null>(null)
 
 // Reference to api.client.tui.appendPrompt — set by entry plugin
 let injectFn: ((cmd: string) => void) | null = null
+/** Sets the command injection callback used by the sidebar to dispatch /kombinat commands. */
 export function setInjector(fn: (cmd: string) => void) {
   injectFn = fn
 }
@@ -93,6 +101,7 @@ const gateDefinitions = [
   { id: 'non-negotiables', name: 'Non-Negotiables', category: 'Constraints' },
 ]
 
+/** Creates the singleton sidebar state with project info, gate results, and action methods. */
 export function useProjectState(
   projectRoot: string,
   activeTab: () => Tab,

@@ -13,6 +13,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Scan results for unintentional repetition across word structural and beat levels. */
 export interface EchoReport {
   chapter: number;
   wordEchoes: WordEcho[];
@@ -67,6 +68,7 @@ const COMMON_WORDS = new Set([
   'said', 'says', 'say',
 ]);
 
+/** Scan XML content for word echoes crutch words structural repetition and beat pattern echoes. */
 export function detectEchoes(
   xmlContent: string,
   chapterNumber: number
@@ -298,6 +300,7 @@ function detectBeatEchoes(xmlContent: string): BeatEcho[] {
 
 // ─── Integration ────────────────────────────────────────────────────────────
 
+/** Convert an echo report into a standard quality-gate result. */
 export function echoReportToGateResult(report: EchoReport): GateResult {
   return {
     gate: 'echo-detection',

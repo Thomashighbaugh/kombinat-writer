@@ -11,8 +11,10 @@
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Severity level for AI-generated suggestions — from blocking to informational. */
 export type SeverityTier = 'must-fix' | 'should-consider' | 'your-call' | 'fyi';
 
+/** A single suggestion tagged with a severity tier and metadata. */
 export interface TieredSuggestion {
   id: string;
   tier: SeverityTier;
@@ -25,6 +27,7 @@ export interface TieredSuggestion {
   gateRef?: string;        // if must-fix, which gate flagged it
 }
 
+/** A collection of suggestions for a given phase/chapter, with a display filter level. */
 export interface SuggestionSet {
   phase: string;
   chapter?: number;
@@ -37,6 +40,7 @@ export interface SuggestionSet {
 
 const TIER_ORDER: SeverityTier[] = ['must-fix', 'should-consider', 'your-call', 'fyi'];
 
+/** Get the numeric rank of a severity tier (0 = must-fix, 3 = fyi). */
 export function tierRank(tier: SeverityTier): number {
   return TIER_ORDER.indexOf(tier);
 }
@@ -99,6 +103,7 @@ export function classifySuggestion(
 
 // ─── Summary ────────────────────────────────────────────────────────────────
 
+/** Count of suggestions at each severity tier. */
 export interface TierSummary {
   'must-fix': number;
   'should-consider': number;
@@ -107,6 +112,7 @@ export interface TierSummary {
   total: number;
 }
 
+/** Count suggestions by tier from a SuggestionSet. */
 export function summarizeTiers(set: SuggestionSet): TierSummary {
   const summary: TierSummary = {
     'must-fix': 0,
@@ -139,6 +145,7 @@ const TIER_ICONS: Record<SeverityTier, string> = {
   'fyi': '[FYI]',
 };
 
+/** Format a filtered suggestion set as a markdown report. */
 export function formatSuggestionSet(
   set: SuggestionSet,
   minTier: SeverityTier = set.filterLevel

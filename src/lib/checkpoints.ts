@@ -13,6 +13,7 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** A tracked context file with metadata for change detection. */
 export interface ContextItem {
   id: string;
   path: string;
@@ -21,6 +22,7 @@ export interface ContextItem {
   size: number;        // bytes at checkpoint time
 }
 
+/** Snapshot of context state after a chapter was processed. */
 export interface ChapterCheckpoint {
   chapterNumber: number;
   timestamp: string;
@@ -51,6 +53,7 @@ function contentHash(content: string): string {
 
 const CHECKPOINT_DIR = path.join('book', 'checkpoints');
 
+/** Persist a checkpoint to `book/checkpoints/chapter-N.json`. */
 export function saveCheckpoint(
   projectRoot: string,
   checkpoint: ChapterCheckpoint
@@ -61,6 +64,7 @@ export function saveCheckpoint(
   fs.writeJsonSync(path.join(dir, filename), checkpoint, { spaces: 2 });
 }
 
+/** Construct a ChapterCheckpoint by hashing tracking state and voice profiles. */
 export function buildCheckpoint(
   projectRoot: string,
   chapterNumber: number,
@@ -103,6 +107,7 @@ export function buildCheckpoint(
 
 // ─── Load Checkpoint ────────────────────────────────────────────────────
 
+/** Load a checkpoint for a specific chapter, or null if it doesn't exist. */
 export function loadCheckpoint(
   projectRoot: string,
   chapterNumber: number
@@ -117,6 +122,7 @@ export function loadCheckpoint(
   }
 }
 
+/** Find and load the highest-numbered checkpoint, or null if none exist. */
 export function getLatestCheckpoint(projectRoot: string): ChapterCheckpoint | null {
   const dir = path.join(projectRoot, CHECKPOINT_DIR);
   if (!fs.existsSync(dir)) return null;
@@ -136,6 +142,7 @@ export function getLatestCheckpoint(projectRoot: string): ChapterCheckpoint | nu
 
 // ─── Resume Diff ─────────────────────────────────────────────────────────
 
+/** Delta between a checkpoint and current file state for efficient resumption. */
 export interface ResumeDiff {
   checkpoint: ChapterCheckpoint;
   unchanged: ContextItem[];    // Files that haven't changed since checkpoint
@@ -222,6 +229,7 @@ export function computeResumeDiff(
 
 // ─── Resume Report ───────────────────────────────────────────────────────
 
+/** Format a resume diff as a human-readable markdown report. */
 export function formatResumeReport(diff: ResumeDiff): string {
   const lines: string[] = [];
   lines.push(`# Resume Report — Chapter ${diff.checkpoint.chapterNumber}`);

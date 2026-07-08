@@ -12,6 +12,7 @@ import { BOLD } from '../utils/format.js'
 
 type VizSubTab = 'pacing' | 'threads' | 'provenance' | 'cognitive' | 'escalation'
 
+/** Renders the Visualizations tab with sub-tab navigation for pacing, threads, provenance, cognitive, and escalation. */
 export function VizTab(props: { state: SidebarState }) {
   const [subTab, setSubTab] = createSignal<VizSubTab>('pacing')
   const viz = props.state.vizData

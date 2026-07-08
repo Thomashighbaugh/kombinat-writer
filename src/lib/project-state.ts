@@ -13,7 +13,9 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Book track type — determines phase ordering. */
 export type Track = 'fiction' | 'non-fiction' | 'mixed';
+/** Workflow phase in the book-writing pipeline. */
 export type Phase =
   | 'not-started'
   | 'constitute'
@@ -30,6 +32,7 @@ export type Phase =
   | 'publish'
   | 'complete';
 
+/** High-level project state category for navigation. */
 export type State =
   | 'not-started'
   | 'in-progress'
@@ -40,6 +43,7 @@ export type State =
   | 'publishing'
   | 'complete';
 
+/** Complete snapshot of a project's detected state phase and readiness. */
 export interface ProjectState {
   track: Track;
   phase: Phase;
@@ -65,6 +69,7 @@ export interface ProjectState {
 
 const BOOK_DIR = 'book';
 
+/** Read `track.json` to determine fiction/non-fiction/mixed track. */
 export function detectTrack(projectRoot: string): Track {
   const trackFile = path.join(projectRoot, BOOK_DIR, 'track.json');
   if (fs.existsSync(trackFile)) {
@@ -76,6 +81,7 @@ export function detectTrack(projectRoot: string): Track {
   return 'fiction'; // default
 }
 
+/** Return the ordered list of phases appropriate for the given track. */
 export function getPhaseOrder(track: Track): Phase[] {
   const fiction: Phase[] = [
     'constitute', 'specify', 'clarify', 'research', 'outline',
@@ -97,6 +103,7 @@ export function getPhaseOrder(track: Track): Phase[] {
   }
 }
 
+/** Scan the project directory to determine current phase state and next recommended step. */
 export function detectState(projectRoot: string): ProjectState {
   const track = detectTrack(projectRoot);
   const bookDir = path.join(projectRoot, BOOK_DIR);

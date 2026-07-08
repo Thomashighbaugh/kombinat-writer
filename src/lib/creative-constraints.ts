@@ -21,8 +21,10 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Category of a creative non-negotiable constraint. */
 export type ConstraintCategory = 'plot' | 'character' | 'tone' | 'content' | 'structure' | 'world';
 
+/** A single non-negotiable creative constraint declared by the author. */
 export interface CreativeConstraint {
   id: string;
   category: ConstraintCategory;
@@ -32,6 +34,7 @@ export interface CreativeConstraint {
   notes?: string;
 }
 
+/** Complete set of creative constraints with author acknowledgement. */
 export interface ConstraintSet {
   constraints: CreativeConstraint[];
   declaredAt: string;
@@ -42,12 +45,14 @@ export interface ConstraintSet {
 
 const CONSTRAINTS_PATH = 'book/creative-constraints.json';
 
+/** Load constraint set from `book/creative-constraints.json`, or null if absent. */
 export function loadConstraints(projectRoot: string): ConstraintSet | null {
   const filepath = path.join(projectRoot, CONSTRAINTS_PATH);
   if (!fs.existsSync(filepath)) return null;
   return fs.readJsonSync(filepath);
 }
 
+/** Persist a constraint set to `book/creative-constraints.json`. */
 export function saveConstraints(projectRoot: string, constraints: ConstraintSet): void {
   const filepath = path.join(projectRoot, CONSTRAINTS_PATH);
   fs.ensureDirSync(path.dirname(filepath));
@@ -56,6 +61,7 @@ export function saveConstraints(projectRoot: string, constraints: ConstraintSet)
 
 // ─── Constraint Management ───────────────────────────────────────────────────
 
+/** Add a new constraint to the set and return the updated set. */
 export function addConstraint(
   set: ConstraintSet,
   category: ConstraintCategory,
@@ -76,6 +82,7 @@ export function addConstraint(
   };
 }
 
+/** Remove a constraint by ID and return the updated set. */
 export function removeConstraint(set: ConstraintSet, id: string): ConstraintSet {
   return {
     ...set,
@@ -85,6 +92,7 @@ export function removeConstraint(set: ConstraintSet, id: string): ConstraintSet 
 
 // ─── Constraint Verification ────────────────────────────────────────────────
 
+/** A detected violation of a creative constraint with severity and location. */
 export interface ConstraintViolation {
   constraintId: string;
   category: ConstraintCategory;
@@ -94,6 +102,7 @@ export interface ConstraintViolation {
   severity: 'block';
 }
 
+/** Result of checking content against a full constraint set. */
 export interface ConstraintCheckResult {
   passed: boolean;
   violations: ConstraintViolation[];
@@ -229,6 +238,7 @@ function findLineWithWord(content: string, word: string): string {
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Format the full constraint set as a readable markdown document. */
 export function formatConstraintsForDisplay(set: ConstraintSet): string {
   const lines: string[] = [
     '## Creative Constraints (Non-Negotiables)',
@@ -259,6 +269,7 @@ export function formatConstraintsForDisplay(set: ConstraintSet): string {
   return lines.join('\n');
 }
 
+/** Format constraint check results as a pass/fail markdown report with violation details. */
 export function formatViolationReport(result: ConstraintCheckResult): string {
   const lines: string[] = [
     '## Non-Negotiables Gate Report',

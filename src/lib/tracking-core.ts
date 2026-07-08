@@ -10,10 +10,13 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Entity types that can be tracked in the tracking system. */
 export type TrackingEntityType = 'character' | 'plot' | 'timeline' | 'relationship' | 'source' | 'argument';
 
+/** Actions that can be recorded against a tracked entity. */
 export type TrackingAction = 'update' | 'create' | 'resolve';
 
+/** A single tracking event recording a state change for an entity. */
 export interface TrackingEvent {
   id: string;
   type: TrackingEntityType;

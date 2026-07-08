@@ -94,6 +94,53 @@ For each chapter in the batch, produce structured feedback. **Every critique ite
 
 **If an item fails the specificity gate, reject it and do not include it in the output.**
 
+### 3b. Anti-AI-Slop Mandate (ALL MODES)
+
+Every critique, regardless of mode, must check for common AI-generated writing slop. These are recurring patterns that signal lazy or formulaic prose — the LLM defaulting to stock sensory clichés, repetitive sentence architecture, and hollow emotional beats. The critic flags every instance found.
+
+**Tier 1: Sensory clichés (HARD BLOCK — must-fix)**
+
+The most emblematic indicator of AI slop is the **smell or taste of ozone**. This single trope — describing ozone when no electrical event justifies it — is the signature tell of AI-generated prose. Flag it every time. The same applies to:
+
+| Pattern | Why it's slop | Fix |
+||---------|--------------|-----|
+| "smell/taste of ozone" | No electrical event present; LLM default for "tension" | Replace with a specific, earned sensory detail |
+| "copper taste of blood" | Default blood-in-mouth descriptor; overused to the point of cliché | Use a fresh descriptor or cut if not needed |
+| "the air crackled with tension" | Abstract tension made physical without earning it | Show tension through action, not atmospheric metaphor |
+| "a shiver ran down [their] spine" | Stock physiological response; LLM default for fear/surprise | Find a body-specific or situation-specific reaction |
+| "eyes like [gemstone]" | Generic eye-description formula (emeralds, sapphires, obsidian) | Describe what the eyes *do*, not what they resemble |
+| "lips curled into a [creature] smile" (wolf, snake, etc.) | Animal-metaphor smile; LLM shorthand for "menacing" | Show the menace through action or dialogue |
+
+**Tier 2: Structural tells (should-consider)**
+
+| Pattern | Why it's slop | Fix |
+|---------|--------------|-----|
+| "Not [X]. Not [X] the way [Y] expected." | Fragment-emphasis pattern overused by LLMs for dramatic effect | Vary the emphasis technique; use sparingly if at all |
+| Three consecutive sentences starting with the same word | Anaphora the LLM uses as a rhythm crutch | Vary sentence openings |
+| "It wasn't just [X]. It was [Y]." | Binary-escalation construction the LLM defaults to for emphasis | Find a different emphasis structure |
+| Every paragraph ends with a one-sentence punch line | LLM "periodic sentence" habit for faux-dramatic closers | Let some paragraphs end quietly |
+| Dialogue tag + adverb ("said angrily", "whispered softly") | Adverbial dialogue tags are a beginner tell; LLMs overuse them | Use action beats or subtext instead |
+
+**Tier 3: Hollow emotional beats (your-call)**
+
+| Pattern | Why it's slop | Fix |
+|---------|--------------|-----|
+| "Something shifted in [their] expression" | Vague emotional change the LLM uses when it can't specify the emotion | Name the specific micro-expression or cut the beat |
+| "The weight of [abstract noun] hung in the air" | Weight-of-abstract-noun is the LLM's default for atmosphere | Show the atmosphere through concrete detail |
+| "[Character] didn't say anything. They didn't have to." | LLM shorthand for mutual understanding; profoundly overused | Show the understanding through action or cut the line |
+
+**Reporting:** Anti-slop items use severity tiers — Tier 1 = must-fix, Tier 2 = should-consider, Tier 3 = your-call. They appear in the critique output with the \`AI-SLOP\` category prefix:
+
+\`\`\`markdown
+### AI-SLOP: Ozone smell without electrical event
+- **ID**: C1-A-SLOP-001
+- **Severity**: Critical (must-fix)
+- **Location**: Paragraph 7, "The ozone tang of impending violence..."
+- **Effect**: Signals AI-generated prose to any reader familiar with the pattern; breaks immersion
+- **Recommendation**: Replace with a specific sensory detail earned by the scene context (e.g., the metallic taste of adrenaline, the dry-mouth feel of fear)
+- **Evidence**: "The ozone tang of impending violence hung between them."
+\`\`\`
+
 ### 4. Categories by Mode
 
 | Mode | Categories |

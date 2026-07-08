@@ -6,6 +6,7 @@ import { GatesTab } from './gates-tab.js'
 import { DiffTab } from './diff-tab.js'
 import { VizTab } from './viz-tab.js'
 
+/** Renders the active tab content (Dashboard, Gates, Diff, or Viz). */
 export function SidebarContent(props: { session_id: string; state: SidebarState }) {
   const tab = props.state.activeTab
 

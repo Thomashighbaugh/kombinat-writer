@@ -12,6 +12,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Tabular view of all plot threads across chapters with status per chapter. */
 export interface ThreadMatrix {
   threads: ThreadRow[];
   chapters: number[];
@@ -29,6 +30,7 @@ interface ThreadRow {
   totalChapters: number;
 }
 
+/** Build a thread matrix from plot-tracker.json and XML draft plot-thread tags. */
 export function generateThreadMatrix(
   projectRoot: string
 ): ThreadMatrix {
@@ -164,6 +166,7 @@ export function generateThreadMatrix(
   return { threads, chapters, droppedThreads, orphanedPayoffs, overconcentrated, evidence };
 }
 
+/** Format the thread matrix as a markdown table with legends and issue sections. */
 export function formatThreadMatrix(matrix: ThreadMatrix): string {
   const lines: string[] = [];
   lines.push('# Thread Tracking Matrix');

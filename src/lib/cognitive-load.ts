@@ -13,6 +13,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Per-chapter cognitive load metrics with overloaded chapters flagged. */
 export interface CognitiveLoadReport {
   chapters: ChapterLoad[];
   overloadedChapters: ChapterLoad[];
@@ -32,6 +33,7 @@ const MAX_NAMED_CHARACTERS = 7;
 const MAX_ACTIVE_THREADS = 5;
 const MAX_OPEN_QUESTIONS = 3;
 
+/** Scan XML drafts to measure named characters active threads and open questions per chapter. */
 export function analyzeCognitiveLoad(
   projectRoot: string
 ): CognitiveLoadReport {
@@ -106,6 +108,7 @@ export function analyzeCognitiveLoad(
   return { chapters, overloadedChapters, evidence };
 }
 
+/** Format a cognitive load report as a markdown table. */
 export function formatCognitiveLoadReport(report: CognitiveLoadReport): string {
   const lines: string[] = [];
   lines.push('# Cognitive Load Analysis');

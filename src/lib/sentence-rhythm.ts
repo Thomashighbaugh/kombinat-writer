@@ -9,6 +9,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Per-chapter report of sentence length distribution and rhythm monotony. */
 export interface RhythmReport {
   chapter: number;
   totalSentences: number;
@@ -31,6 +32,7 @@ interface LengthBucket {
 
 const MONOTONY_THRESHOLD = 0.6;  // >60% sentences in same range = warning
 
+/** Analyze sentence length distribution and detect monotony in XML chapter content. */
 export function analyzeSentenceRhythm(
   xmlContent: string,
   chapterNumber: number
@@ -132,6 +134,7 @@ function stripXmlTags(xml: string): string {
     .trim();
 }
 
+/** Convert a rhythm report into the generic GateResult format. */
 export function rhythmToGateResult(report: RhythmReport): GateResult {
   return {
     gate: 'sentence-rhythm',

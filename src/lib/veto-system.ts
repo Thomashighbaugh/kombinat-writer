@@ -19,6 +19,7 @@ import { loadPreferences, savePreferences, logRejection, type PreferenceSet } fr
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** A single veto record logged when the author rejects a suggestion. */
 export interface VetoRecord {
   id: string;
   timestamp: string;
@@ -30,6 +31,7 @@ export interface VetoRecord {
   reason?: string;
 }
 
+/** Persistent log of all vetoes, vetoed suggestion IDs, and vetoed patterns. */
 export interface VetoLog {
   vetoes: VetoRecord[];
   vetoedSuggestionIds: string[];   // IDs of vetoed suggestions — never re-suggest
@@ -65,12 +67,14 @@ export function parseVetoInput(input: string): { isVeto: boolean; reason?: strin
 
 // ─── Persistence ────────────────────────────────────────────────────────────
 
+/** Load the veto log from book/vetoes.json, or null if not found. */
 export function loadVetoLog(projectRoot: string): VetoLog | null {
   const filepath = path.join(projectRoot, VETO_PATH);
   if (!fs.existsSync(filepath)) return null;
   return fs.readJsonSync(filepath);
 }
 
+/** Persist the veto log to book/vetoes.json. */
 export function saveVetoLog(projectRoot: string, log: VetoLog): void {
   const filepath = path.join(projectRoot, VETO_PATH);
   fs.ensureDirSync(path.dirname(filepath));
@@ -177,6 +181,7 @@ function extractVetoPattern(reason: string): string {
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Format the prompt shown to the author when presenting a suggestion for veto. */
 export function formatVetoPrompt(suggestionTitle: string): string {
   return [
     `Suggestion: ${suggestionTitle}`,
@@ -187,6 +192,7 @@ export function formatVetoPrompt(suggestionTitle: string): string {
   ].join('\n');
 }
 
+/** Format the veto log as a markdown display with summary and recent entries. */
 export function formatVetoLogForDisplay(log: VetoLog): string {
   const lines: string[] = [
     '## Veto Log',

@@ -12,6 +12,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Per-chapter report of purple prose and overwriting metrics. */
 export interface PurpleProseReport {
   chapter: number;
   modifierRatio: number;       // adjectives+adverbs / total words
@@ -48,6 +49,7 @@ const ELEVATED_WORDS = [
   'perspicacious', 'mellifluous', 'venerable', 'sagacious', 'opprobrious',
 ];
 
+/** Scan XML chapter content for excessive modifiers, metaphors, and elevated vocabulary. */
 export function detectPurpleProse(
   xmlContent: string,
   chapterNumber: number
@@ -166,6 +168,7 @@ function stripXmlTags(xml: string): string {
     .trim();
 }
 
+/** Convert a purple prose report into the generic GateResult format. */
 export function purpleProseToGateResult(report: PurpleProseReport): GateResult {
   return {
     gate: 'purple-prose',

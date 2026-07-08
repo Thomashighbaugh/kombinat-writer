@@ -11,6 +11,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Result of analyzing a chapter's emotional beat trajectory. */
 export interface BeatArcReport {
   chapter: number;
   beats: BeatChange[];
@@ -34,6 +35,7 @@ interface BeatChange {
 const FLAT_STREAK_THRESHOLD = 3;     // >3 consecutive same-emotion beats = flat
 const REPETITION_THRESHOLD = 2;     // same from→to pattern appearing 2+ times
 
+/** Parse `<beatchange>` tags from XML draft and assess emotional arc coherence. */
 export function analyzeBeatArc(
   xmlContent: string,
   chapterNumber: number
@@ -197,6 +199,7 @@ function describeArc(beats: BeatChange[]): string {
 
 // ─── Cross-Chapter Arc Analysis ─────────────────────────────────────────────
 
+/** Build a map of arc shapes across a chapter range, detecting gaps and transitions. */
 export function analyzeCrossChapterArcs(
   projectRoot: string,
   chapterRange: [number, number]
@@ -235,6 +238,7 @@ export function analyzeCrossChapterArcs(
 
 // ─── Integration ────────────────────────────────────────────────────────────
 
+/** Convert a beat arc report into a standard quality-gate result. */
 export function beatArcToGateResult(report: BeatArcReport): GateResult {
   return {
     gate: 'beat-arc',

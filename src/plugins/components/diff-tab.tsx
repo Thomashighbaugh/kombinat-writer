@@ -3,6 +3,7 @@ import { For, Show, createMemo, createSignal } from 'solid-js'
 import type { SidebarState, DiffHunk } from '../hooks/use-project-state.js'
 import { truncate, BOLD } from '../utils/format.js'
 
+/** Renders the Diff Approval tab with hunk navigation, side-by-side diff, and approve/reject/veto actions. */
 export function DiffTab(props: { state: SidebarState }) {
   const diff = props.state.diffData
   const [selectedHunk, setSelectedHunk] = createSignal<number>(0)

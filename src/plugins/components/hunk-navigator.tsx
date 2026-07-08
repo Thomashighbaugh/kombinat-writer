@@ -3,6 +3,7 @@ import { For } from 'solid-js'
 import type { DiffHunk } from '../hooks/use-project-state.js'
 import { truncate, BOLD } from '../utils/format.js'
 
+/** Renders a navigable list of diff hunks with status indicators. */
 export function HunkNavigator(props: {
   hunks: DiffHunk[]
   selected: number

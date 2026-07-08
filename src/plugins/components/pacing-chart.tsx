@@ -3,6 +3,7 @@ import { For, Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { pacingChart } from '../utils/chart-rendering.js'
 
+/** Renders the pacing heartbeat visualization as a vertical bar chart. */
 export function PacingChart(props: { state: SidebarState }) {
   const viz = props.state.vizData
   return (

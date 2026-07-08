@@ -18,8 +18,10 @@ import fs from 'fs-extra';
 import path from 'path';
 import { execSync, execFileSync } from 'child_process';
 
+/** Supported export output formats. */
 export type ExportFormat = 'manuscript' | 'epub' | 'docx' | 'latex' | 'pdf' | 'web' | 'all';
 
+/** Metadata configuration for a book publication. */
 export interface PublishConfig {
   title: string;
   author: string;
@@ -417,6 +419,7 @@ ${htmlBody}
  * consider using a dedicated library like docx or mammoth.
  * This provides a structurally valid fallback.
  */
+/** Generate a DOCX-compatible Open XML document with heading styles and TOC. */
 export function exportDocx(manuscript: string, outputPath: string, config?: PublishConfig): void {
   const cfg = config || { title: 'Untitled', author: 'Unknown', language: 'en', license: 'All Rights Reserved' };
   const docxDir = path.resolve(outputPath);
@@ -821,6 +824,7 @@ export function detectLatexEngine(): string | null {
   return null;
 }
 
+/** Full publish configuration loaded from publish-config.json. */
 export interface PublishConfigFile {
   formats: ExportFormat[];
   pandoc: {
@@ -860,6 +864,7 @@ export interface PublishConfigFile {
   };
 }
 
+/** Load publish configuration from book/publish-config.json, or null if absent. */
 export function loadPublishConfig(projectRoot: string): PublishConfigFile | null {
   const configPath = path.join(projectRoot, 'book', 'publish-config.json');
   if (!fs.existsSync(configPath)) return null;
@@ -942,6 +947,7 @@ export function exportWithPandoc(
 
 // ─── Post-Export Verification ─────────────────────────────────────────────
 
+/** Result of a post-export file validation check. */
 export interface ExportVerificationResult {
   format: ExportFormat;
   path: string;
@@ -953,6 +959,7 @@ export interface ExportVerificationResult {
   verdict: 'pass' | 'fail' | 'warning';
 }
 
+/** Validate a generated export file — size, structure, format-specific signature. */
 export function verifyExport(outputPath: string, format: ExportFormat): ExportVerificationResult {
   const result: ExportVerificationResult = {
     format,
@@ -1081,6 +1088,7 @@ export function verifyExport(outputPath: string, format: ExportFormat): ExportVe
   return result;
 }
 
+/** Format verification results as a markdown report table. */
 export function formatVerificationReport(results: ExportVerificationResult[]): string {
   const lines: string[] = [];
   lines.push('# Post-Export Verification Report');

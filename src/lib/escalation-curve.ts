@@ -10,6 +10,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Per-chapter escalation metrics with detected plateaus and descending stretches. */
 export interface EscalationReport {
   chapterIntensities: ChapterIntensity[];
   plateaus: Plateau[];
@@ -52,6 +53,7 @@ const PACING_INTENSITY: Record<string, number> = {
   'application': 6,
 };
 
+/** Scan XML drafts to measure pacing intensity per chapter and detect plateaus or descents. */
 export function verifyEscalation(
   projectRoot: string
 ): EscalationReport {
@@ -171,6 +173,7 @@ export function verifyEscalation(
   return { chapterIntensities, plateaus, descendingStretches, overallTrend, evidence };
 }
 
+/** Format an escalation report as a markdown document with intensity chart and plateau details. */
 export function formatEscalationReport(report: EscalationReport): string {
   const lines: string[] = [];
   lines.push('# Escalation Curve Verification');

@@ -3,6 +3,7 @@ import { For, Show, createMemo } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { phaseLabel, stateLabel, bar, BOLD } from '../utils/format.js'
 
+/** Renders the Dashboard tab with project status, document checklist, chapter counts, and quick actions. */
 export function DashboardTab(props: { state: SidebarState }) {
   const project = props.state.project
 

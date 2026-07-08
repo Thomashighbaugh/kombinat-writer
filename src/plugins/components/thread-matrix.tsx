@@ -3,6 +3,7 @@ import { For, Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { threadMatrix } from '../utils/chart-rendering.js'
 
+/** Renders the thread matrix heatmap showing story thread presence per chapter. */
 export function ThreadMatrixView(props: { state: SidebarState }) {
   const viz = props.state.vizData
   return (

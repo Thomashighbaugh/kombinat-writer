@@ -17,6 +17,7 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Origin classification for a line of prose. */
 export type ProvenanceType =
   | 'author'
   | 'ai-drafted'
@@ -25,6 +26,7 @@ export type ProvenanceType =
   | 'ai-modified'
   | 'author-revised';
 
+/** Provenance metadata for a single line of prose. */
 export interface LineProvenance {
   lineNumber: number;
   content: string;           // the line content (for verification)
@@ -34,6 +36,7 @@ export interface LineProvenance {
   approvedBy?: 'author' | 'ai';  // who approved the final form
 }
 
+/** Per-chapter provenance data with line-level tracking and statistics. */
 export interface ChapterProvenance {
   chapterNumber: number;
   lines: LineProvenance[];
@@ -41,6 +44,7 @@ export interface ChapterProvenance {
   updatedAt: string;
 }
 
+/** Counts and percentages by origin type for a chapter. */
 export interface ProvenanceStatistics {
   totalLines: number;
   byOrigin: Record<ProvenanceType, number>;
@@ -205,6 +209,7 @@ function computeStatistics(lines: LineProvenance[]): ProvenanceStatistics {
 
 // ─── Manuscript-Level Statistics ──────────────────────────────────────────────
 
+/** Aggregate provenance statistics across all chapters of a manuscript. */
 export interface ManuscriptProvenance {
   totalChapters: number;
   totalLines: number;
@@ -216,6 +221,7 @@ export interface ManuscriptProvenance {
   perChapter: { chapter: number; authorPercent: number; aiPercent: number }[];
 }
 
+/** Aggregate per-chapter provenance data into manuscript-level statistics. */
 export function aggregateProvenance(chapters: ChapterProvenance[]): ManuscriptProvenance {
   const aggregate = {
     'author': 0,
@@ -263,12 +269,14 @@ export function aggregateProvenance(chapters: ChapterProvenance[]): ManuscriptPr
 
 // ─── Persistence ────────────────────────────────────────────────────────────
 
+/** Write chapter provenance to a sidecar JSON file. */
 export function saveProvenance(projectRoot: string, provenance: ChapterProvenance): void {
   const dir = path.join(projectRoot, 'book', 'content');
   const filename = `chapter-${String(provenance.chapterNumber).padStart(5, '0')}.provenance.json`;
   fs.writeJsonSync(path.join(dir, filename), provenance, { spaces: 2 });
 }
 
+/** Read chapter provenance from a sidecar JSON file, or null if not found. */
 export function loadProvenance(projectRoot: string, chapterNumber: number): ChapterProvenance | null {
   const dir = path.join(projectRoot, 'book', 'content');
   const filename = `chapter-${String(chapterNumber).padStart(5, '0')}.provenance.json`;
@@ -279,6 +287,7 @@ export function loadProvenance(projectRoot: string, chapterNumber: number): Chap
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Format a chapter's provenance statistics as a markdown display. */
 export function formatProvenanceForDisplay(provenance: ChapterProvenance): string {
   const stats = provenance.statistics;
   return [
@@ -296,6 +305,7 @@ export function formatProvenanceForDisplay(provenance: ChapterProvenance): strin
   ].join('\n');
 }
 
+/** Format manuscript-level provenance as a markdown report. */
 export function formatManuscriptProvenance(mp: ManuscriptProvenance): string {
   return [
     '## Manuscript Provenance Report',

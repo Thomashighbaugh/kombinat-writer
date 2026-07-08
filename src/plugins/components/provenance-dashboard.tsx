@@ -4,6 +4,7 @@ import type { SidebarState } from '../hooks/use-project-state.js'
 import { provenanceBar } from '../utils/chart-rendering.js'
 import { BOLD } from '../utils/format.js'
 
+/** Renders the full provenance dashboard with stacked bar and per-category line counts. */
 export function ProvenanceDashboard(props: { state: SidebarState }) {
   const prov = props.state.provenanceData
   return (

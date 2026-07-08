@@ -13,6 +13,7 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** A contiguous block of changed lines with approval status. */
 export interface DiffHunk {
   hunkId: string;
   startLine: number;
@@ -23,6 +24,7 @@ export interface DiffHunk {
   rejectReason?: string;
 }
 
+/** Result of a diff-based approval gate for a revision or edit pass. */
 export interface DiffApprovalResult {
   phase: string;
   chapter: number;
@@ -109,6 +111,7 @@ export function generateDiff(
 
 // ─── Approval Actions ──────────────────────────────────────────────────────
 
+/** Mark a single hunk as approved and recalculate result totals. */
 export function approveHunk(
   result: DiffApprovalResult,
   hunkId: string
@@ -119,6 +122,7 @@ export function approveHunk(
   return recalculateResult({ ...result, hunks });
 }
 
+/** Mark a single hunk as rejected with an optional reason. */
 export function rejectHunk(
   result: DiffApprovalResult,
   hunkId: string,
@@ -132,6 +136,7 @@ export function rejectHunk(
   return recalculateResult({ ...result, hunks });
 }
 
+/** Approve every pending hunk at once. */
 export function approveAll(result: DiffApprovalResult): DiffApprovalResult {
   const hunks = result.hunks.map(h => ({ ...h, status: 'approved' as const }));
   return recalculateResult({ ...result, hunks });
@@ -162,6 +167,7 @@ export function applyApprovedChanges(
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Format diff approval result as a markdown diff display with status per hunk. */
 export function formatDiffForDisplay(result: DiffApprovalResult): string {
   const lines: string[] = [
     `## Diff Approval: ${result.phase} — Chapter ${result.chapter}`,
@@ -212,6 +218,7 @@ export function formatDiffForDisplay(result: DiffApprovalResult): string {
 
 // ─── Persistence ───────────────────────────────────────────────────────────
 
+/** Persist an approval result to `book/revisions/approvals/` as JSON. */
 export function saveApprovalResult(
   projectRoot: string,
   result: DiffApprovalResult

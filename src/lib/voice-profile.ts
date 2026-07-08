@@ -14,6 +14,7 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Voice fingerprint for the narration register — sentence length, sensory density, atmosphere. */
 export interface NarrationVoiceProfile {
   register: string;
   sentenceLength: {
@@ -31,6 +32,7 @@ export interface NarrationVoiceProfile {
   samplePassages: string[]; // 3-5 representative excerpts
 }
 
+/** Voice fingerprint for a single character — speech patterns, register, verbal tics. */
 export interface CharacterVoiceProfile {
   characterName: string;
   speechPattern: string;      // "Short declarative. No contractions after emotional scenes."
@@ -48,6 +50,7 @@ export interface CharacterVoiceProfile {
   sampleLines: string[];       // 5-10 representative dialogue lines
 }
 
+/** Complete set of voice profiles — narration + all characters. */
 export interface VoiceProfileSet {
   generatedAfterChapter: number;
   lastUpdated: number; // chapter number
@@ -297,6 +300,7 @@ export function generateVoiceProfiles(
 
 // ─── Drift Detection ──────────────────────────────────────────────────────
 
+/** Report of voice deviations between a new chapter and established profiles. */
 export interface VoiceDriftReport {
   passed: boolean;
   narration: {
@@ -411,12 +415,14 @@ export function checkVoiceDrift(
 
 const PROFILES_PATH = path.join('book', 'knowledge', 'voice-profiles.json');
 
+/** Persist voice profiles to book/knowledge/voice-profiles.json. */
 export function saveProfiles(profiles: VoiceProfileSet, projectRoot: string): void {
   const fullPath = path.join(projectRoot, PROFILES_PATH);
   fs.ensureDirSync(path.dirname(fullPath));
   fs.writeJsonSync(fullPath, profiles, { spaces: 2 });
 }
 
+/** Load voice profiles from book/knowledge/voice-profiles.json, or null if absent. */
 export function loadProfiles(projectRoot: string): VoiceProfileSet | null {
   const fullPath = path.join(projectRoot, PROFILES_PATH);
   if (!fs.existsSync(fullPath)) return null;
@@ -427,6 +433,7 @@ export function loadProfiles(projectRoot: string): VoiceProfileSet | null {
   }
 }
 
+/** Check whether voice profiles have been generated for this project. */
 export function profilesExist(projectRoot: string): boolean {
   return fs.existsSync(path.join(projectRoot, PROFILES_PATH));
 }

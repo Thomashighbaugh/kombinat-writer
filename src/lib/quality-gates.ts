@@ -19,6 +19,7 @@ import { loadConstraints, checkConstraints, formatViolationReport } from './crea
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
+/** Result of a single quality gate check — passed, blocking, warnings, evidence. */
 export interface GateResult {
   gate: string;
   passed: boolean;
@@ -62,6 +63,7 @@ export interface GateResult {
 // The gate is structural — it does not evaluate literary quality, only
 // whether the outline provides enough scaffolding for consistent drafting.
 
+/** Parsed representation of a single chapter entry in the outline. */
 export interface OutlineChapter {
   number: number;
   title: string;
@@ -160,6 +162,7 @@ function extractField(block: string, regex: RegExp): string {
   return match ? match[1].trim() : '';
 }
 
+/** Verify the outline has scene beats, setup/payoff pairs, continuity anchors, and pacing distribution. */
 export function outlineGate(
   projectRoot: string
 ): GateResult {
@@ -360,6 +363,7 @@ const REQUIRED_CONTEXT_ITEMS = [
   { id: 'existing-chapter', path: './book/content/chapter_[current].md', description: 'Existing chapter if this is a rewrite' },
 ];
 
+/** Verify all 13 required context items exist before drafting a chapter. */
 export function preDraftGate(
   projectRoot: string,
   chapterNumber: number
@@ -464,6 +468,7 @@ export function preDraftGate(
 
 // ─── Post-Draft Gate ──────────────────────────────────────────────────────
 
+/** Verify XML structure, awareness-map, scene goals/conflicts, and voice consistency after drafting. */
 export function postDraftGate(
   projectRoot: string,
   chapterNumber: number,
@@ -642,6 +647,7 @@ export function postDraftGate(
 
 // ─── Revision Verification ────────────────────────────────────────────────
 
+/** Cross-reference critique items against revision log to verify all critical items are addressed. */
 export function revisionVerifyGate(
   projectRoot: string,
   critiqueRoundNumber: number
@@ -735,6 +741,7 @@ export function revisionVerifyGate(
 
 // ─── Continuity Check ────────────────────────────────────────────────────
 
+/** Scan all chapters for sequential numbering, valid tracking JSON, and cross-reference XML drafts. */
 export function continuityCheckGate(
   projectRoot: string
 ): GateResult {
@@ -832,6 +839,7 @@ export function continuityCheckGate(
 
 // ─── Gate Runner ──────────────────────────────────────────────────────────
 
+/** Dispatch to the appropriate gate function based on gate type. */
 export function runGate(
   gateType: 'outline' | 'pre-draft' | 'post-draft' | 'revision-verify' | 'continuity-check' | 'non-negotiables',
   projectRoot: string,
@@ -867,6 +875,7 @@ export function runGate(
 // If no constraints file exists, the gate passes (no constraints = no violations).
 // If content is not provided, the gate checks all content files for the chapter.
 
+/** Check content against the author's declared creative constraints. Passes if no constraints file exists. */
 export function nonNegotiablesGate(
   projectRoot: string,
   chapterNumber?: number,

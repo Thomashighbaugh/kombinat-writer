@@ -13,6 +13,7 @@ import path from 'path';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Record of an author-rejected AI suggestion with extracted avoidance pattern. */
 export interface RejectionRecord {
   id: string;
   timestamp: string;
@@ -24,12 +25,14 @@ export interface RejectionRecord {
   pattern: string;            // generalized pattern to avoid (extracted from reason)
 }
 
+/** Collection of rejection records and the aggregated avoidance patterns. */
 export interface PreferenceSet {
   rejections: RejectionRecord[];
   patterns: AvoidancePattern[];
   updatedAt: string;
 }
 
+/** Aggregated pattern of rejections across multiple suggestions. */
 export interface AvoidancePattern {
   pattern: string;
   occurrences: number;
@@ -42,12 +45,14 @@ export interface AvoidancePattern {
 
 const MEMORY_PATH = 'book/feedback-memory.json';
 
+/** Load preference set from `book/feedback-memory.json`, or null if absent. */
 export function loadPreferences(projectRoot: string): PreferenceSet | null {
   const filepath = path.join(projectRoot, MEMORY_PATH);
   if (!fs.existsSync(filepath)) return null;
   return fs.readJsonSync(filepath);
 }
 
+/** Persist preference set to `book/feedback-memory.json`. */
 export function savePreferences(projectRoot: string, prefs: PreferenceSet): void {
   const filepath = path.join(projectRoot, MEMORY_PATH);
   fs.ensureDirSync(path.dirname(filepath));
@@ -82,6 +87,7 @@ export function logRejection(
 
 // ─── Checking Against Preferences ────────────────────────────────────────────
 
+/** Result of checking a suggestion against known avoidance patterns. */
 export interface PreferenceCheckResult {
   isAvoided: boolean;
   matchedPattern?: AvoidancePattern;
@@ -186,6 +192,7 @@ function updatePatterns(
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Format preference set as a markdown document with patterns and recent rejections. */
 export function formatPreferencesForDisplay(prefs: PreferenceSet): string {
   const lines: string[] = [
     '## Feedback Memory — Author Preferences',

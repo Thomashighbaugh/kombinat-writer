@@ -12,6 +12,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Per-chapter knowledge tracking with violations and dramatic irony opportunities. */
 export interface KnowledgeStateReport {
   chapters: ChapterKnowledge[];
   violations: KnowledgeViolation[];
@@ -47,6 +48,7 @@ interface IronyOpportunity {
   potentialEffect: string;
 }
 
+/** Scan all XML drafts to track character and reader knowledge across chapters. */
 export function analyzeKnowledgeStates(
   projectRoot: string
 ): KnowledgeStateReport {
@@ -182,6 +184,7 @@ export function analyzeKnowledgeStates(
   return { chapters, violations, dramaticIronyOpportunities, evidence };
 }
 
+/** Format a knowledge state report as a markdown document with irony and violation tables. */
 export function formatKnowledgeStateReport(report: KnowledgeStateReport): string {
   const lines: string[] = [];
   lines.push('# Knowledge State Matrix');

@@ -3,6 +3,7 @@ import { For, Show } from 'solid-js'
 import type { DiffHunk } from '../hooks/use-project-state.js'
 import { truncate } from '../utils/format.js'
 
+/** Renders a single hunk's before/after diff lines. */
 export function DiffViewer(props: { hunk: DiffHunk | null }) {
   return (
     <Show when={props.hunk} fallback={<text style={{ fg: 'gray' }}>No hunk selected</text>} keyed>

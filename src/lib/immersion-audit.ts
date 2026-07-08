@@ -8,6 +8,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Result of scanning a chapter for immersion-breaking passages. */
 export interface ImmersionReport {
   chapter: number;
   breaks: ImmersionBreak[];
@@ -23,6 +24,7 @@ interface ImmersionBreak {
   description: string;
 }
 
+/** Scan XML content for anachronisms authorial intrusion meta-references and logic breaks. */
 export function auditImmersion(
   xmlContent: string,
   chapterNumber: number,
@@ -176,6 +178,7 @@ function extractBlocks(xml: string, tagName: string): string[] {
   return [...xml.matchAll(regex)].map(m => m[0]);
 }
 
+/** Convert an immersion report into a standard quality-gate result. */
 export function immersionToGateResult(report: ImmersionReport): GateResult {
   return {
     gate: 'immersion-audit',

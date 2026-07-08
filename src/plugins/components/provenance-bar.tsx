@@ -3,6 +3,7 @@ import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { provenanceBar } from '../utils/chart-rendering.js'
 
+/** Renders a compact provenance bar showing author vs AI contribution split. */
 export function ProvenanceBar(props: { state: SidebarState }) {
   const prov = props.state.provenanceData
   return (

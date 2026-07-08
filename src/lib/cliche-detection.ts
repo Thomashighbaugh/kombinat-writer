@@ -9,6 +9,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Result of scanning a chapter for clichés and trope overuse. */
 export interface ClicheReport {
   chapter: number;
   cliches: ClicheHit[];
@@ -103,6 +104,7 @@ const GENRE_TROPES: Record<string, string[]> = {
 const CLICHE_BLOCK_THRESHOLD = 5;  // >5 clichés per chapter = block
 const TROPE_WARN_THRESHOLD = 3;   // >3 same-trope mentions = warn
 
+/** Scan XML draft text for cliché phrases and genre-trope overuse patterns. */
 export function detectCliches(
   xmlContent: string,
   chapterNumber: number,
@@ -202,6 +204,7 @@ function stripXmlTags(xml: string): string {
     .trim();
 }
 
+/** Convert a cliché report into a standard quality-gate result. */
 export function clicheToGateResult(report: ClicheReport): GateResult {
   return {
     gate: 'cliche-detection',

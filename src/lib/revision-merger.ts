@@ -9,10 +9,14 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Decision on how to handle a critique item. */
 export type RevisionDisposition = 'accept' | 'accept-with-adaptation' | 'discuss' | 'defer' | 'decline';
+/** Category of the revision change. */
 export type RevisionCategory = 'structural' | 'substantive' | 'clarity' | 'consistency' | 'enhancement' | 'correction';
+/** Current lifecycle status of a revision. */
 export type RevisionStatus = 'pending' | 'applied' | 'declined' | 'deferred';
 
+/** A single planned revision derived from a critique item. */
 export interface Revision {
   id: number;
   chapter: number;
@@ -25,6 +29,7 @@ export interface Revision {
   status: RevisionStatus;
 }
 
+/** A single critique item from a review round. */
 export interface CritiqueInput {
   id: string;
   chapter: number;

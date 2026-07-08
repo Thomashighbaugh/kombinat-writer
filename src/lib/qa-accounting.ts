@@ -10,6 +10,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Question/answer accounting report: raised, answered, and unresolved questions. */
 export interface QAReport {
   questions: NarrativeQuestion[];
   answered: NarrativeQuestion[];
@@ -18,6 +19,7 @@ export interface QAReport {
   evidence: string[];
 }
 
+/** A single narrative question raised by the story. */
 export interface NarrativeQuestion {
   id: string;
   question: string;
@@ -29,6 +31,7 @@ export interface NarrativeQuestion {
   resolutionNote?: string;
 }
 
+/** Scan drafts and tracking data for raised and resolved narrative questions. */
 export function analyzeQuestionAccounting(
   projectRoot: string
 ): QAReport {
@@ -154,6 +157,7 @@ export function analyzeQuestionAccounting(
   return { questions, answered, unanswered, deliberatelyUnresolved, evidence };
 }
 
+/** Format the QA report as a markdown table. */
 export function formatQAReport(report: QAReport): string {
   const lines: string[] = [];
   lines.push('# Question/Answer Accounting');

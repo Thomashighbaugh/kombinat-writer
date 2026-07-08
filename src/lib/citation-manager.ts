@@ -9,6 +9,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Supported academic citation style identifiers. */
 export type CitationStyle =
   | 'apa7'
   | 'chicago17-notes'
@@ -19,6 +20,7 @@ export type CitationStyle =
   | 'vancouver'
   | 'custom';
 
+/** Raw metadata fields for a single cited source. */
 export interface SourceMetadata {
   key: string;
   author: string;
@@ -36,6 +38,7 @@ export interface SourceMetadata {
   accessedDate?: string;
 }
 
+/** A fully resolved source with precomputed citation, credibility, and annotations. */
 export interface Source {
   key: string;
   citation: string;

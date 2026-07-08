@@ -11,6 +11,7 @@
 
 import { GateResult } from './quality-gates.js';
 
+/** Per-chapter report of reader trust violations (coincidence, deus ex machina, etc.). */
 export interface TrustReport {
   chapter: number;
   violations: TrustViolation[];
@@ -54,6 +55,7 @@ const PLOT_ARMOR_INDICATORS = [
   'against all probability', 'survived the impossible',
 ];
 
+/** Scan XML chapter content for patterns that break reader trust. */
 export function auditTrust(
   xmlContent: string,
   chapterNumber: number
@@ -161,6 +163,7 @@ function stripXmlTags(xml: string): string {
     .trim();
 }
 
+/** Convert a trust audit report into the generic GateResult format. */
 export function trustToGateResult(report: TrustReport): GateResult {
   return {
     gate: 'trust-audit',

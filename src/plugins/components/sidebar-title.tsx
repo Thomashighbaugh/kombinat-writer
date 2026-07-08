@@ -3,6 +3,7 @@ import { For, Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { phaseLabel, stateLabel, BOLD } from '../utils/format.js'
 
+/** Renders the sidebar header with project name, phase, state, and chapter counts. */
 export function SidebarTitle(props: { session_id: string; title: string; state: SidebarState }) {
   const project = props.state.project
 

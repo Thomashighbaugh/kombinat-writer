@@ -9,9 +9,12 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Critique pass mode — determines depth and focus. */
 export type CritiqueMode = 'alpha' | 'beta' | 'peer' | 'sensitivity' | 'comprehensive';
+/** Severity level of a critique finding. */
 export type Severity = 'critical' | 'major' | 'minor' | 'observation';
 
+/** A single critique finding with category severity and recommendation. */
 export interface CritiqueItem {
   id: string;
   chapter: number;
@@ -23,6 +26,7 @@ export interface CritiqueItem {
   recommendation: string;
 }
 
+/** A complete critique round with items and mode metadata. */
 export interface CritiqueRound {
   round: number;
   mode: CritiqueMode;

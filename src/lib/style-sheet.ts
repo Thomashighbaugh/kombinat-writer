@@ -19,6 +19,7 @@ import path from 'path';
 
 // ─── Module Definitions ──────────────────────────────────────────────────
 
+/** A named module within the style sheet system. */
 export type StyleSheetModule =
   | 'terminology'
   | 'character-voices'
@@ -26,6 +27,7 @@ export type StyleSheetModule =
   | 'timeline'
   | 'emotional-register';
 
+/** A single style decision recorded in a style sheet module. */
 export interface StyleEntry {
   module: StyleSheetModule;
   decision: string;
@@ -53,6 +55,7 @@ const MODULE_TITLES: Record<StyleSheetModule, string> = {
 
 // ─── Initialization ──────────────────────────────────────────────────────
 
+/** Create the style-sheet directory and all module files if they don't exist. */
 export function initializeStyleSheet(projectRoot: string): void {
   const dir = path.join(projectRoot, 'book', 'style-sheet');
   fs.ensureDirSync(dir);
@@ -72,6 +75,7 @@ export function initializeStyleSheet(projectRoot: string): void {
 
 // ─── Append Decision ──────────────────────────────────────────────────────
 
+/** Append a formatted style decision entry to the appropriate module file. */
 export function appendDecision(
   projectRoot: string,
   entry: StyleEntry
@@ -99,6 +103,7 @@ function formatEntry(entry: StyleEntry): string {
 
 // ─── Read Module ──────────────────────────────────────────────────────────
 
+/** Read the full content of a single style sheet module. */
 export function readModule(
   projectRoot: string,
   module: StyleSheetModule
@@ -108,6 +113,7 @@ export function readModule(
   return fs.readFileSync(fullPath, 'utf-8');
 }
 
+/** Read all style sheet modules into a record keyed by module name. */
 export function readAllModules(
   projectRoot: string
 ): Record<StyleSheetModule, string> {
@@ -120,6 +126,7 @@ export function readAllModules(
 
 // ─── Check Against Style Sheet ──────────────────────────────────────────
 
+/** A detected deviation from a style sheet rule. */
 export interface StyleViolation {
   module: StyleSheetModule;
   decision: string;
@@ -191,11 +198,13 @@ export function checkViolations(
 
 // ─── Style Sheet Status ──────────────────────────────────────────────────
 
+/** Check whether the style-sheet directory exists with at least one file. */
 export function styleSheetExists(projectRoot: string): boolean {
   const dir = path.join(projectRoot, 'book', 'style-sheet');
   return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
 }
 
+/** Count the number of decisions in each style sheet module. */
 export function getModuleStats(projectRoot: string): Record<StyleSheetModule, number> {
   const stats: Partial<Record<StyleSheetModule, number>> = {};
   for (const module of Object.keys(MODULE_PATHS) as StyleSheetModule[]) {

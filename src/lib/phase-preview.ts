@@ -10,8 +10,10 @@
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
+/** Workflow phase type for preview generation. */
 export type PhaseType = 'draft' | 'critique' | 'revise' | 'edit' | 'review' | 'cycle' | 'publish';
 
+/** Pre-execution summary of a workflow phase showing scope duration and changes. */
 export interface PhasePreview {
   phase: PhaseType;
   scope: PhaseScope;
@@ -21,6 +23,7 @@ export interface PhasePreview {
   requiresConfirmation: boolean;
 }
 
+/** Scope details for a phase preview — chapters context and gates. */
 export interface PhaseScope {
   chapters: number[];           // which chapters will be affected
   chapterCount: number;
@@ -30,6 +33,7 @@ export interface PhaseScope {
   batchMode: boolean;
 }
 
+/** A single file-level change described in a phase preview. */
 export interface ChangePreview {
   type: 'create' | 'modify' | 'review';
   target: string;               // file or section name
@@ -232,6 +236,7 @@ function buildWarnings(chapters: number[], batchMode: boolean, phase: string): s
 
 // ─── Formatting ────────────────────────────────────────────────────────────
 
+/** Format a phase preview as a human-readable markdown confirmation prompt. */
 export function formatPreviewForDisplay(preview: PhasePreview): string {
   const lines: string[] = [
     `## Phase Preview: ${preview.phase.toUpperCase()}`,

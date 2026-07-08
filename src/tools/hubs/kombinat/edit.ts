@@ -65,6 +65,7 @@ Run the following analyses before generating line-edit suggestions:
 2. **Purple prose detection** — flag excessive modifiers (>15%), metaphor density (>3 per 500 words), elevated vocabulary. Warning level.
 3. **Cliché detection** — scan for known clichéd phrases (>5 per chapter = block) and genre-trope overuse (>3 same trope = warn).
 4. **Sentence rhythm analysis** — track sentence length distribution. >60% in same range = warning. 5+ consecutive similar-length sentences = warning.
+5. **AI-slop detection (HARD BLOCK)** — scan for signature AI writing patterns. Any instance of "smell/taste of ozone" without an electrical event = immediate block. Also flag: "copper taste of blood," "air crackled with tension," "shiver ran down spine," "eyes like [gemstone]," "[animal] smile," "Not [X]. Not the way [Y] expected," "It wasn't just [X]. It was [Y]," "Something shifted in [their] expression," "The weight of [abstract] hung in the air," "They didn't say anything. They didn't have to," adverbial dialogue tags ("said angrily"). >3 slop patterns per chapter = block.
 
 **If any blocking analysis fails: STOP.** Report the specific issue. Do not proceed to suggestions until corrected.
 
@@ -76,7 +77,7 @@ After analyses pass, generate line-edit suggestions:
 **Current**: [Exact text as it appears]
 **Suggest**: [Exact replacement text]
 **Reason**: [Why this change improves the prose]
-**Category**: [Clarity | Rhythm | Word Choice | Register | Filtering | Showing | Subtext | Purple Prose | Cliché]
+**Category**: [Clarity | Rhythm | Word Choice | Register | Filtering | Showing | Subtext | Purple Prose | Cliché | AI-SLOP]
 **Status**: [Pending]
 \`\`\`
 

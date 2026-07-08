@@ -14,6 +14,7 @@ const GATE_LIST = [
 
 const CATEGORIES = ['Structure', 'Drafting', 'Revision', 'Consistency', 'Constraints'] as const
 
+/** Renders the Quality Gates tab with per-category gate list, run-all control, and detail view. */
 export function GatesTab(props: { state: SidebarState }) {
   const [selectedGate, setSelectedGate] = createSignal<string | null>(null)
   const [running, setRunning] = createSignal(false)

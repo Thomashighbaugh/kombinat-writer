@@ -12,6 +12,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** Book-level and per-chapter analysis of opening hook and closing resonance. */
 export interface OpeningClosingReport {
   bookOpening: PassageAnalysis | null;
   bookClosing: PassageAnalysis | null;
@@ -36,6 +37,7 @@ interface ChapterPassageAnalysis {
   closing: PassageAnalysis;
 }
 
+/** Scan all chapter markdown files to score opening hooks and closing resonance. */
 export function auditOpeningsClosings(
   projectRoot: string
 ): OpeningClosingReport {
@@ -175,6 +177,7 @@ function analyzePassage(content: string, wordLimit: number, type: 'opening' | 'c
   };
 }
 
+/** Format an opening/closing audit as a markdown report with scores per chapter. */
 export function formatOpeningClosingReport(report: OpeningClosingReport): string {
   const lines: string[] = [];
   lines.push('# Opening/Closing Strength Audit');

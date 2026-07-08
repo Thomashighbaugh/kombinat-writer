@@ -3,6 +3,7 @@ import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { statusIcon, BOLD } from '../utils/format.js'
 
+/** Renders the sidebar footer with tab navigation hints and gate status counts. */
 export function SidebarFooter(props: { session_id: string; state: SidebarState }) {
   const summary = props.state.gateSummary
 

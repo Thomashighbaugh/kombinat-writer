@@ -14,6 +14,7 @@ import { GateResult } from './quality-gates.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
+/** A single prose quality metric with count, density, threshold, and pass/fail. */
 export interface ProseMetric {
   name: string;
   count: number;
@@ -25,6 +26,7 @@ export interface ProseMetric {
   evidence: string;       // specific examples found
 }
 
+/** Per-chapter report of all prose quality metrics and pass/fail status. */
 export interface ProseQualityReport {
   chapter: number;
   wordCount: number;
@@ -56,6 +58,7 @@ const PASSIVE_INDICATORS = /\b(?:was|were|is|are|been|being|be)\s+(\w+ed|written
 
 // ─── Analyzer ──────────────────────────────────────────────────────────────
 
+/** Analyze XML chapter content for filter words, adverb density, passive voice, info-dumps, and other prose quality metrics. */
 export function analyzeProseQuality(
   xmlContent: string,
   chapterNumber: number
@@ -506,6 +509,7 @@ function buildScorecard(metrics: ProseMetric[], chapter: number, wordCount: numb
 
 // ─── Integration with GateResult ────────────────────────────────────────────
 
+/** Convert a prose quality report into the generic GateResult format. */
 export function proseQualityToGateResult(report: ProseQualityReport): GateResult {
   return {
     gate: 'prose-quality',

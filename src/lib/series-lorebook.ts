@@ -27,6 +27,7 @@ import path from 'path';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
+/** Metadata for a multi-book series. */
 export interface SeriesMeta {
   seriesId: string;
   title: string;
@@ -42,6 +43,7 @@ export interface SeriesMeta {
   updatedAt: string;
 }
 
+/** A single event on the series-wide timeline. */
 export interface SeriesTimelineEntry {
   date: string;          // in-fiction date
   bookNumber: number;
@@ -50,10 +52,12 @@ export interface SeriesTimelineEntry {
   significance: string;
 }
 
+/** Collection of timeline entries spanning all books in the series. */
 export interface SeriesTimeline {
   entries: SeriesTimelineEntry[];
 }
 
+/** A single continuity issue found across books in the series. */
 export interface SeriesContinuityFinding {
   type: 'character' | 'world' | 'timeline' | 'glossary' | 'thread';
   severity: 'critical' | 'major' | 'minor' | 'observation';
@@ -67,21 +71,25 @@ export interface SeriesContinuityFinding {
 const SERIES_DIR = 'series';
 const LOREBOOK_DIR = path.join(SERIES_DIR, 'lorebook');
 
+/** Get the absolute path to the series directory. */
 export function getSeriesDir(projectRoot: string): string {
   return path.join(projectRoot, SERIES_DIR);
 }
 
+/** Get the absolute path to the lorebook directory. */
 export function getLorebookDir(projectRoot: string): string {
   return path.join(projectRoot, LOREBOOK_DIR);
 }
 
 // ─── Initialization ──────────────────────────────────────────────────────
 
+/** Check whether a series has been initialized (meta.json exists). */
 export function seriesExists(projectRoot: string): boolean {
   return fs.existsSync(getSeriesDir(projectRoot)) &&
     fs.existsSync(path.join(getSeriesDir(projectRoot), 'meta.json'));
 }
 
+/** Initialize a new series with lorebook files, timeline, and meta.json. */
 export function initSeries(
   projectRoot: string,
   meta: Omit<SeriesMeta, 'createdAt' | 'updatedAt'>
@@ -125,27 +133,32 @@ export function initSeries(
 
 // ─── Read/Write ──────────────────────────────────────────────────────────
 
+/** Load series metadata from meta.json, or null if not found. */
 export function loadSeriesMeta(projectRoot: string): SeriesMeta | null {
   const metaPath = path.join(getSeriesDir(projectRoot), 'meta.json');
   if (!fs.existsSync(metaPath)) return null;
   return fs.readJsonSync(metaPath);
 }
 
+/** Persist series metadata, updating the updatedAt timestamp. */
 export function saveSeriesMeta(projectRoot: string, meta: SeriesMeta): void {
   meta.updatedAt = new Date().toISOString();
   fs.writeJsonSync(path.join(getSeriesDir(projectRoot), 'meta.json'), meta, { spaces: 2 });
 }
 
+/** Load the series timeline from lorebook/timeline.json, or an empty timeline. */
 export function loadTimeline(projectRoot: string): SeriesTimeline {
   const timelinePath = path.join(getLorebookDir(projectRoot), 'timeline.json');
   if (!fs.existsSync(timelinePath)) return { entries: [] };
   return fs.readJsonSync(timelinePath);
 }
 
+/** Persist the series timeline to lorebook/timeline.json. */
 export function saveTimeline(projectRoot: string, timeline: SeriesTimeline): void {
   fs.writeJsonSync(path.join(getLorebookDir(projectRoot), 'timeline.json'), timeline, { spaces: 2 });
 }
 
+/** Append an entry to the series timeline and re-sort by date. */
 export function addTimelineEntry(projectRoot: string, entry: SeriesTimelineEntry): void {
   const timeline = loadTimeline(projectRoot);
   timeline.entries.push(entry);
@@ -160,18 +173,21 @@ export function addTimelineEntry(projectRoot: string, entry: SeriesTimelineEntry
 
 // ─── Book Integration ────────────────────────────────────────────────────
 
+/** Track info for a book that may be part of a series. */
 export interface BookTrackInfo {
   seriesId?: string;
   bookNumber?: number;
   track: string;
 }
 
+/** Load per-book track info including optional seriesId and bookNumber. */
 export function loadBookTrackInfo(projectRoot: string): BookTrackInfo {
   const trackPath = path.join(projectRoot, 'book', 'track.json');
   if (!fs.existsSync(trackPath)) return { track: 'fiction' };
   return fs.readJsonSync(trackPath);
 }
 
+/** Link a book to a series by writing seriesId and bookNumber into track.json. */
 export function linkBookToSeries(
   projectRoot: string,
   seriesId: string,
@@ -186,6 +202,7 @@ export function linkBookToSeries(
 
 // ─── Sync from Book to Series Lorebook ──────────────────────────────────────
 
+/** Sync per-book knowledge (characters, timeline, glossary) into the series lorebook. */
 export function syncFromBook(projectRoot: string): { synced: string[]; warnings: string[] } {
   const result = { synced: [] as string[], warnings: [] as string[] };
   if (!seriesExists(projectRoot)) {
@@ -325,6 +342,7 @@ export function syncFromBook(projectRoot: string): { synced: string[]; warnings:
 
 // ─── Series-Level Continuity Scan ─────────────────────────────────────────
 
+/** Scan all books in the series for character, timeline, world, and glossary continuity issues. */
 export function seriesContinuityScan(
   projectRoot: string
 ): SeriesContinuityFinding[] {
@@ -483,6 +501,7 @@ export function seriesContinuityScan(
   return findings;
 }
 
+/** Format series continuity scan findings as a markdown report. */
 export function formatContinuityReport(findings: SeriesContinuityFinding[]): string {
   const lines: string[] = [];
   lines.push('# Series Continuity Scan Report');
@@ -542,6 +561,7 @@ export function formatContinuityReport(findings: SeriesContinuityFinding[]): str
 
 // ─── Register Book ───────────────────────────────────────────────────────
 
+/** Register a new book in the series metadata or update an existing one. */
 export function registerBook(
   projectRoot: string,
   bookNumber: number,
@@ -570,6 +590,7 @@ export function registerBook(
   saveSeriesMeta(projectRoot, meta);
 }
 
+/** Update the status of a registered book (planned/drafting/complete/published). */
 export function updateBookStatus(
   projectRoot: string,
   bookNumber: number,
