@@ -360,23 +360,49 @@ async function main() {
         ],
     });
 
-    let importPath = null;
+    let importedFiles = [];
     if (importChoice !== 'none') {
         const { input } = await import('@inquirer/prompts');
-        importPath = await input({
+        const rawInput = await input({
             message: importChoice === 'lorebook'
-                ? 'Path to your lorebook JSON file:'
-                : 'Path to your premise/idea document:',
+                ? 'Path to your lorebook JSON file(s) (space-separated for multiple):'
+                : 'Path to your premise/idea document(s) (space-separated for multiple):',
             default: '',
         });
-        if (importPath && fs.existsSync(importPath)) {
-            const destName = importChoice === 'lorebook' ? 'imported-lorebook.json' : 'premise.md';
-            const destPath = path.join(process.cwd(), destName);
-            fs.copySync(importPath, destPath);
-            success(`Imported ${importChoice} → ${destName}`);
-        } else if (importPath) {
-            warn(`File not found: ${importPath} — skipping import (you can add it later via /kombinat constitute)`);
-            importPath = null;
+        // Split on spaces, strip quotes, resolve ~ and relative paths
+        const paths = rawInput
+            .split(/\s+/)
+            .map(p => p.replace(/^["']|["']$/g, '').trim())
+            .filter(p => p.length > 0)
+            .map(p => {
+                if (p.startsWith('~/')) return path.join(process.env.HOME, p.slice(2));
+                if (!path.isAbsolute(p)) return path.resolve(p);
+                return p;
+            });
+
+        for (const p of paths) {
+            if (fs.existsSync(p)) {
+                const basename = path.basename(p);
+                let destPath;
+                if (importChoice === 'lorebook') {
+                    // Multiple lorebooks get numbered suffixes
+                    destPath = path.join(process.cwd(), `imported-lorebook-${importedFiles.length === 0 ? basename : basename}`);
+                    if (importedFiles.length > 0 && basename === path.basename(importedFiles[0])) {
+                        destPath = path.join(process.cwd(), `imported-lorebook-${importedFiles.length}.json`);
+                    }
+                    destPath = path.join(process.cwd(), importedFiles.length === 0 ? 'imported-lorebook.json' : `imported-lorebook-${importedFiles.length}.json`);
+                } else {
+                    destPath = path.join(process.cwd(), importedFiles.length === 0 ? 'premise.md' : `premise-${importedFiles.length}.md`);
+                }
+                fs.copySync(p, destPath);
+                success(`Imported → ${path.basename(destPath)}`);
+                importedFiles.push(destPath);
+            } else {
+                warn(`File not found: "${p}" — skipping`);
+            }
+        }
+        if (importedFiles.length === 0 && rawInput.trim()) {
+            warn('No files could be imported — you can add them later via /kombinat constitute');
         }
     }
 
@@ -418,8 +444,8 @@ async function main() {
     log('  Next steps:');
     log('    1. Open your project in OpenCode (restart if already open)');
     log('    2. Type /kombinat to open the instant phase menu');
-    if (importPath) {
-        log(`    3. Run /kombinat constitute — it will detect your imported ${importChoice === 'lorebook' ? 'lorebook' : 'premise'} and use it`);
+    if (importedFiles.length > 0) {
+        log(`    3. Run /kombinat constitute — it will detect your imported ${importChoice === 'lorebook' ? 'lorebook' : 'premise'} file${importedFiles.length > 1 ? 's' : ''} and use it`);
     } else {
         log('    3. Or invoke a specific phase directly (e.g. /kombinat outline)');
     }

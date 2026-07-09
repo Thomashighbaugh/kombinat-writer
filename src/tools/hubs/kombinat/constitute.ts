@@ -59,8 +59,8 @@ Continue directly to step 1.
 - Check \`./book/track.json\` for \`seriesId\` and \`bookNumber\` fields. If present, this book is part of a series.
 - Check \`./series/meta.json\` — if it exists, this is a series project.
 - Check \`./series/lorebook/\` — if it exists (from step 0 import), load the lorebook files for context.
-- Check \`./imported-lorebook.json\` — if it exists, this was copied during install. Auto-select the "Yes — Lorebook" option from step 0 and process it immediately (don't ask, just do it).
-- Check \`./premise.md\` — if it exists, this was copied during install. Auto-select the "Yes — Premise document" option from step 0 and process it immediately (don't ask, just do it).
+- Check \`./imported-lorebook.json\` AND \`./imported-lorebook-*.json\` — if any exist, these were copied during install. Auto-select the "Yes — Lorebook" option from step 0 and process them immediately (don't ask, just do it). Import ALL matching files.
+- Check \`./premise.md\` AND \`./premise-*.md\` — if any exist, these were copied during install. Auto-select the "Yes — Premise document" option from step 0 and process them immediately (don't ask, just do it). Read ALL matching files.
 
 ### 1a. Series Lorebook Inheritance (Book 2+)
 
