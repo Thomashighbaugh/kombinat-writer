@@ -365,14 +365,49 @@ async function main() {
         const { input } = await import('@inquirer/prompts');
         const rawInput = await input({
             message: importChoice === 'lorebook'
-                ? 'Path to your lorebook JSON file(s) (space-separated for multiple):'
-                : 'Path to your premise/idea document(s) (space-separated for multiple):',
+                ? 'Path to your lorebook JSON file(s):'
+                : 'Path to your premise/idea document(s):',
             default: '',
         });
-        // Split on spaces, strip quotes, resolve ~ and relative paths
-        const paths = rawInput
-            .split(/\s+/)
-            .map(p => p.replace(/^["']|["']$/g, '').trim())
+
+        // Parse paths: respect quoted segments for filenames with spaces,
+        // fall back to space-splitting for unquoted input.
+        // Examples:
+        //   "/path/to/file.json" "/other/file.json"  → 2 paths
+        //   /path/to/file.json /other/file.json       → 2 paths
+        //   "/home/user/My Lorebook.json"             → 1 path (quoted)
+        //   /home/user/My\ Lorebook.json              → 1 path (backslash-escaped)
+        let paths;
+        if (rawInput.includes('"') || rawInput.includes("'")) {
+            // Quoted mode: extract quoted segments, then space-split the rest
+            const quoted = [];
+            const quoteRegex = /["']([^"']+)["']/g;
+            let match;
+            let lastIdx = 0;
+            while ((match = quoteRegex.exec(rawInput)) !== null) {
+                // Capture any unquoted text before this quote
+                const before = rawInput.slice(lastIdx, match.index).trim();
+                if (before) quoted.push(...before.split(/\s+/).filter(Boolean));
+                quoted.push(match[1]);
+                lastIdx = quoteRegex.lastIndex;
+            }
+            // Capture trailing unquoted text
+            const after = rawInput.slice(lastIdx).trim();
+            if (after) quoted.push(...after.split(/\s+/).filter(Boolean));
+            paths = quoted;
+        } else {
+            // Backslash-escape mode: replace "\ " with a placeholder, split, restore
+            const PLACEHOLDER = '\x00SPACE\x00';
+            paths = rawInput
+                .replace(/\\ /g, PLACEHOLDER)
+                .split(/\s+/)
+                .map(p => p.replace(new RegExp(PLACEHOLDER, 'g'), ' '))
+                .filter(p => p.length > 0);
+        }
+
+        // Resolve each path: expand ~, resolve relative
+        paths = paths
+            .map(p => p.trim())
             .filter(p => p.length > 0)
             .map(p => {
                 if (p.startsWith('~/')) return path.join(process.env.HOME, p.slice(2));
@@ -382,20 +417,12 @@ async function main() {
 
         for (const p of paths) {
             if (fs.existsSync(p)) {
-                const basename = path.basename(p);
-                let destPath;
-                if (importChoice === 'lorebook') {
-                    // Multiple lorebooks get numbered suffixes
-                    destPath = path.join(process.cwd(), `imported-lorebook-${importedFiles.length === 0 ? basename : basename}`);
-                    if (importedFiles.length > 0 && basename === path.basename(importedFiles[0])) {
-                        destPath = path.join(process.cwd(), `imported-lorebook-${importedFiles.length}.json`);
-                    }
-                    destPath = path.join(process.cwd(), importedFiles.length === 0 ? 'imported-lorebook.json' : `imported-lorebook-${importedFiles.length}.json`);
-                } else {
-                    destPath = path.join(process.cwd(), importedFiles.length === 0 ? 'premise.md' : `premise-${importedFiles.length}.md`);
-                }
+                const destName = importChoice === 'lorebook'
+                    ? (importedFiles.length === 0 ? 'imported-lorebook.json' : `imported-lorebook-${importedFiles.length}.json`)
+                    : (importedFiles.length === 0 ? 'premise.md' : `premise-${importedFiles.length}.md`);
+                const destPath = path.join(process.cwd(), destName);
                 fs.copySync(p, destPath);
-                success(`Imported → ${path.basename(destPath)}`);
+                success(`Imported ${path.basename(p)} → ${destName}`);
                 importedFiles.push(destPath);
             } else {
                 warn(`File not found: "${p}" — skipping`);
