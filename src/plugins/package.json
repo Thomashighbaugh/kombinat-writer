@@ -1,0 +1,23 @@
+{
+  "name": "kombinat-sidebar",
+  "version": "0.1.0",
+  "description": "Kombinat Writer TUI Sidebar Plugin — instant /kombinat menu, dashboard, gates, diff, visualizations",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./tui": "./kombinat-sidebar.js"
+  },
+  "oc-plugin": ["tui"],
+  "scripts": {
+    "build": "bun build kombinat-sidebar.tsx --outdir . --target bun --minify --external '@opentui/*' --external '@opencode-ai/*' --external 'solid-js' --external 'fs-extra'",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.14.0",
+    "@opentui/solid": ">=0.1.97",
+    "solid-js": "^1.9.0",
+    "fs-extra": "^11.0.0"
+  },
+  "license": "MIT"
+}

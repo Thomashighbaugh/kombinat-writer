@@ -6,6 +6,7 @@ dist/
 *.js
 !bin/install.mjs
 !src/tools/*.js
+!src/plugins/index.js
 
 # Environment
 .env

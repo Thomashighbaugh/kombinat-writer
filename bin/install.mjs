@@ -3,8 +3,8 @@
  * Kombinat Writer — Per-Project Installer (OpenCode only)
  *
  * Installs the kombinat-writer workflow into a book project's .opencode/ directory.
- * Copies skills, tools, lib, templates, and slash commands.
- * The /kombinat command is a native OpenCode slash command — no TUI plugin needed.
+ * Copies skills, tools, lib, templates, slash commands, and the built TUI sidebar plugin.
+ * Writes opencode.jsonc to register the plugin so the /kombinat instant menu loads.
  */
 import { confirm, select } from '@inquirer/prompts';
 import chalk from 'chalk';
@@ -168,24 +168,37 @@ function copyTemplates(track) {
     success('Templates copied');
 }
 
-// ─── Sidebar Plugin ──────────────────────────────────────────────────────────
+// ─── Sidebar Plugin (built bundle) ──────────────────────────────────────────
 async function copySidebarPlugin(overwriteAll, skipAll) {
+    // Prefer the pre-built bundle in dist/plugins/kombinat-sidebar/.
+    // Fall back to source .tsx if no build exists (dev mode).
+    const builtDir = path.join(PACKAGE_ROOT, 'dist', 'plugins', 'kombinat-sidebar');
+    const destDir = path.join(DEST_DIR, 'plugins', 'kombinat-sidebar');
+
+    if (fs.existsSync(builtDir)) {
+        fs.ensureDirSync(destDir);
+        let copied = 0;
+        for (const file of fs.readdirSync(builtDir)) {
+            fs.copySync(path.join(builtDir, file), path.join(destDir, file), { overwrite: true });
+            copied++;
+        }
+        success(`${copied} built sidebar plugin files copied → .opencode/plugins/kombinat-sidebar/`);
+        return { overwriteAll, skipAll, copied };
+    }
+
+    // Dev fallback — copy raw .tsx source (OpenCode can load .tsx directly when TS is available)
     const srcDir = path.join(SRC_DIR, 'plugins');
-    const destDir = path.join(DEST_DIR, 'plugins');
     if (!fs.existsSync(srcDir)) { log('No sidebar plugin source — skipping'); return { overwriteAll, skipAll, copied: 0 }; }
     fs.ensureDirSync(destDir);
     let copied = 0, newOverwriteAll = overwriteAll, newSkipAll = skipAll;
-
-    // Copy the entire plugins directory recursively (entry, components, hooks, utils)
     const entries = fs.readdirSync(srcDir, { withFileTypes: true });
     for (const entry of entries) {
         const src = path.join(srcDir, entry.name);
         const dest = path.join(destDir, entry.name);
         if (entry.isDirectory()) {
-            // components/, hooks/, utils/
             fs.copySync(src, dest, { overwrite: true });
             copied += fs.readdirSync(src).length;
-        } else if (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts')) {
+        } else if (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts') || entry.name.endsWith('.js') || entry.name === 'package.json' || entry.name === 'tsconfig.json') {
             if (newSkipAll) continue;
             if (fs.existsSync(dest) && !newOverwriteAll) {
                 const action = await resolveConflict(dest);
@@ -199,13 +212,97 @@ async function copySidebarPlugin(overwriteAll, skipAll) {
             copied++;
         }
     }
-    // Also copy the plugin tsconfig.json
-    const tsconfigSrc = path.join(srcDir, 'tsconfig.json');
-    if (fs.existsSync(tsconfigSrc)) {
-        fs.copySync(tsconfigSrc, path.join(destDir, 'tsconfig.json'), { overwrite: true });
-    }
-    success(`${copied} sidebar plugin files copied`);
+    warn('No pre-built plugin found — copied raw .tsx source. Run `npm run build:sidebar` in kombinat-writer for production installs.');
+    success(`${copied} sidebar plugin source files copied`);
     return { overwriteAll: newOverwriteAll, skipAll: newSkipAll, copied };
+}
+
+// ─── Project tui.json + package.json (TUI plugin registration) ──────────────
+// OpenCode loads TUI plugins from tui.json, NOT from opencode.jsonc's plugin
+// array (that array is for server plugins that export { server() }).
+// tui.json is loaded from the global config dir AND per-project .opencode/
+// directories. We write .opencode/tui.json so the plugin is scoped to the
+// book project.
+//
+// The plugin's built bundle externalizes solid-js and @opentui/solid (they
+// are baked into the OpenCode bun runtime but need to be resolvable from
+// .opencode/node_modules/). OpenCode runs `bun install` on .opencode/package.json
+// at startup, so we ensure the runtime deps are declared there.
+async function ensureProjectConfig() {
+    const projectRoot = process.cwd();
+    const tuiJsonPath = path.join(DEST_DIR, 'tui.json');
+    const pkgJsonPath = path.join(DEST_DIR, 'package.json');
+    const PLUGIN_ENTRY = './plugins/kombinat-sidebar/index.js';
+
+    // ── tui.json: register the plugin ──
+    if (!fs.existsSync(tuiJsonPath)) {
+        const config = {
+            $schema: 'https://opencode.ai/tui.json',
+            plugin: [PLUGIN_ENTRY],
+        };
+        fs.writeJsonSync(tuiJsonPath, config, { spaces: 2 });
+        let content = fs.readFileSync(tuiJsonPath, 'utf-8');
+        if (!content.endsWith('\n')) { fs.writeFileSync(tuiJsonPath, content + '\n'); }
+        success('Created .opencode/tui.json with kombinat-sidebar plugin registered');
+    } else {
+        const raw = fs.readFileSync(tuiJsonPath, 'utf-8');
+        let config;
+        try {
+            config = JSON.parse(raw);
+        } catch {
+            const stripped = raw.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+            try {
+                config = JSON.parse(stripped);
+            } catch {
+                warn('Could not parse existing .opencode/tui.json — skipping plugin registration. Add this manually:');
+                log(`  "plugin": ["${PLUGIN_ENTRY}"]`);
+                config = null;
+            }
+        }
+        if (config) {
+            const plugins = Array.isArray(config.plugin) ? config.plugin : [];
+            const hasEntry = plugins.some(p => typeof p === 'string' && p.endsWith('kombinat-sidebar/index.js'));
+            if (hasEntry) {
+                log('.opencode/tui.json already registers kombinat-sidebar — skipping');
+            } else {
+                config.plugin = [...plugins, PLUGIN_ENTRY];
+                fs.writeFileSync(tuiJsonPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
+                success(`Added kombinat-sidebar to .opencode/tui.json plugin array`);
+            }
+        }
+    }
+
+    // ── package.json: ensure runtime deps for the plugin ──
+    // The plugin externalizes solid-js and @opentui/solid at build time.
+    // OpenCode's bun runtime can resolve these from .opencode/node_modules/.
+    // OpenCode runs `bun install` on .opencode/package.json at startup.
+    const REQUIRED_DEPS = {
+        '@opencode-ai/plugin': '1.17.9',
+        '@opentui/solid': '>=0.1.97',
+        'solid-js': '^1.9.0',
+        'fs-extra': '^11.0.0',
+    };
+
+    let pkg = {};
+    if (fs.existsSync(pkgJsonPath)) {
+        try { pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8')); } catch { pkg = {}; }
+    }
+    pkg.type = pkg.type || 'module';
+    pkg.dependencies = pkg.dependencies || {};
+    let depsAdded = false;
+    for (const [name, version] of Object.entries(REQUIRED_DEPS)) {
+        if (!pkg.dependencies[name]) {
+            pkg.dependencies[name] = version;
+            depsAdded = true;
+        }
+    }
+    if (depsAdded) {
+        fs.writeFileSync(pkgJsonPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8');
+        success('Updated .opencode/package.json with plugin runtime deps (solid-js, @opentui/solid, fs-extra)');
+        log('  OpenCode will run `bun install` on next startup to install them');
+    } else {
+        log('.opencode/package.json already has all required deps — skipping');
+    }
 }
 
 // ─── Project Init ───────────────────────────────────────────────────────────
@@ -273,6 +370,9 @@ async function main() {
     const pluginResult = await copySidebarPlugin(overwriteAll, skipAll);
     overwriteAll = pluginResult.overwriteAll; skipAll = pluginResult.skipAll;
 
+    header('Registering Plugin');
+    await ensureProjectConfig();
+
     header('Installation Complete');
     log('');
     log('  Installed to .opencode/:');
@@ -280,11 +380,14 @@ async function main() {
     log(`    ${chalk.green('\u2713')} tools/ (incl. hubs/kombinat/ + lib/)`);
     log(`    ${chalk.green('\u2713')} commands/kombinat.md`);
     log(`    ${chalk.green('\u2713')} templates/`);
-    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar.tsx (+ components/)`);
+    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (built bundle)`);
+    log('');
+    log(`  ${chalk.green('\u2713')} tui.json — TUI plugin registered`);
+    log(`  ${chalk.green('\u2713')} package.json — runtime deps (solid-js, @opentui/solid, fs-extra)`);
     log('');
     log('  Next steps:');
-    log('    1. Open your project in OpenCode');
-    log('    2. Type /kombinat to trigger state detection and run your workflow');
+    log('    1. Open your project in OpenCode (restart if already open)');
+    log('    2. Type /kombinat to open the instant phase menu');
     log('    3. Or invoke a specific phase directly (e.g. /kombinat outline)');
     log('');
     log('  Phases: guided, constitute, specify, clarify, research, outline,');
