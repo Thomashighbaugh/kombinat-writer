@@ -433,8 +433,90 @@ async function main() {
         }
     }
 
+    // ── Series init option ──
+    const isSeries = await select({
+        message: 'Is this project part of a series?',
+        choices: [
+            { name: 'No — standalone book', value: false, description: 'Single-book project' },
+            { name: 'Yes — book 1 of a new series', value: 'new', description: 'Initialize the series and link this as book 1' },
+            { name: 'Yes — book N of an existing series', value: 'existing', description: 'Link to an existing ./series/ directory' },
+        ],
+    });
+
+    let seriesTitle = null;
+    let seriesAuthor = null;
+    let bookNumber = null;
+    let seriesId = null;
+
+    if (isSeries === 'new') {
+        const { input } = await import('@inquirer/prompts');
+        seriesTitle = await input({ message: 'Series title:', default: '' });
+        seriesAuthor = await input({ message: 'Author name:', default: '' });
+        seriesId = seriesTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'series';
+        bookNumber = 1;
+    } else if (isSeries === 'existing') {
+        const { input, number } = await import('@inquirer/prompts');
+        bookNumber = await number({ message: 'Book number in series:', default: 2 });
+        if (fs.existsSync(path.join(process.cwd(), 'series', 'meta.json'))) {
+            const meta = fs.readJsonSync(path.join(process.cwd(), 'series', 'meta.json'));
+            seriesId = meta.id || meta.seriesId;
+            seriesTitle = meta.title;
+            seriesAuthor = meta.author;
+        } else {
+            seriesId = await input({ message: 'Series ID (folder-safe, e.g. my-series):', default: 'series' });
+        }
+    }
+
     header('Project Structure');
     await initProjectStructure(track);
+
+    // Create series infrastructure if requested
+    if (isSeries) {
+        const seriesDir = path.join(process.cwd(), 'series');
+        const lorebookDir = path.join(seriesDir, 'lorebook');
+        fs.ensureDirSync(lorebookDir);
+        if (!fs.existsSync(path.join(lorebookDir, 'characters.md'))) {
+            fs.writeFileSync(path.join(lorebookDir, 'characters.md'), '# Series Characters\n\n*Cross-book character profiles.*\n', 'utf-8');
+        }
+        if (!fs.existsSync(path.join(lorebookDir, 'world.md'))) {
+            fs.writeFileSync(path.join(lorebookDir, 'world.md'), '# Series World\n\n*World-setting, geography, history, cosmology.*\n', 'utf-8');
+        }
+        if (!fs.existsSync(path.join(lorebookDir, 'glossary.md'))) {
+            fs.writeFileSync(path.join(lorebookDir, 'glossary.md'), '# Series Glossary\n\n*Terms, names, places, and concepts.*\n', 'utf-8');
+        }
+        if (!fs.existsSync(path.join(lorebookDir, 'timeline.json'))) {
+            fs.writeJsonSync(path.join(lorebookDir, 'timeline.json'), { entries: [] }, { spaces: 2 });
+        }
+        if (!fs.existsSync(path.join(lorebookDir, 'threads.md'))) {
+            fs.writeFileSync(path.join(lorebookDir, 'threads.md'), '# Series Plot Threads\n\n*Cross-book story threads.*\n', 'utf-8');
+        }
+
+        // Series metadata
+        let meta = { id: seriesId, title: seriesTitle, author: seriesAuthor, bookCount: 1, books: [] };
+        const metaPath = path.join(seriesDir, 'meta.json');
+        if (fs.existsSync(metaPath)) {
+            try { meta = { ...meta, ...fs.readJsonSync(metaPath) }; } catch {}
+        }
+        meta.bookCount = Math.max(meta.bookCount || 1, bookNumber);
+        const bookTitle = path.basename(process.cwd());
+        const existingIdx = meta.books.findIndex(b => b.number === bookNumber);
+        const bookEntry = { number: bookNumber, title: bookTitle, path: '.' };
+        if (existingIdx >= 0) meta.books[existingIdx] = bookEntry;
+        else meta.books.push(bookEntry);
+        meta.books.sort((a, b) => a.number - b.number);
+        fs.writeJsonSync(metaPath, meta, { spaces: 2 });
+
+        // Link current book
+        const trackPath = path.join(process.cwd(), 'book', 'track.json');
+        if (fs.existsSync(trackPath)) {
+            const track = fs.readJsonSync(trackPath);
+            track.seriesId = seriesId;
+            track.bookNumber = bookNumber;
+            fs.writeJsonSync(trackPath, track, { spaces: 2 });
+        }
+
+        success(`Series infrastructure initialized: seriesId=${seriesId}, bookNumber=${bookNumber}`);
+    }
 
     header('Installing Workflow');
     let overwriteAll = false, skipAll = false;
@@ -471,8 +553,11 @@ async function main() {
     log('  Next steps:');
     log('    1. Open your project in OpenCode (restart if already open)');
     log('    2. Type /kombinat to open the instant phase menu');
+    if (isSeries) {
+        log(`    ✓ Series linked: ${seriesId}, book ${bookNumber}`);
+    }
     if (importedFiles.length > 0) {
-        log(`    3. Run /kombinat constitute — it will detect your imported ${importChoice === 'lorebook' ? 'lorebook' : 'premise'} file${importedFiles.length > 1 ? 's' : ''} and use it`);
+        log(`    ${isSeries ? '3' : '3'}. Run /kombinat constitute — it will detect your imported ${importChoice === 'lorebook' ? 'lorebook' : 'premise'} file${importedFiles.length > 1 ? 's' : ''} and use it`);
     } else {
         log('    3. Or invoke a specific phase directly (e.g. /kombinat outline)');
     }
