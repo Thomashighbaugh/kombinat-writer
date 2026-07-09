@@ -43,7 +43,7 @@ Read the constitution, specification (fiction) or research notes (non-fiction), 
 
 ### 2. Determine Structure
 
-Interview the user to establish the high-level structure:
+Interview the user to establish the high-level structure. Use the \`question\` tool for all interview questions:
 
 **Fiction:**
 - Number of major arcs or sagas
@@ -182,7 +182,7 @@ The gate produces evidence, not just pass/fail. Each check reports what it found
 | \`pacing-rhythm\` | \`skills/fiction/writing-techniques/pacing-rhythm/SKILL.md\` | Pacing archetype enforcement |
 | \`argument-structure\` | \`skills/non-fiction/argument-structure/SKILL.md\` | Argument flow and evidence placement |
 | \`strategic-reversal\` | \`skills/fiction/writing-techniques/strategic-reversal/SKILL.md\` | Reversal setup planning (fiction) |`,
-  tools: ["loadSkill", "bash"],
+  tools: ["loadSkill", "bash", "question"],
   relatedSkills: ["scene-structure", "pacing-rhythm", "argument-structure", "strategic-reversal"],
   examples: [
     { input: "/kombinat outline 3 acts, 12 chapters each", approach: "Builds a 36-chapter outline with scene beats, setup/payoff chains, and continuity anchors per chapter. Gate runs — if it fails, revises up to 3 cycles." },

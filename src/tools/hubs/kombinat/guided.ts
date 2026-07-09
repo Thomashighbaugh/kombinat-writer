@@ -43,8 +43,8 @@ If the subcommand is not recognised, proceed to state detection and treat the fu
 
 Check \`./book/track.json\`:
 - If it exists, read the \`track\` field: \`fiction\`, \`non-fiction\`, or \`mixed\`.
-- If it does not exist, ask the user: "Which track is this project? (fiction / non-fiction / mixed)"
-- If uncertain, ask diagnostic questions about the nature of the work.
+- If it does not exist, ask the user (using the \`question\` tool): "Which track is this project? (fiction / non-fiction / mixed)"
+- If uncertain, ask diagnostic questions about the nature of the work using the \`question\` tool.
 
 ### 2. Detect Phase
 
@@ -146,7 +146,7 @@ Draft files go in \`./book/drafts/\` (relative to project root). The \`/kombinat
 | \`citation-styles\` | \`skills/non-fiction/citation-styles/SKILL.md\` | Citation format reference (non-fiction) |
 
 If any skill file is not found, note it but continue.`,
-  tools: ["loadSkill", "bash"],
+  tools: ["loadSkill", "bash", "question"],
   relatedSkills: ["workflow-guide", "getting-started"],
   examples: [
     { input: "/kombinat guided", approach: "Runs state detection, detects current phase, and presents a contextualised roadmap." },

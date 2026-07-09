@@ -65,7 +65,7 @@ Before committing to a full specification, stress-test the premise. A weak premi
 
 ### 4. Build Specification Levels
 
-Interview the user to progressively build the specification:
+Interview the user to progressively build the specification. Use the \`question\` tool for all interview questions:
 
 **Level 1: Logline** — A single sentence capturing the story's essence.
 Format: \`[Protagonist] must [goal] or else [stakes] in a world where [setting].\`
@@ -126,7 +126,7 @@ Save the completed specification to \`./book/specification.md\`. If it exceeds ~
 | \`scene-structure\` | \`skills/fiction/writing-techniques/scene-structure/SKILL.md\` | Scene framework reference |
 | \`character-depth\` | \`skills/fiction/writing-techniques/character-depth/SKILL.md\` | Character profiling guidance |
 | \`namecraft\` | \`skills/fiction/writing-techniques/namecraft/SKILL.md\` | Character and location naming |`,
-  tools: ["loadSkill", "bash"],
+  tools: ["loadSkill", "bash", "question"],
   relatedSkills: ["scene-structure", "character-depth", "namecraft"],
   examples: [
     { input: "/kombinat specify I want to write about a detective who solves crimes using memory palaces", approach: "Starts Phase 2. Reads constitution, then builds logline → premise → story promise → knowledge map through structured interview." },

@@ -33,7 +33,7 @@ research/
 
 ### 1. Establish Research Plan
 
-Interview the user to define:
+Interview the user to define. Use the \`question\` tool for all interview questions:
 - **Research questions**: What specific questions need answers?
 - **Kombinate**: What is in and out of kombinate for this research phase?
 - **Depth**: Quick survey vs. deep academic review vs. authenticity check
@@ -108,7 +108,7 @@ If the track is non-fiction or mixed, maintain a running bibliography. Each new 
 | \`source-evaluation\` | \`skills/non-fiction/source-evaluation/SKILL.md\` | CRAAP test, bias detection |
 | \`interview-methods\` | \`skills/research/interview-methods/SKILL.md\` | Interview design and transcription |
 | \`field-notes\` | \`skills/research/field-notes/SKILL.md\` | Observation recording standards |`,
-  tools: ["loadSkill", "bash", "websearch"],
+  tools: ["loadSkill", "bash", "websearch", "question"],
   relatedSkills: ["web-research", "source-annotation", "citation-styles", "source-evaluation", "interview-methods", "field-notes"],
   examples: [
     { input: "/kombinat research 19th century maritime medicine", approach: "Starts Phase 4. Defines research questions, searches sources, extracts annotations, evaluates credibility, and saves structured notes." },

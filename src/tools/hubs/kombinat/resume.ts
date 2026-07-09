@@ -106,8 +106,8 @@ Read:
 
 ### 5. Offer to Jump
 
-Present the recommended next step and ask the user:
-"Resume with \`/kombinat [phase] [args]\`? (yes/no)"
+Present the recommended next step and ask the user (using the \`question\` tool):
+"Resume with \`/kombinat [phase] [args]\`?"
 
 If yes, the router will dispatch to the correct phase with the chapter number pre-loaded.
 
@@ -127,7 +127,7 @@ Checkpoints are JSON, not markdown — they are programmatic state, not human-re
 | Skill | File | Purpose |
 |-------|------|---------|
 | \`checkpoints\` | \`src/lib/checkpoints.ts\` | Checkpoint save/load/resume engine |`,
-  tools: ["bash"],
+  tools: ["bash", "question"],
   relatedSkills: ["consistency-checker"],
   examples: [
     { input: "/kombinat resume", approach: "Loads latest checkpoint, computes diff, reports what's done and what's next" }

@@ -26,12 +26,39 @@ This command adapts its output based on the detected track:
 
 ## Execution Steps
 
+### 0. Premise / Lorebook Import (FIRST QUESTION)
+
+Before anything else, ask the user whether they have a premise document or an external lorebook to import. Use the \`question\` tool:
+
+Question 1: "Do you have a premise, outline, or world-building document you'd like to import?"
+Options:
+- **Yes — Lorebook** (SillyTavern, JanitorAI, CharacterAI export) — "I have a world info / character card JSON from an AI roleplay platform"
+- **Yes — Premise document** (Markdown, text, or other) — "I have a written premise, synopsis, or outline document"
+- **No** — "Start from scratch"
+
+#### If "Yes — Lorebook":
+1. Ask the user for the file path (use the \`question\` tool with a text prompt).
+2. Call \`src/lib/lorebook-import.ts\` → \`importLorebook(projectRoot, 'auto', inputPath)\` to convert the lorebook into \`./series/lorebook/\` (characters.md, world.md, glossary.md, timeline.json, threads.md).
+3. Report the import result: "[N] characters, [M] world entries, [K] glossary terms, [L] timeline entries, [P] plot threads imported."
+4. These become the pre-existing world context. Mark the constitution sections that can inherit from the lorebook and continue to the interview, pre-filling where the lorebook answers the question.
+5. Also create \`./series/meta.json\` if it doesn't exist, marking this as a series project with \`seriesId\` generated from the book title or a user-provided series name.
+
+#### If "Yes — Premise document":
+1. Ask the user for the file path (use the \`question\` tool with a text prompt).
+2. Read the document and extract: themes, character information, world-building details, style hints, and any stated quality preferences.
+3. Use these as pre-filled answers in the interview below, marked \`[From premise document — review and adapt]\`.
+4. Continue to the interview, skipping questions where the premise document already provides a clear answer.
+
+#### If "No":
+Continue directly to step 1.
+
 ### 1. Check Existing Documents
 
 - Check \`./book/constitution.md\`. If it exists, read it and present a diff-based update option.
 - Check \`./book/track.json\` for track selection.
 - Check \`./book/track.json\` for \`seriesId\` and \`bookNumber\` fields. If present, this book is part of a series.
 - Check \`./series/meta.json\` — if it exists, this is a series project.
+- Check \`./series/lorebook/\` — if it exists (from step 0 import), load the lorebook files for context.
 
 ### 1a. Series Lorebook Inheritance (Book 2+)
 
@@ -66,7 +93,7 @@ If the user chooses A (inherit):
 
 ### 2. Gather Principles
 
-Interview the user to fill each constitution section. Use targeted questions:
+Interview the user to fill each constitution section. Use the \`question\` tool for all interview questions — this renders interactive prompts in the TUI. Ask questions one at a time or in small batches. Targeted questions:
 
 **Core Values:**
 - Fiction: "What central theme or emotional experience do you want the reader to carry away?"
@@ -175,13 +202,14 @@ Populate the constitution template with the user's answers. Save to \`./book/con
 | \`academic-writing\` | \`skills/non-fiction/academic-writing/SKILL.md\` | Thesis and argument structure (non-fiction) |
 | \`citation-styles\` | \`skills/non-fiction/citation-styles/SKILL.md\` | Citation conventions (non-fiction) |
 | \`creative-constraints\` | \`src/lib/creative-constraints.ts\` | Non-negotiables declaration and gate check |
+| \`lorebook-import\` | \`src/lib/lorebook-import.ts\` | Import SillyTavern/JanitorAI/CharacterAI lorebooks into series lorebook format |
 
 If skill files are not found, continue without them.`,
-  tools: ["loadSkill", "bash"],
-  relatedSkills: ["pacing-rhythm", "character-depth", "academic-writing", "citation-styles", "creative-constraints"],
+  tools: ["loadSkill", "bash", "question"],
+  relatedSkills: ["pacing-rhythm", "character-depth", "academic-writing", "citation-styles", "creative-constraints", "lorebook-import"],
   examples: [
-    { input: "/kombinat constitute I want to write a literary fantasy novel with deep character work", approach: "Starts Phase 1. Interviews the user to fill each constitution section, then saves to ./book/constitution.md." },
-    { input: "/kombinat constitute", approach: "Checks for existing constitution. If found, offers diff-based update. Otherwise starts fresh interview." }
+    { input: "/kombinat constitute I want to write a literary fantasy novel with deep character work", approach: "Asks about premise/lorebook import, then interviews the user via question tool to fill each constitution section, saves to ./book/constitution.md." },
+    { input: "/kombinat constitute", approach: "Asks about premise/lorebook import, checks for existing constitution (offers diff-based update if found), otherwise starts fresh interview." }
   ],
   warnings: []
 }

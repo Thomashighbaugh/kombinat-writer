@@ -11,7 +11,7 @@ The user typed `/kombinat` without a subcommand. Tell the user:
 
 "Type `/kombinat` and select a phase from the instant menu, or run `/kombinat <phase>` directly (e.g. `/kombinat guided`, `/kombinat draft`)."
 
-Do NOT use the `question` tool — it causes a ~30s delay. The sidebar plugin handles the menu.
+Do NOT use the `question` tool for menu selection — the sidebar plugin handles that. (This restriction applies to Case 1 ONLY. When executing a phase in Case 2 that requires interviewing the user, you MUST use the `question` tool — it renders the interactive prompt in the TUI.)
 
 ### Case 2: $ARGUMENTS starts with a valid subcommand
 1. Extract the first word as `subcommand`. Everything after the first space is `phaseArgs`.

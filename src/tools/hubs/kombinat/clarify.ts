@@ -41,13 +41,13 @@ Select up to five items to clarify in this session. Prioritise items that block 
 
 ### 4. Ask Targeted Questions
 
-For each ambiguity, present:
+For each ambiguity, present (using the \`question\` tool):
 - **Location**: Where in the specification it appears
 - **Issue**: What is ambiguous or missing
 - **Question**: A single, specific question to resolve it
 - **Effect**: What becomes possible once resolved
 
-Allow the user to answer each question before moving to the next.
+Allow the user to answer each question before moving to the next. Use the \`question\` tool for each question.
 
 ### 5. Update Specification
 
@@ -66,7 +66,7 @@ After each resolution:
 |-------|------|---------|
 | \`consistency-checker\` | \`skills/quality-assurance/consistency-checker/SKILL.md\` | Detect internal contradictions |
 | \`forgotten-elements\` | \`skills/quality-assurance/forgotten-elements/SKILL.md\` | Catch missing or underdeveloped elements |`,
-  tools: ["loadSkill", "bash"],
+  tools: ["loadSkill", "bash", "question"],
   relatedSkills: ["consistency-checker", "forgotten-elements"],
   examples: [
     { input: "/kombinat clarify", approach: "Loads specification, scans for [Needs Clarification] markers, and asks up to 5 targeted questions to resolve each." },
