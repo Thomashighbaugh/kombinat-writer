@@ -68,7 +68,7 @@ Draft and revise in separate sessions. Never revise during a draft session — m
 ```
 project-root/
 ├── .opencode/             # Per-project OpenCode configuration
-│   ├── commands/kombinat.md   # Hub command (installed by kombinat-writer)
+│   ├── commands/kombinat-router.md  # Hub phase router (installed by kombinat-writer)
 │   ├── skills/            # QA, critique, research, fiction, non-fiction skills
 │   ├── tools/             # TypeScript tools (hubMenu, hub-data, project-state, etc.)
 │   │   ├── hubs/kombinat/ # 26 subcommand spec files

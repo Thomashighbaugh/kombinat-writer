@@ -10,12 +10,12 @@ export function ProvenanceDashboard(props: { state: SidebarState }) {
   return (
     <Show
       when={prov()}
-      fallback={<text style={{ fg: 'gray' }}>No provenance data — run /kombinat verify</text>}
+      fallback={<text style={{ fg: 'gray' }}>{'No provenance data — run /kombinat verify'}</text>}
       keyed
     >
       {(p) => (
         <box flexDirection="column">
-          <text style={{ fg: 'cyan', attributes: BOLD }}>── Provenance ──</text>
+          <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Provenance ──'}</text>
           <text style={{ fg: 'white' }}>
             {provenanceBar({
               author: p.author,
@@ -26,12 +26,12 @@ export function ProvenanceDashboard(props: { state: SidebarState }) {
               authorRevised: p.authorRevised,
             })}
           </text>
-          <text style={{ fg: 'green' }}>🟢 Author:     {p.author + p.authorRevised} ({p.percentages.author}%)</text>
-          <text style={{ fg: 'blue' }}>🔵 AI Drafted: {p.aiDrafted}</text>
-          <text style={{ fg: 'blue' }}>🔵 AI Revised: {p.aiRevised}</text>
-          <text style={{ fg: 'blue' }}>🔵 AI Edited:  {p.aiEdited}</text>
-          <text style={{ fg: 'blue' }}>🔵 AI Modified: {p.aiModified}</text>
-          <text style={{ fg: 'gray' }}>Total lines: {p.totalLines}</text>
+          <text style={{ fg: 'green' }}>{`🟢 Author:     ${String(p.author + p.authorRevised)} (${String(p.percentages.author)}%)`}</text>
+          <text style={{ fg: 'blue' }}>{`🔵 AI Drafted: ${String(p.aiDrafted)}`}</text>
+          <text style={{ fg: 'blue' }}>{`🔵 AI Revised: ${String(p.aiRevised)}`}</text>
+          <text style={{ fg: 'blue' }}>{`🔵 AI Edited:  ${String(p.aiEdited)}`}</text>
+          <text style={{ fg: 'blue' }}>{`🔵 AI Modified: ${String(p.aiModified)}`}</text>
+          <text style={{ fg: 'gray' }}>{`Total lines: ${String(p.totalLines)}`}</text>
         </box>
       )}
     </Show>

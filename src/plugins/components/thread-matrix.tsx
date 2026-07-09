@@ -9,14 +9,14 @@ export function ThreadMatrixView(props: { state: SidebarState }) {
   return (
     <Show
       when={viz()?.threads.length}
-      fallback={<text style={{ fg: 'gray' }}>No thread data — run /kombinat review</text>}
+      fallback={<text style={{ fg: 'gray' }}>{'No thread data — run /kombinat review'}</text>}
     >
       <box flexDirection="column">
-        <text style={{ fg: 'cyan' }}>Thread Matrix</text>
+        <text style={{ fg: 'cyan' }}>{'Thread Matrix'}</text>
         <For each={threadMatrix(viz()!.threads, 20)}>
           {(line) => <text style={{ fg: 'white' }}>{line}</text>}
         </For>
-        <text style={{ fg: 'gray' }}>█ = present  ░ = absent</text>
+        <text style={{ fg: 'gray' }}>{'█ = present  ░ = absent'}</text>
       </box>
     </Show>
   )

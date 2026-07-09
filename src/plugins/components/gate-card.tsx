@@ -9,7 +9,7 @@ export function GateCard(props: { result: () => GateRunResult | undefined; gateN
   return (
     <box flexDirection="column" on:select={props.onSelect}>
       <text style={{ fg: r() ? statusColor(r()!.status) : 'gray' }}>
-        {r() ? statusIcon(r()!.status) : '○'} {props.gateName}
+        {r() ? `${statusIcon(r()!.status)} ${props.gateName}` : `○ ${props.gateName}`}
       </text>
       <Show when={r()}>
         <text style={{ fg: 'gray' }}>

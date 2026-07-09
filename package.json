@@ -1,6 +1,6 @@
 {
   "name": "kombinat-writer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Professional-grade book writing workflow for OpenCode — 25-subcommand slash command router, 26 hard-block quality gates, 8 HITL features, XML-structured drafting, per-character voice profiles, series lorebook infrastructure, and an OpenCode TUI sidebar plugin.",
   "type": "module",
   "main": "bin/install.mjs",

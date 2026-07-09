@@ -47,7 +47,7 @@ export function GatesTab(props: { state: SidebarState }) {
 
   return (
     <box flexDirection="column">
-      <text style={{ fg: 'cyan', attributes: BOLD }}>── Quality Gates ──</text>
+      <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Quality Gates ──'}</text>
 
       <box marginTop={1}>
         <text
@@ -61,7 +61,7 @@ export function GatesTab(props: { state: SidebarState }) {
       <For each={CATEGORIES}>
         {(cat) => (
           <box flexDirection="column" marginTop={1}>
-            <text style={{ fg: 'cyan' }}>─ {cat} ─</text>
+            <text style={{ fg: 'cyan' }}>{`─ ${cat} ─`}</text>
             <For each={GATE_LIST.filter(g => g.category === cat)}>
               {(gateDef) => {
                 const result = () => gateResults()[gateDef.id]
@@ -70,7 +70,7 @@ export function GatesTab(props: { state: SidebarState }) {
                     style={{ fg: result() ? statusColor(result()!.status) : 'gray' }}
                     on:select={() => handleRunSingle(gateDef.id)}
                   >
-                    {result() ? statusIcon(result()!.status) : '○'} {gateDef.name}
+                    {result() ? `${statusIcon(result()!.status)} ${gateDef.name}` : `○ ${gateDef.name}`}
                   </text>
                 )
               }}
@@ -83,16 +83,16 @@ export function GatesTab(props: { state: SidebarState }) {
       <Show when={selectedDetail()} keyed>
         {(detail: GateRunResult) => (
           <box marginTop={1} flexDirection="column">
-            <text style={{ fg: 'cyan', attributes: BOLD }}>── Details ──</text>
+            <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Details ──'}</text>
             <text style={{ fg: statusColor(detail.status), attributes: BOLD }}>
-              {statusIcon(detail.status)} {detail.gateName}
+              {`${statusIcon(detail.status)} ${detail.gateName}`}
             </text>
             <text style={{ fg: 'white' }}>
               {truncate(detail.detail, 200)}
             </text>
             <Show when={detail.fixHint}>
               <text style={{ fg: 'yellow' }}>
-                Fix: {truncate(detail.fixHint!, 150)}
+                {`Fix: ${truncate(detail.fixHint!, 150)}`}
               </text>
             </Show>
           </box>

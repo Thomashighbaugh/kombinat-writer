@@ -19,43 +19,43 @@ export function VizTab(props: { state: SidebarState }) {
 
   return (
     <box flexDirection="column">
-      <text style={{ fg: 'cyan', attributes: BOLD }}>── Visualizations ──</text>
+      <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Visualizations ──'}</text>
 
       {/* Sub-tab selector */}
       <box marginTop={1} flexDirection="row">
         <text
           style={{ fg: subTab() === 'pacing' ? 'cyan' : 'gray' }}
           on:select={() => setSubTab('pacing')}
-        >1:Pacing</text>
+        >{'1:Pacing'}</text>
         <text>{' '}</text>
         <text
           style={{ fg: subTab() === 'threads' ? 'cyan' : 'gray' }}
           on:select={() => setSubTab('threads')}
-        >2:Threads</text>
+        >{'2:Threads'}</text>
         <text>{' '}</text>
         <text
           style={{ fg: subTab() === 'provenance' ? 'cyan' : 'gray' }}
           on:select={() => setSubTab('provenance')}
-        >3:Prov</text>
+        >{'3:Prov'}</text>
         <text>{' '}</text>
         <text
           style={{ fg: subTab() === 'cognitive' ? 'cyan' : 'gray' }}
           on:select={() => setSubTab('cognitive')}
-        >4:Cog</text>
+        >{'4:Cog'}</text>
         <text>{' '}</text>
         <text
           style={{ fg: subTab() === 'escalation' ? 'cyan' : 'gray' }}
           on:select={() => setSubTab('escalation')}
-        >5:Esc</text>
+        >{'5:Esc'}</text>
       </box>
 
       <Show
         when={viz()}
         fallback={
-          <box marginTop={1}>
-            <text style={{ fg: 'gray' }}>No visualization data.</text>
+          <box marginTop={1} flexDirection="column">
+            <text style={{ fg: 'gray' }}>{'No visualization data.'}</text>
             <text style={{ fg: 'gray' }}>
-              Run /kombinat verify or /kombinat review to generate data.
+              {'Run /kombinat verify or /kombinat review to generate data.'}
             </text>
           </box>
         }
@@ -65,8 +65,8 @@ export function VizTab(props: { state: SidebarState }) {
           <box marginTop={1} flexDirection="column">
             {/* ─── Pacing ─── */}
             <Show when={subTab() === 'pacing'}>
-              <text style={{ fg: 'cyan' }}>Pacing Heartbeat</text>
-              <text style={{ fg: 'gray' }}>Chapter intensity over time</text>
+              <text style={{ fg: 'cyan' }}>{'Pacing Heartbeat'}</text>
+              <text style={{ fg: 'gray' }}>{'Chapter intensity over time'}</text>
               <box marginTop={1} flexDirection="column">
                 <For each={pacingChart(v.pacing)}>
                   {(line) => <text style={{ fg: 'green' }}>{line}</text>}
@@ -76,21 +76,21 @@ export function VizTab(props: { state: SidebarState }) {
 
             {/* ─── Thread Matrix ─── */}
             <Show when={subTab() === 'threads'}>
-              <text style={{ fg: 'cyan' }}>Thread Matrix</text>
-              <text style={{ fg: 'gray' }}>Story thread presence per chapter</text>
+              <text style={{ fg: 'cyan' }}>{'Thread Matrix'}</text>
+              <text style={{ fg: 'gray' }}>{'Story thread presence per chapter'}</text>
               <box marginTop={1} flexDirection="column">
                 <For each={threadMatrix(v.threads, 20)}>
                   {(line) => <text style={{ fg: 'white' }}>{line}</text>}
                 </For>
               </box>
-              <text style={{ fg: 'gray' }}>█ = present  ░ = absent</text>
+              <text style={{ fg: 'gray' }}>{'█ = present  ░ = absent'}</text>
             </Show>
 
             {/* ─── Provenance ─── */}
             <Show when={subTab() === 'provenance'}>
-              <text style={{ fg: 'cyan' }}>Provenance</text>
-              <text style={{ fg: 'gray' }}>Author vs AI contribution</text>
-              <Show when={v.provenance} fallback={<text style={{ fg: 'gray' }}>No provenance data</text>} keyed>
+              <text style={{ fg: 'cyan' }}>{'Provenance'}</text>
+              <text style={{ fg: 'gray' }}>{'Author vs AI contribution'}</text>
+              <Show when={v.provenance} fallback={<text style={{ fg: 'gray' }}>{'No provenance data'}</text>} keyed>
                 {(p) => (
                   <box flexDirection="column">
                     <box marginTop={1}>
@@ -105,9 +105,9 @@ export function VizTab(props: { state: SidebarState }) {
                         })}
                       </text>
                     </box>
-                    <text style={{ fg: 'green' }}>🟢 Author: {p.author + p.authorRevised}</text>
-                    <text style={{ fg: 'blue' }}>🔵 AI: {p.aiDrafted + p.aiRevised + p.aiEdited + p.aiModified}</text>
-                    <text style={{ fg: 'gray' }}>Total: {p.totalLines} lines</text>
+                    <text style={{ fg: 'green' }}>{`🟢 Author: ${String(p.author + p.authorRevised)}`}</text>
+                    <text style={{ fg: 'blue' }}>{`🔵 AI: ${String(p.aiDrafted + p.aiRevised + p.aiEdited + p.aiModified)}`}</text>
+                    <text style={{ fg: 'gray' }}>{`Total: ${String(p.totalLines)} lines`}</text>
                   </box>
                 )}
               </Show>
@@ -115,20 +115,20 @@ export function VizTab(props: { state: SidebarState }) {
 
             {/* ─── Cognitive Load ─── */}
             <Show when={subTab() === 'cognitive'}>
-              <text style={{ fg: 'cyan' }}>Cognitive Load</text>
-              <text style={{ fg: 'gray' }}>Reader cognitive load per chapter</text>
+              <text style={{ fg: 'cyan' }}>{'Cognitive Load'}</text>
+              <text style={{ fg: 'gray' }}>{'Reader cognitive load per chapter'}</text>
               <box marginTop={1}>
                 <text style={{ fg: 'yellow' }}>
                   {cognitiveLoadSparkline(v.cognitiveLoad)}
                 </text>
               </box>
-              <text style={{ fg: 'gray' }}>▁ low · ▄ med · █ high</text>
+              <text style={{ fg: 'gray' }}>{'▁ low · ▄ med · █ high'}</text>
             </Show>
 
             {/* ─── Escalation Curve ─── */}
             <Show when={subTab() === 'escalation'}>
-              <text style={{ fg: 'cyan' }}>Escalation Curve</text>
-              <text style={{ fg: 'gray' }}>Tension across story beats</text>
+              <text style={{ fg: 'cyan' }}>{'Escalation Curve'}</text>
+              <text style={{ fg: 'gray' }}>{'Tension across story beats'}</text>
               <box marginTop={1} flexDirection="column">
                 <For each={escalationCurve(v.escalation)}>
                   {(line) => <text style={{ fg: 'red' }}>{line}</text>}

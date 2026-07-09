@@ -9,12 +9,12 @@ export function ProvenanceBar(props: { state: SidebarState }) {
   return (
     <Show
       when={prov()}
-      fallback={<text style={{ fg: 'gray' }}>No provenance data</text>}
+      fallback={<text style={{ fg: 'gray' }}>{'No provenance data'}</text>}
       keyed
     >
       {(p) => (
         <box flexDirection="column">
-          <text style={{ fg: 'cyan' }}>Provenance</text>
+          <text style={{ fg: 'cyan' }}>{'Provenance'}</text>
           <text style={{ fg: 'white' }}>
             {provenanceBar({
               author: p.author,
@@ -26,10 +26,10 @@ export function ProvenanceBar(props: { state: SidebarState }) {
             })}
           </text>
           <text style={{ fg: 'green' }}>
-            🟢 Author: {p.author + p.authorRevised} ({p.percentages.author}%)
+            {`🟢 Author: ${String(p.author + p.authorRevised)} (${String(p.percentages.author)}%)`}
           </text>
           <text style={{ fg: 'blue' }}>
-            🔵 AI: {p.aiDrafted + p.aiRevised + p.aiEdited + p.aiModified} ({p.percentages.ai}%)
+            {`🔵 AI: ${String(p.aiDrafted + p.aiRevised + p.aiEdited + p.aiModified)} (${String(p.percentages.ai)}%)`}
           </text>
         </box>
       )}

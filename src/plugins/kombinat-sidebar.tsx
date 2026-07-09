@@ -103,9 +103,9 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
       }> = [
         // ─── Instant /kombinat menu ────────────────────────────────────────
         // Shows a DialogSelect immediately — no LLM processing delay.
-        // When the user picks a subcommand, it injects "/kombinat <subcommand> "
+        // When the user picks a subcommand, it injects "/kombinat-router <subcommand> "
         // into the prompt and submits it, so the agent processes it via the
-        // slash command router (kombinat.md Case 2 — direct routing, no menu).
+        // kombinat-router.md slash command (Case 2 — direct phase execution, no menu).
         {
           title: 'Kombinat: Phase Menu',
           value: 'kombinat',
@@ -126,20 +126,20 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
                 title: 'Kombinat Writer — Select Phase',
                 placeholder: 'Choose a phase...',
                 options,
-                onSelect: (sel: TuiDialogSelectOption<string>) => {
-                  api.ui.dialog.clear()
-                  const cmd = `/kombinat ${sel.value}`
-                  api.ui.toast({ title: 'Kombinat', message: cmd })
-                  // Inject the chosen subcommand into the prompt and submit.
-                  // The slash command (kombinat.md) handles it via Case 2
-                  // (direct routing) since $ARGUMENTS is non-empty.
-                  api.client.tui.appendPrompt({ text: cmd + ' ' }).then(() => {
-                    // Auto-submit so the agent picks it up immediately
-                    setTimeout(() => {
-                      api.client.tui.appendPrompt({ text: '\n' }).catch(() => {})
-                    }, 100)
-                  }).catch(() => {})
-                },
+          onSelect: (sel: TuiDialogSelectOption<string>) => {
+            api.ui.dialog.clear()
+            const cmd = `/kombinat-router ${sel.value}`
+            api.ui.toast({ title: 'Kombinat', message: `Routing to ${sel.value}` })
+            // Inject the routing command into the prompt and submit.
+            // The kombinat-router.md slash command handles direct phase execution
+            // (Case 2), so the agent calls hubMenu route and executes the phase.
+            api.client.tui.appendPrompt({ text: cmd + ' ' }).then(() => {
+              // Auto-submit so the agent picks it up immediately
+              setTimeout(() => {
+                api.client.tui.appendPrompt({ text: '\n' }).catch(() => {})
+              }, 100)
+            }).catch(() => {})
+          },
               })
             )
           },

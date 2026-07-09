@@ -9,10 +9,10 @@ export function PacingChart(props: { state: SidebarState }) {
   return (
     <Show
       when={viz()?.pacing.length}
-      fallback={<text style={{ fg: 'gray' }}>No pacing data — run /kombinat verify</text>}
+      fallback={<text style={{ fg: 'gray' }}>{'No pacing data — run /kombinat verify'}</text>}
     >
       <box flexDirection="column">
-        <text style={{ fg: 'cyan' }}>Pacing Heartbeat</text>
+        <text style={{ fg: 'cyan' }}>{'Pacing Heartbeat'}</text>
         <For each={pacingChart(viz()!.pacing)}>
           {(line) => <text style={{ fg: 'green' }}>{line}</text>}
         </For>

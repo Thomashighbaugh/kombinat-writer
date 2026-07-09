@@ -543,7 +543,7 @@ async function main() {
     log('  Installed to .opencode/:');
     log(`    ${chalk.green('\u2713')} skills/`);
     log(`    ${chalk.green('\u2713')} tools/ (incl. hubs/kombinat/ + lib/)`);
-    log(`    ${chalk.green('\u2713')} commands/kombinat.md`);
+    log(`    ${chalk.green('\u2713')} commands/kombinat-router.md`);
     log(`    ${chalk.green('\u2713')} templates/`);
     log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (built bundle)`);
     log('');

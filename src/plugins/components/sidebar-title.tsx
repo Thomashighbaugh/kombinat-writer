@@ -1,5 +1,5 @@
 /** @jsxImportSource @opentui/solid */
-import { For, Show } from 'solid-js'
+import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { phaseLabel, stateLabel, BOLD } from '../utils/format.js'
 
@@ -10,14 +10,14 @@ export function SidebarTitle(props: { session_id: string; title: string; state: 
   return (
     <box flexDirection="column">
       <text style={{ fg: 'cyan', attributes: BOLD }}>
-        Kombinat Writer
+        {'Kombinat Writer'}
       </text>
-      <Show when={project()} fallback={<text style={{ fg: 'gray' }}>No project detected</text>}>
+      <Show when={project()} fallback={<text style={{ fg: 'gray' }}>{'No project detected'}</text>}>
         <text style={{ fg: 'white' }}>
-          {phaseLabel(project()!.phase)} — {stateLabel(project()!.state)}
+          {`${phaseLabel(project()!.phase)} — ${stateLabel(project()!.state)}`}
         </text>
         <text style={{ fg: 'gray' }}>
-          {project()!.chapters} ch · {project()!.critiqueRounds} crit · {project()!.revisions} rev
+          {`${String(project()!.chapters)} ch · ${String(project()!.critiqueRounds)} crit · ${String(project()!.revisions)} rev`}
         </text>
       </Show>
     </box>

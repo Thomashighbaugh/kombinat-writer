@@ -11,19 +11,29 @@ export function HunkNavigator(props: {
 }) {
   return (
     <box flexDirection="column">
-      <text style={{ fg: 'cyan' }}>Hunks ({props.hunks.length})</text>
+      <text style={{ fg: 'cyan' }}>
+        {`Hunks (${String(props.hunks.length)})`}
+      </text>
       <For each={props.hunks}>
-        {(hunk, i) => (
-          <text
-            style={{
-              fg: i() === props.selected ? 'cyan' : hunk.status === 'approved' ? 'green' : hunk.status === 'rejected' ? 'red' : 'yellow',
-              attributes: i() === props.selected ? BOLD : 0,
-            }}
-            on:select={() => props.onSelect(i())}
-          >
-            {hunk.status === 'approved' ? '✓' : hunk.status === 'rejected' ? '✗' : '○'} {i() + 1}. L{hunk.startLine}–{hunk.endLine} — {truncate(hunk.after[0] || hunk.before[0] || '', 30)}
-          </text>
-        )}
+        {(hunk, i) => {
+          const isSelected = i() === props.selected
+          const statusIcon = hunk.status === 'approved' ? '✓' : hunk.status === 'rejected' ? '✗' : '○'
+          const preview = truncate(hunk.after[0] || hunk.before[0] || '', 30)
+          return (
+            <text
+              style={{
+                fg: isSelected ? 'cyan'
+                  : hunk.status === 'approved' ? 'green'
+                  : hunk.status === 'rejected' ? 'red'
+                  : 'yellow',
+                ...(isSelected ? { attributes: BOLD } : {}),
+              }}
+              on:select={() => props.onSelect(i())}
+            >
+              {`${statusIcon} ${String(i() + 1)}. L${String(hunk.startLine)}–${String(hunk.endLine)} — ${preview}`}
+            </text>
+          )
+        }}
       </For>
     </box>
   )

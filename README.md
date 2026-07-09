@@ -406,7 +406,7 @@ JSON checkpoints save state after each phase, enabling resume:
 ```
 project/
 ├── .opencode/               # Installed workflow
-│   ├── commands/kombinat.md  # Hub command router (25 subcommands)
+│   ├── commands/kombinat-router.md  # Hub phase router (direct phase execution)
 │   ├── skills/               # 34 SKILL.md files across 5 categories
 │   │   ├── quality-assurance/
 │   │   ├── critique/
@@ -465,7 +465,7 @@ node bin/install.mjs test-dir   # Test installation
 ```
 
 Source structure:
-- `src/commands/kombinat.md` — Hub command router
+- `src/commands/kombinat-router.md` — Hub phase router (direct `/kombinat-router <phase>`)
 - `src/tools/hubs/kombinat/` — 26 subcommand spec files
 - `src/lib/` — 32 library files (gates, voice, checkpoints, analyses, etc.)
 - `src/skills/` — 34 SKILL.md files across 5 categories
