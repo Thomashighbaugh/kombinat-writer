@@ -59,11 +59,14 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
 
   const sidebarState = useProjectState(projectRoot, activeTab, setActiveTab)
 
-  // Show a launch toast so the user knows the sidebar exists and how to focus it
+  // Show a launch toast so the user knows the sidebar exists and how to use it.
+  // NOTE: OpenCode has no plugin API to open/focus the sidebar programmatically.
+  // The sidebar must be toggled with the built-in keybind (default <leader>b = Ctrl+X, B).
+  // Once visible, 1-4 switch tabs.
   onMount(() => {
     api.ui.toast({
       title: 'Kombinat Writer',
-      message: 'Sidebar ready — press Ctrl+K to focus, 1-4 to switch tabs, or type /kombinat for the menu',
+      message: 'Sidebar ready — toggle with <leader>b (Ctrl+X, B), then 1-4 to switch tabs, or type /kombinat for the menu',
       duration: 8000,
       variant: 'info',
     })
@@ -103,14 +106,12 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
         // When the user picks a subcommand, it injects "/kombinat <subcommand> "
         // into the prompt and submits it, so the agent processes it via the
         // slash command router (kombinat.md Case 2 — direct routing, no menu).
-        // NOTE: Do NOT set `slash: {name: "kombinat"}` here — that would create
-        // a duplicate slash command entry (the .opencode/commands/kombinat.md
-        // file already registers /kombinat). This command is palette-only.
         {
-          title: 'Kombinat: Select Phase',
-          value: 'kombinat:select-phase',
-          description: 'Open the Kombinat phase selection menu',
+          title: 'Kombinat: Phase Menu',
+          value: 'kombinat',
+          description: 'Open the instant Kombinat phase selection menu',
           category: 'Kombinat Writer',
+          slash: { name: 'kombinat', aliases: ['kom'] },
           onSelect: () => {
             const DS = api.ui.DialogSelect
             const options: TuiDialogSelectOption<string>[] = KOMBINAT_SUBCOMMANDS.map(s => ({
@@ -146,12 +147,12 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
 
         // ─── Sidebar focus ─────────────────────────────────────────────────
         {
-          title: 'Kombinat: Focus Sidebar',
+          title: 'Kombinat: Sidebar Help',
           value: 'kombinat:focus-sidebar',
-          description: 'Focus the Kombinat Writer sidebar — use 1-4 to switch tabs',
+          description: 'Show how to open and navigate the Kombinat Writer sidebar',
           keybind: 'ctrl+k',
           onSelect: () => {
-            api.ui.toast({ title: 'Kombinat', message: 'Sidebar active — 1:Dashboard 2:Gates 3:Diff 4:Viz' })
+            api.ui.toast({ title: 'Kombinat', message: 'Toggle sidebar with <leader>b (Ctrl+X, B), then 1-4: Dashboard / Gates / Diff / Viz' })
           },
         },
       ]

@@ -24,7 +24,7 @@ export function SidebarFooter(props: { session_id: string; state: SidebarState }
         </Show>
       </box>
       <text style={{ fg: 'cyan', attributes: BOLD }}>
-        Ctrl+K Focus · /kombinat Menu
+        [leader]b toggle · 1-4 tabs · /kombinat menu
       </text>
     </box>
   )
