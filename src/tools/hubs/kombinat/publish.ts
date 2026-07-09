@@ -160,7 +160,9 @@ Update \`./book/meta.json\` with:
 
 ### 9. Next Steps
 
-"Manuscript exported to [formats]. Verification: [all passed / N failures]. Files in \`output/\`. Next: upload to distributor, submit to publisher, or begin series planning."
+"Manuscript exported to [formats]. Verification: [all passed / N failures]. Files in \`output/\`."
+
+This is the terminal phase. If there are failures, offer to fix them via \`/kombinat edit\` using the \`question\` tool. Otherwise, congratulate the user — the manuscript is done.
 
 ## Supplement Skills
 

@@ -129,11 +129,14 @@ In addition to per-chapter hooks, run the book-level opening/closing analysis (\
 [Pass: all hooks strong / Conditional: [N] hooks need revision / Fail: [N] hooks missing entirely — mandatory revision]
 \`\`\`
 
-### 7. Next Steps
+### 7. Next Steps (Auto-Handoff)
 
-- Pass: "Hooks are strong. Continue with \`/kombinat read-through\` or \`/kombinat pacing-audit\`."
-- Conditional: "[N] hooks need work. Address with \`/kombinat revise\` — focus on opening and closing paragraphs."
-- Fail: "Multiple chapters missing hooks entirely. Mandatory \`/kombinat revise\` before proceeding."
+Based on the hook review result, offer to automatically continue. Use the \`question\` tool:
+- **Pass**: Offer \`/kombinat read-through\` or \`/kombinat pacing-audit\`
+- **Conditional**: Offer \`/kombinat revise\` (focus on opening/closing paragraphs)
+- **Fail**: Offer \`/kombinat revise\` (mandatory — hooks missing)
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

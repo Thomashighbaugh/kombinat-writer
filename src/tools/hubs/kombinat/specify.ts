@@ -115,9 +115,17 @@ Use the templates from \`templates/fiction/knowledge/\` for structure. Keep each
 
 Save the completed specification to \`./book/specification.md\`. If it exceeds ~500 lines, use split mode: \`./book/specification/_main.md\` as index, shards for each level.
 
-### 7. Next Steps
+### 7. Next Steps (Auto-Handoff)
 
-"Your specification is saved. Continue to Phase 3: \`/kombinat clarify\` to resolve ambiguities, or if you have contextual research to gather, \`/kombinat research\` first."
+After saving the specification, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Specification saved. Continue to the next phase?"
+Options:
+- **Yes — Clarify** → Run \`/kombinat clarify\` (call hubMenu route for \`clarify\`)
+- **Yes — Research** → Run \`/kombinat research\` (call hubMenu route for \`research\`)
+- **No — I'll continue later** → Stop
+
+If the user selects a phase, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

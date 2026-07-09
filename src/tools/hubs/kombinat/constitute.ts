@@ -189,11 +189,19 @@ Populate the constitution template with the user's answers. Save to \`./book/con
 [How revision decisions are made and applied]
 \`\`\`
 
-### 5. Next Steps
+### 5. Next Steps (Auto-Handoff)
 
-- Fiction: "Your constitution is saved. Continue to Phase 2: \`/kombinat specify\`."
-- Non-fiction: "Your constitution is saved. Continue to Phase 2: \`/kombinat research\`."
-- Mixed: "Your constitution is saved. Continue to Phase 2: \`/kombinat specify\` to establish the narrative frame, or \`/kombinat research\` to begin source gathering."
+After saving the constitution, offer to automatically continue to the next phase. Use the \`question\` tool:
+
+Question: "Constitution saved. Continue to the next phase?"
+Options:
+- **Yes — Specify** (Fiction/Mixed) → Run \`/kombinat specify\` (call hubMenu route for \`specify\`)
+- **Yes — Research** (Non-Fiction/Mixed) → Run \`/kombinat research\` (call hubMenu route for \`research\`)
+- **No — I'll continue later** → Stop
+
+If the user selects a phase, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately. Do NOT just tell them to type it — run it.
+
+For Mixed track, offer both options in the question.
 
 ## Supplement Skills
 

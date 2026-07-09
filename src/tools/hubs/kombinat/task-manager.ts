@@ -111,9 +111,17 @@ At the bottom of \`tasks.md\`, include an Editorial Cycle Log for tracking \`/ko
 
 Save to \`./book/tasks.md\`. If exceeding ~500 tasks or lines, split to \`./book/tasks/_main.md\` with per-arc/per-section shards.
 
-### 8. Next Steps
+### 8. Next Steps (Auto-Handoff)
 
-"Task dashboard created with per-chapter lifecycle tracking. Begin drafting with \`/kombinat draft Chapter N\`, or run a full editorial cycle with \`/kombinat cycle Chapter N\`."
+After saving the task dashboard, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Task dashboard created. Ready to start drafting?"
+Options:
+- **Yes — Draft** → Run \`/kombinat draft\` (call hubMenu route for \`draft\`)
+- **Yes — Cycle (draft→critique→revise→edit)** → Run \`/kombinat cycle\` (call hubMenu route for \`cycle\`)
+- **No — I'll continue later** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

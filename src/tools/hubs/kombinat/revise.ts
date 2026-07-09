@@ -166,9 +166,16 @@ After all revisions are applied across all chapters in the batch, run the revisi
 | 5 | 2 | 1 | 0 | 0 |
 \`\`\`
 
-### 8. Next Steps
+### 8. Next Steps (Auto-Handoff)
 
-"Revisions applied and verified. All Critical items addressed. Continue to line-level editing: \`/kombinat edit\`."
+After revisions are applied and verified, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Revisions applied and verified. All Critical items addressed. Continue to editing?"
+Options:
+- **Yes — Edit** → Run \`/kombinat edit\` (call hubMenu route for \`edit\`)
+- **No — I'll continue later** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: "edit"\` and execute it immediately.
 
 ### 9. Human-in-the-Loop Features
 

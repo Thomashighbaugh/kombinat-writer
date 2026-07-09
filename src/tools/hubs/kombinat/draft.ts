@@ -310,10 +310,18 @@ After the batch completes (or stops on a gate failure):
 **Remaining**: [K] chapters still pending. Run \`/kombinat draft\` for the next batch.
 \`\`\`
 
-### 5. Next Steps
+### 5. Next Steps (Auto-Handoff)
 
-- All passed: "Batch complete. [N] chapters drafted and saved. Next: \`/kombinat critique\` to review the batch, or \`/kombinat draft\` for the next batch."
-- Partial: "Batch stopped at chapter [N] due to [gate failure]. Fix and re-run \`/kombinat draft [N]\` to continue, then \`/kombinat draft\` for the remaining batch."
+After the batch completes, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Batch [complete/stopped]. [N] chapters drafted. Continue?"
+Options (adjust based on gate results):
+- **Yes — Critique** → Run \`/kombinat critique\` (call hubMenu route for \`critique\`)
+- **Yes — Draft next batch** → Run \`/kombinat draft\` again (call hubMenu route for \`draft\`)
+- **No — I'll continue later** → Stop
+
+If partial/gate failure, only offer "Draft next batch" and "Stop" — do not offer critique on incomplete batches.
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ### 6. Human-in-the-Loop Features
 

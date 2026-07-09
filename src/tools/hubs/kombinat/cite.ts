@@ -64,11 +64,15 @@ Check:
 
 Compile all cited sources into \`./book/research/bibliography/bibliography.md\` formatted in the project's selected style, alphabetised by author.
 
-### 5. Next Steps
+### 5. Next Steps (Auto-Handoff)
 
-- During research phase: "Sources ingested. Continue to Phase 5: \`/kombinat outline\`."
-- During review phase: "Citations validated. All \`[Source: key]\` markers resolved."
-- Pre-publish: "Bibliography generated. Continue to \`/kombinat publish\`."
+Context-dependent handoff using the \`question\` tool:
+
+- During research phase: Offer to run \`/kombinat outline\`
+- During review phase: "Citations validated. All \`[Source: key]\` markers resolved." — offer to run \`/kombinat publish\`
+- Pre-publish: "Bibliography generated." — offer to run \`/kombinat publish\`
+
+If the user selects a phase, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

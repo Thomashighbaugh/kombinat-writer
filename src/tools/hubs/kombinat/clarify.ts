@@ -56,9 +56,17 @@ After each resolution:
 - Replace vague language with the user's concrete answer
 - If the resolution introduces new constraints, add them with \`[Core Requirement]\` markers
 
-### 6. Next Steps
+### 6. Next Steps (Auto-Handoff)
 
-"Specification clarified. Continue to Phase 4: \`/kombinat research\` to gather contextual material, or Phase 5: \`/kombinat outline\` to begin structuring chapters."
+After clarifying, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Specification clarified. Continue to the next phase?"
+Options:
+- **Yes — Research** → Run \`/kombinat research\` (call hubMenu route)
+- **Yes — Outline** → Run \`/kombinat outline\` (call hubMenu route)
+- **No — I'll continue later** → Stop
+
+If the user selects a phase, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

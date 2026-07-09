@@ -139,10 +139,20 @@ If all gates passed for all chapters:
 **Remaining**: [K] pending chapters. Run \`/kombinat cycle\` for the next batch.
 \`\`\`
 
-### 10. Next Steps
+### 10. Next Steps (Auto-Handoff)
 
-- All passed: "Batch cycle complete. [N] chapters done. Next: \`/kombinat cycle\` for the next batch, or \`/kombinat review final\` when all chapters are done."
-- Partial: "Batch stopped at chapter [N] due to [gate failure]. Fix and re-run \`/kombinat cycle [N]\` to continue."
+After the batch cycle completes, offer to automatically continue. Use the \`question\` tool:
+
+Question varies by result:
+- **All passed**: "Batch cycle complete. [N] chapters done. Continue?"
+  - **Yes — Cycle next batch** → Run \`/kombinat cycle\` again (call hubMenu route)
+  - **Yes — Review** → Run \`/kombinat review\` (call hubMenu route)
+  - **No — I'll continue later** → Stop
+- **Partial**: "Batch stopped at chapter [N] due to [gate failure]. Continue?"
+  - **Yes — Re-run cycle from [N]** → Run \`/kombinat cycle [N]\` (call hubMenu route)
+  - **No — I'll fix manually** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

@@ -157,9 +157,16 @@ After the gate passes, create \`./book/tracking/\` files from templates:
 
 Save to \`./book/outline.md\`. If exceeding ~500 lines, split to \`./book/outline/_main.md\` with per-arc/per-section shards. Each shard must contain complete chapter entries (not fragments) — the gate parses each shard independently.
 
-### 9. Next Steps
+### 9. Next Steps (Auto-Handoff)
 
-"Outline saved and gate passed. Continue to Phase 6: \`/kombinat task-manager\`."
+After the outline is saved and the gate passes, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Outline saved and gate passed. Continue to task breakdown?"
+Options:
+- **Yes — Task Manager** → Run \`/kombinat task-manager\` (call hubMenu route for \`task-manager\`)
+- **No — I'll continue later** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: "task-manager"\` and execute it immediately.
 
 ## Gate Evidence
 

@@ -164,11 +164,14 @@ Run the trust audit (\`src/lib/trust-audit.ts\`) across all chapters. Scans for:
 [Pass: reader experience is strong / Conditional: [N] experience issues to address / Fail: reader experience is broken — major revision needed]
 \`\`\`
 
-### 6. Next Steps
+### 6. Next Steps (Auto-Handoff)
 
-- Pass: "Reader experience is strong. The manuscript is ready for final review and publication."
-- Conditional: "Reader experience has [N] issues. Address with \`/kombinat revise\` for structural fixes, or \`/kombinat hook-review\` for engagement adjustments."
-- Fail: "Reader experience is broken — confusion clusters, sustained engagement drops, or belief breaks. Major revision needed: \`/kombinat revise\`."
+Based on the read-through result, offer to automatically continue. Use the \`question\` tool:
+- **Pass**: "Reader experience is strong. The manuscript is ready for final review and publication." — Offer \`/kombinat review\` then \`/kombinat publish\`
+- **Conditional**: Offer \`/kombinat revise\` (structural) or \`/kombinat hook-review\` (engagement)
+- **Fail**: Offer \`/kombinat revise\` (major revision needed)
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

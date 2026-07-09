@@ -109,11 +109,14 @@ Compute across all chapters:
 [Pass: pacing is well-distributed / Conditional: [N] issues to address / Fail: serious pacing problems — consider restructuring]
 \`\`\`
 
-### 6. Next Steps
+### 6. Next Steps (Auto-Handoff)
 
-- Pass: "Pacing is well-distributed. Continue with \`/kombinat hook-review\` or \`/kombinat read-through\`."
-- Conditional: "Pacing has [N] issues. Address with \`/kombinat revise\` (structural changes) or \`/kombinat edit\` (rhythm adjustments)."
-- Fail: "Serious pacing problems detected. Recommend \`/kombinat outline\` to restructure chapter pacing tags before revising."
+Based on the pacing audit result, offer to automatically continue. Use the \`question\` tool:
+- **Pass**: Offer \`/kombinat hook-review\` or \`/kombinat read-through\`
+- **Conditional**: Offer \`/kombinat revise\` (structural) or \`/kombinat edit\` (rhythm)
+- **Fail**: Offer \`/kombinat outline\` (restructure pacing tags)
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

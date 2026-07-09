@@ -184,11 +184,23 @@ Produce a structured report:
 [Pass: proceed to next phase / Conditional: address issues first / Fail: restructure needed]
 \`\`\`
 
-### 7. Next Steps
+### 7. Next Steps (Auto-Handoff)
 
-- Pass: "Review passed. Continuity scan clean. Proceed to Phase 12: \`/kombinat publish\`."
-- Conditional: "Review identified [N] items to address. Recommended: \`/kombinat edit\` for line fixes, or \`/kombinat revise\` for substantive changes."
-- Fail: "Review failed. [N] continuity contradictions must be resolved. Recommended: \`/kombinat revise\` to address contradictions, then \`/kombinat edit\`."
+Based on the review verdict, offer to automatically continue. Use the \`question\` tool:
+
+Question varies by verdict:
+- **Pass**: "Review passed. Continuity scan clean. Continue to publishing?"
+  - **Yes — Publish** → Run \`/kombinat publish\` (call hubMenu route)
+  - **No — I'll continue later** → Stop
+- **Conditional**: "Review identified [N] items to address. Continue?"
+  - **Yes — Edit** (line fixes) → Run \`/kombinat edit\` (call hubMenu route)
+  - **Yes — Revise** (substantive) → Run \`/kombinat revise\` (call hubMenu route)
+  - **No — I'll review the items first** → Stop
+- **Fail**: "Review failed. [N] continuity contradictions must be resolved. Continue?"
+  - **Yes — Revise** → Run \`/kombinat revise\` (call hubMenu route)
+  - **No — I'll address these manually** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ## Supplement Skills
 

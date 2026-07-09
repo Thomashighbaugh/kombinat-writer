@@ -163,9 +163,17 @@ Apply all approved edits to chapter files. Update task status to \`[ED]\` (Edite
 **Remaining**: [K] chapters with status [R]. Run \`/kombinat edit\` again for the next batch.
 \`\`\`
 
-### 5. Next Steps
+### 5. Next Steps (Auto-Handoff)
 
-"Batch edit complete. [N] chapters edited. Continue to broad review: \`/kombinat review\`, or \`/kombinat edit\` for the next batch."
+After the batch edit completes, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Batch edit complete. [N] chapters edited. Continue?"
+Options:
+- **Yes — Review** → Run \`/kombinat review\` (call hubMenu route for \`review\`)
+- **Yes — Edit next batch** → Run \`/kombinat edit\` again (call hubMenu route for \`edit\`)
+- **No — I'll continue later** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ### 6. Human-in-the-Loop Features
 

@@ -93,10 +93,16 @@ If multiple sources address the same question, produce a synthesis note:
 
 If the track is non-fiction or mixed, maintain a running bibliography. Each new source is added to \`./book/research/bibliography/bibliography.md\` in the selected citation style (APA 7th, Chicago 17th, MLA 9th, IEEE — set during Phase 1).
 
-### 5. Next Steps
+### 5. Next Steps (Auto-Handoff)
 
-- Fiction: "Research notes saved. Continue to Phase 5: \`/kombinat outline\`."
-- Non-fiction: "Research complete. Continue to Phase 5: \`/kombinat outline\` with your sources ready for citation integration."
+After saving research notes, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Research notes saved. Continue to outlining?"
+Options:
+- **Yes — Outline** → Run \`/kombinat outline\` (call hubMenu route for \`outline\`)
+- **No — I'll continue later** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: "outline"\` and execute it immediately.
 
 ## Supplement Skills
 

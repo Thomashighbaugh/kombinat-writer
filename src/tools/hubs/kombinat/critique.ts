@@ -210,9 +210,17 @@ Save to \`./book/critique/round-N/\` where N increments. Include:
 **Remaining**: [K] chapters with status [FR]. Run \`/kombinat critique\` again for the next batch.
 \`\`\`
 
-### 8. Next Steps
+### 8. Next Steps (Auto-Handoff)
 
-"Critique round [N] saved with [M] actionable items across [K] chapters. Review the priority matrix and plan revisions: \`/kombinat revise\`."
+After saving the critique round, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Critique round [N] saved with [M] actionable items. Continue?"
+Options:
+- **Yes — Revise** → Run \`/kombinat revise\` (call hubMenu route for \`revise\`)
+- **Yes — Critique next batch** → Run \`/kombinat critique\` again (call hubMenu route for \`critique\`)
+- **No — I'll review the items first** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: <chosen>\` and execute it immediately.
 
 ### 9. Human-in-the-Loop Features
 

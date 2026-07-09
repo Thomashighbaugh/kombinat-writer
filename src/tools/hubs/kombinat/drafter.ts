@@ -40,9 +40,16 @@ For \`extend\`, \`redo\`, and \`revise\`: load the existing draft file and any r
 
 Save to \`./book/drafts/chapter_[NNNNN].md\` or \`./book/drafts/[topic].md\`. Inform the user the draft is ready for \`/kombinat draft\` which will detected and expand it.
 
-### 5. Next Steps
+### 5. Next Steps (Auto-Handoff)
 
-"Draft saved to ./book/drafts/. When you are ready for full prose, run \`/kombinat draft Chapter [N]\` — it will detect and expand this draft."`,
+After saving the draft, offer to automatically continue. Use the \`question\` tool:
+
+Question: "Draft saved to ./book/drafts/. Ready for full prose expansion?"
+Options:
+- **Yes — Draft Chapter [N]** → Run \`/kombinat draft [N]\` (call hubMenu route for \`draft\` with chapter arg)
+- **No — I'll continue later** → Stop
+
+If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat"\`, \`subcommand: "draft"\` and execute it immediately.`,
   tools: ["bash"],
   relatedSkills: ["scene-structure", "dialogue-techniques"],
   examples: [
