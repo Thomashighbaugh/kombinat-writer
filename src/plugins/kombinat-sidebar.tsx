@@ -103,12 +103,14 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
         // When the user picks a subcommand, it injects "/kombinat <subcommand> "
         // into the prompt and submits it, so the agent processes it via the
         // slash command router (kombinat.md Case 2 — direct routing, no menu).
+        // NOTE: Do NOT set `slash: {name: "kombinat"}` here — that would create
+        // a duplicate slash command entry (the .opencode/commands/kombinat.md
+        // file already registers /kombinat). This command is palette-only.
         {
-          title: 'Kombinat',
-          value: 'kombinat',
-          description: 'Kombinat Writer — professional book writing workflow',
+          title: 'Kombinat: Select Phase',
+          value: 'kombinat:select-phase',
+          description: 'Open the Kombinat phase selection menu',
           category: 'Kombinat Writer',
-          slash: { name: 'kombinat', aliases: ['kom'] },
           onSelect: () => {
             const DS = api.ui.DialogSelect
             const options: TuiDialogSelectOption<string>[] = KOMBINAT_SUBCOMMANDS.map(s => ({

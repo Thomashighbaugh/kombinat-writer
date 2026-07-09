@@ -86,6 +86,12 @@ Check for the presence and status of phase output documents. The detection follo
 | \`publishing\` | All content approved, ready to export | Phase 12: \`/kombinat publish\` |
 | \`complete\` | Everything finalised | Celebrate the achievement |
 
+**IMPORTANT — Do not belabor the obvious.** When the state is \`not-started\`, simply state "New project — starting from Phase 1" and recommend \`/kombinat constitute\`. Do NOT repeatedly mention that the project is blank, empty, or has no documents — the user knows, they just created it. Be concise. One sentence of context, then the recommendation.
+
+**Also check for imported files.** Before reporting state, check for:
+- \`./imported-lorebook.json\` — if present, mention "Lorebook import detected — run \`/kombinat constitute\` to convert it into series lorebook and pre-fill your constitution."
+- \`./premise.md\` — if present, mention "Premise document detected — run \`/kombinat constitute\` to use it as a starting point."
+
 ### 4. Build Contextualised Roadmap
 
 Present a roadmap that:

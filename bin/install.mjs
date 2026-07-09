@@ -350,6 +350,36 @@ async function main() {
         ],
     });
 
+    // ── Lorebook / Premise import option ──
+    const importChoice = await select({
+        message: 'Do you have a lorebook, premise, or world-building document to import?',
+        choices: [
+            { name: 'No', value: 'none', description: 'Start from scratch' },
+            { name: 'Yes — Lorebook (SillyTavern/JanitorAI/CharacterAI JSON)', value: 'lorebook', description: 'Import a world info / character card export' },
+            { name: 'Yes — Premise document (Markdown, text, outline)', value: 'premise', description: 'Import a written premise, synopsis, or idea file' },
+        ],
+    });
+
+    let importPath = null;
+    if (importChoice !== 'none') {
+        const { input } = await import('@inquirer/prompts');
+        importPath = await input({
+            message: importChoice === 'lorebook'
+                ? 'Path to your lorebook JSON file:'
+                : 'Path to your premise/idea document:',
+            default: '',
+        });
+        if (importPath && fs.existsSync(importPath)) {
+            const destName = importChoice === 'lorebook' ? 'imported-lorebook.json' : 'premise.md';
+            const destPath = path.join(process.cwd(), destName);
+            fs.copySync(importPath, destPath);
+            success(`Imported ${importChoice} → ${destName}`);
+        } else if (importPath) {
+            warn(`File not found: ${importPath} — skipping import (you can add it later via /kombinat constitute)`);
+            importPath = null;
+        }
+    }
+
     header('Project Structure');
     await initProjectStructure(track);
 
@@ -388,7 +418,11 @@ async function main() {
     log('  Next steps:');
     log('    1. Open your project in OpenCode (restart if already open)');
     log('    2. Type /kombinat to open the instant phase menu');
-    log('    3. Or invoke a specific phase directly (e.g. /kombinat outline)');
+    if (importPath) {
+        log(`    3. Run /kombinat constitute — it will detect your imported ${importChoice === 'lorebook' ? 'lorebook' : 'premise'} and use it`);
+    } else {
+        log('    3. Or invoke a specific phase directly (e.g. /kombinat outline)');
+    }
     log('');
     log('  Phases: guided, constitute, specify, clarify, research, outline,');
     log('          task-manager, draft, critique, revise, edit, review,');
