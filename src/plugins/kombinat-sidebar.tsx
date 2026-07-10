@@ -66,14 +66,14 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
   onMount(() => {
     api.ui.toast({
       title: 'Kombinat Writer',
-      message: 'Sidebar ready — toggle with <leader>b (Ctrl+X, B), then 1-4 to switch tabs, or type /kombinat for the menu',
+      message: 'Sidebar ready — <leader>k cycles tabs, <leader>1-4 jumps, or /kombinat for the menu',
       duration: 8000,
       variant: 'info',
     })
   })
 
-  // Register keybinds for tab switching (1-4)
-  useKeybinds(api, setActiveTab)
+  // Register keybinds for tab switching (<leader>k cycles, <leader>1-4 jumps)
+  useKeybinds(api, () => activeTab(), setActiveTab)
 
   // Register sidebar slots — slot renderers receive (ctx, props) where ctx has theme
   api.slots.register({
@@ -152,7 +152,7 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
           description: 'Show how to open and navigate the Kombinat Writer sidebar',
           keybind: 'ctrl+k',
           onSelect: () => {
-            api.ui.toast({ title: 'Kombinat', message: 'Toggle sidebar with <leader>b (Ctrl+X, B), then 1-4: Dashboard / Gates / Diff / Viz' })
+            api.ui.toast({ title: 'Kombinat', message: '<leader>k cycles tabs · <leader>1-4 jumps · /kombinat for menu' })
           },
         },
       ]

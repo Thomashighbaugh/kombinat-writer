@@ -1,7 +1,7 @@
 /** @jsxImportSource @opentui/solid */
 import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
-import { statusIcon, BOLD } from '../utils/format.js'
+import { statusIcon } from '../utils/format.js'
 
 /** Renders the sidebar footer with tab navigation hints and gate status counts. */
 export function SidebarFooter(props: { session_id: string; state: SidebarState }) {
@@ -23,8 +23,8 @@ export function SidebarFooter(props: { session_id: string; state: SidebarState }
           </box>
         </Show>
       </box>
-      <text style={{ fg: 'cyan', attributes: BOLD }}>
-        {'[leader]b toggle · 1-4 tabs · /kombinat menu'}
+      <text style={{ fg: 'gray' }}>
+        {'<leader>k cycle · <leader>1-4 jump · /kombinat menu'}
       </text>
     </box>
   )
