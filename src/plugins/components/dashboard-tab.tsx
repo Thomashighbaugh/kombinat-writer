@@ -2,6 +2,7 @@
 import { For, Show, createMemo } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { phaseLabel, stateLabel, bar, BOLD } from '../utils/format.js'
+import { c } from '../utils/colors.js'
 
 /** Renders the Dashboard tab with project status, document checklist, chapter counts, and quick actions. */
 export function DashboardTab(props: { state: SidebarState }) {
@@ -22,39 +23,39 @@ export function DashboardTab(props: { state: SidebarState }) {
   })
 
   const statusMark = (ok: boolean) => (ok ? '✓' : '○')
-  const statusColor = (ok: boolean) => (ok ? 'green' : 'gray')
+  const statusColor = (ok: boolean) => (ok ? c.pass : c.alt)
 
   return (
     <box flexDirection="column">
       {/* ─── Project Status ─── */}
-      <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Project ──'}</text>
-      <Show when={project()} fallback={<text style={{ fg: 'gray' }}>{'No project detected'}</text>}>
+      <text style={{ fg: c.header, attributes: BOLD }}>{'── Project ──'}</text>
+      <Show when={project()} fallback={<text style={{ fg: c.textMuted }}>{'No project detected'}</text>}>
         <box flexDirection="row">
-          <text style={{ fg: 'white' }}>{'Track: '}</text>
-          <text style={{ fg: 'yellow' }}>{project()!.track}</text>
+          <text style={{ fg: c.text }}>{'Track: '}</text>
+          <text style={{ fg: c.magenta }}>{project()!.track}</text>
         </box>
         <box flexDirection="row">
-          <text style={{ fg: 'white' }}>{'Phase: '}</text>
-          <text style={{ fg: 'green' }}>{phaseLabel(project()!.phase)}</text>
+          <text style={{ fg: c.text }}>{'Phase: '}</text>
+          <text style={{ fg: c.green }}>{phaseLabel(project()!.phase)}</text>
         </box>
-        <text style={{ fg: 'gray' }}>
+        <text style={{ fg: c.textMuted }}>
           {`State: ${stateLabel(project()!.state)}`}
         </text>
 
         {/* Phase Progress Bar */}
         <box marginTop={1} flexDirection="row">
-          <text style={{ fg: 'gray' }}>{'Progress: '}</text>
-          <text style={{ fg: 'cyan' }}>
+          <text style={{ fg: c.textMuted }}>{'Progress: '}</text>
+          <text style={{ fg: c.cyan }}>
             {bar(currentPhaseIndex() + 1, phaseList().length, 15)}
           </text>
-          <text style={{ fg: 'gray' }}>
+          <text style={{ fg: c.textMuted }}>
             {` ${String(currentPhaseIndex() + 1)}/${String(phaseList().length)}`}
           </text>
         </box>
 
         {/* ─── Documents ─── */}
         <box marginTop={1}>
-          <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Documents ──'}</text>
+          <text style={{ fg: c.header, attributes: BOLD }}>{'── Documents ──'}</text>
         </box>
         <box flexDirection="row">
           <text style={{ fg: statusColor(project()!.constitution) }}>
@@ -81,26 +82,26 @@ export function DashboardTab(props: { state: SidebarState }) {
 
         {/* ─── Chapters ─── */}
         <box marginTop={1}>
-          <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Chapters ──'}</text>
+          <text style={{ fg: c.header, attributes: BOLD }}>{'── Chapters ──'}</text>
         </box>
-        <text style={{ fg: 'white' }}>
+        <text style={{ fg: c.text }}>
           {`Drafted: ${String(project()!.chapters)}`}
         </text>
-        <text style={{ fg: 'white' }}>
+        <text style={{ fg: c.text }}>
           {`Critique rounds: ${String(project()!.critiqueRounds)}`}
         </text>
-        <text style={{ fg: 'white' }}>
+        <text style={{ fg: c.text }}>
           {`Revisions: ${String(project()!.revisions)}`}
         </text>
         <Show when={project()!.edited > 0}>
-          <text style={{ fg: 'white' }}>
+          <text style={{ fg: c.text }}>
             {`Edited: ${String(project()!.edited)}`}
           </text>
         </Show>
 
         {/* ─── Next Recommended ─── */}
         <box marginTop={1}>
-          <text style={{ fg: 'yellow' }}>
+          <text style={{ fg: c.orange }}>
             {`→ Next: ${project()!.nextRecommended || '—'}`}
           </text>
         </box>
@@ -108,18 +109,18 @@ export function DashboardTab(props: { state: SidebarState }) {
 
       {/* ─── Quick Actions ─── */}
       <box marginTop={1}>
-        <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Actions ──'}</text>
+        <text style={{ fg: c.header, attributes: BOLD }}>{'── Actions ──'}</text>
       </box>
-      <text style={{ fg: 'gray' }}>
+      <text style={{ fg: c.textMuted }}>
         {'Run /kombinat commands in prompt:'}
       </text>
-      <text style={{ fg: 'blue' }}>
+      <text style={{ fg: c.blue }}>
         {'/kombinat draft · /kombinat critique'}
       </text>
-      <text style={{ fg: 'blue' }}>
+      <text style={{ fg: c.blue }}>
         {'/kombinat revise · /kombinat edit'}
       </text>
-      <text style={{ fg: 'blue' }}>
+      <text style={{ fg: c.blue }}>
         {'/kombinat verify · /kombinat status'}
       </text>
     </box>

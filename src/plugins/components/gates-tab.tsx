@@ -2,6 +2,7 @@
 import { For, Show, createMemo, createSignal } from 'solid-js'
 import type { SidebarState, GateRunResult } from '../hooks/use-project-state.js'
 import { statusIcon, statusColor, truncate, BOLD } from '../utils/format.js'
+import { c } from '../utils/colors.js'
 
 const GATE_LIST = [
   { id: 'outline', name: 'Outline Gate', category: 'Structure' },
@@ -47,11 +48,11 @@ export function GatesTab(props: { state: SidebarState }) {
 
   return (
     <box flexDirection="column">
-      <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Quality Gates ──'}</text>
+      <text style={{ fg: c.header, attributes: BOLD }}>{'── Quality Gates ──'}</text>
 
       <box marginTop={1}>
         <text
-          style={{ fg: running() ? 'yellow' : 'green', attributes: BOLD }}
+          style={{ fg: running() ? c.warn : c.pass, attributes: BOLD }}
           on:select={() => handleRunAll()}
         >
           {running() ? '⟳ Running...' : '[R] Run All Gates'}
@@ -61,13 +62,13 @@ export function GatesTab(props: { state: SidebarState }) {
       <For each={CATEGORIES}>
         {(cat) => (
           <box flexDirection="column" marginTop={1}>
-            <text style={{ fg: 'cyan' }}>{`─ ${cat} ─`}</text>
+            <text style={{ fg: c.subheader }}>{`─ ${cat} ─`}</text>
             <For each={GATE_LIST.filter(g => g.category === cat)}>
               {(gateDef) => {
                 const result = () => gateResults()[gateDef.id]
                 return (
                   <text
-                    style={{ fg: result() ? statusColor(result()!.status) : 'gray' }}
+                    style={{ fg: result() ? statusColor(result()!.status) : c.alt }}
                     on:select={() => handleRunSingle(gateDef.id)}
                   >
                     {result() ? `${statusIcon(result()!.status)} ${gateDef.name}` : `○ ${gateDef.name}`}
@@ -83,15 +84,15 @@ export function GatesTab(props: { state: SidebarState }) {
       <Show when={selectedDetail()} keyed>
         {(detail: GateRunResult) => (
           <box marginTop={1} flexDirection="column">
-            <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Details ──'}</text>
+            <text style={{ fg: c.header, attributes: BOLD }}>{'── Details ──'}</text>
             <text style={{ fg: statusColor(detail.status), attributes: BOLD }}>
               {`${statusIcon(detail.status)} ${detail.gateName}`}
             </text>
-            <text style={{ fg: 'white' }}>
+            <text style={{ fg: c.text }}>
               {truncate(detail.detail, 200)}
             </text>
             <Show when={detail.fixHint}>
-              <text style={{ fg: 'yellow' }}>
+              <text style={{ fg: c.warn }}>
                 {`Fix: ${truncate(detail.fixHint!, 150)}`}
               </text>
             </Show>

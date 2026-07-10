@@ -8,6 +8,9 @@ dist/
 !src/tools/*.js
 !src/plugins/index.js
 
+# TypeScript build artifacts (sourcemaps in bin/)
+bin/**/*.js.map
+
 # Environment
 .env
 .env.local

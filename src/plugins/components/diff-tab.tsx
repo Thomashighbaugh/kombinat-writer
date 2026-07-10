@@ -2,6 +2,7 @@
 import { For, Show, createMemo, createSignal } from 'solid-js'
 import type { SidebarState, DiffHunk } from '../hooks/use-project-state.js'
 import { truncate, BOLD } from '../utils/format.js'
+import { c } from '../utils/colors.js'
 
 /** Renders the Diff Approval tab with hunk navigation, side-by-side diff, and approve/reject/veto actions. */
 export function DiffTab(props: { state: SidebarState }) {
@@ -16,19 +17,19 @@ export function DiffTab(props: { state: SidebarState }) {
 
   return (
     <box flexDirection="column">
-      <text style={{ fg: 'cyan', attributes: BOLD }}>{'── Diff Approval ──'}</text>
+      <text style={{ fg: c.header, attributes: BOLD }}>{'── Diff Approval ──'}</text>
 
       <Show
         when={diff()}
         fallback={
           <box flexDirection="column" marginTop={1}>
-            <text style={{ fg: 'gray' }}>{'No pending diffs.'}</text>
-            <text style={{ fg: 'gray' }}>
+            <text style={{ fg: c.textMuted }}>{'No pending diffs.'}</text>
+            <text style={{ fg: c.textMuted }}>
               {'Run /kombinat revise to generate diffs.'}
             </text>
             <box marginTop={1}>
               <text
-                style={{ fg: 'green', attributes: BOLD }}
+                style={{ fg: c.pass, attributes: BOLD }}
                 on:select={() => props.state.injectCommand('/kombinat revise')}
               >
                 {'[Enter] Run /kombinat revise'}
@@ -42,20 +43,20 @@ export function DiffTab(props: { state: SidebarState }) {
           <box flexDirection="column">
             {/* ─── Hunk Summary ─── */}
             <box marginTop={1} flexDirection="row">
-              <text style={{ fg: 'white' }}>
+              <text style={{ fg: c.textBright }}>
                 {d.file}
               </text>
-              <text style={{ fg: 'gray' }}>
+              <text style={{ fg: c.textMuted }}>
                 {`  ${String(d.approved)}/${String(d.totalHunks)} approved · ${String(d.rejected)} rejected · ${String(d.pending)} pending`}
               </text>
             </box>
 
             {/* ─── Hunk Navigator ─── */}
             <box marginTop={1} flexDirection="column">
-              <text style={{ fg: 'cyan' }}>
+              <text style={{ fg: c.cyan }}>
                 {`Hunk ${String(selectedHunk() + 1)} of ${String(d.hunks.length)}`}
               </text>
-              <text style={{ fg: 'gray' }}>
+              <text style={{ fg: c.textMuted }}>
                 {'[↑↓] Navigate  [A] Approve  [R] Reject  [|] Veto'}
               </text>
             </box>
@@ -64,25 +65,25 @@ export function DiffTab(props: { state: SidebarState }) {
             <Show when={currentHunk()} keyed>
               {(hunk: DiffHunk) => (
                 <box marginTop={1} flexDirection="column">
-                  <text style={{ fg: 'gray' }}>
+                  <text style={{ fg: c.textMuted }}>
                     {`Lines ${String(hunk.startLine)}–${String(hunk.endLine)}`}
                   </text>
 
                   {/* Before */}
-                  <text style={{ fg: 'red' }}>{'─ Before ─'}</text>
+                  <text style={{ fg: c.diffRemoved }}>{'─ Before ─'}</text>
                   <For each={hunk.before}>
                     {(line) => (
-                      <text style={{ fg: 'diffRemoved' }}>
+                      <text style={{ fg: c.diffRemoved }}>
                         {`- ${truncate(line, 60)}`}
                       </text>
                     )}
                   </For>
 
                   {/* After */}
-                  <text style={{ fg: 'green' }}>{'─ After ─'}</text>
+                  <text style={{ fg: c.diffAdded }}>{'─ After ─'}</text>
                   <For each={hunk.after}>
                     {(line) => (
-                      <text style={{ fg: 'diffAdded' }}>
+                      <text style={{ fg: c.diffAdded }}>
                         {`+ ${truncate(line, 60)}`}
                       </text>
                     )}
@@ -91,9 +92,9 @@ export function DiffTab(props: { state: SidebarState }) {
                   {/* Hunk status */}
                   <box marginTop={1}>
                     <text style={{
-                      fg: hunk.status === 'approved' ? 'green'
-                        : hunk.status === 'rejected' ? 'red'
-                        : 'yellow',
+                      fg: hunk.status === 'approved' ? c.pass
+                        : hunk.status === 'rejected' ? c.block
+                        : c.warn,
                     }}>
                       {`Status: ${hunk.status.toUpperCase()}${hunk.severity ? `  Severity: ${hunk.severity}` : ''}`}
                     </text>
@@ -104,14 +105,14 @@ export function DiffTab(props: { state: SidebarState }) {
 
             {/* ─── Action Buttons ─── */}
             <box marginTop={1} flexDirection="row">
-              <text style={{ fg: 'green', attributes: BOLD }}>{'[A] Approve'}</text>
+              <text style={{ fg: c.pass, attributes: BOLD }}>{'[A] Approve'}</text>
               <text>{'  '}</text>
-              <text style={{ fg: 'red', attributes: BOLD }}>{'[R] Reject'}</text>
+              <text style={{ fg: c.block, attributes: BOLD }}>{'[R] Reject'}</text>
               <text>{'  '}</text>
-              <text style={{ fg: 'yellow', attributes: BOLD }}>{'[|] Veto'}</text>
+              <text style={{ fg: c.warn, attributes: BOLD }}>{'[|] Veto'}</text>
             </box>
 
-            <text style={{ fg: 'gray' }}>
+            <text style={{ fg: c.textMuted }}>
               {'[Enter] Apply approved · [Esc] Cancel'}
             </text>
           </box>

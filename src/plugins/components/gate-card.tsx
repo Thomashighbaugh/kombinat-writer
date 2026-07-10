@@ -2,17 +2,18 @@
 import { Show } from 'solid-js'
 import type { GateRunResult } from '../hooks/use-project-state.js'
 import { statusIcon, statusColor, BOLD } from '../utils/format.js'
+import { c } from '../utils/colors.js'
 
 /** Renders a single quality gate as a selectable card with status icon and detail preview. */
 export function GateCard(props: { result: () => GateRunResult | undefined; gateName: string; gateId: string; onSelect: () => void }) {
   const r = props.result
   return (
     <box flexDirection="column" on:select={props.onSelect}>
-      <text style={{ fg: r() ? statusColor(r()!.status) : 'gray' }}>
+      <text style={{ fg: r() ? statusColor(r()!.status) : c.alt }}>
         {r() ? `${statusIcon(r()!.status)} ${props.gateName}` : `○ ${props.gateName}`}
       </text>
       <Show when={r()}>
-        <text style={{ fg: 'gray' }}>
+        <text style={{ fg: c.textMuted }}>
           {r()!.detail.slice(0, 50)}
         </text>
       </Show>

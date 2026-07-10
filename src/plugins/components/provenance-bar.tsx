@@ -2,6 +2,7 @@
 import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { provenanceBar } from '../utils/chart-rendering.js'
+import { c } from '../utils/colors.js'
 
 /** Renders a compact provenance bar showing author vs AI contribution split. */
 export function ProvenanceBar(props: { state: SidebarState }) {
@@ -9,13 +10,13 @@ export function ProvenanceBar(props: { state: SidebarState }) {
   return (
     <Show
       when={prov()}
-      fallback={<text style={{ fg: 'gray' }}>{'No provenance data'}</text>}
+      fallback={<text style={{ fg: c.textMuted }}>{'No provenance data'}</text>}
       keyed
     >
       {(p) => (
         <box flexDirection="column">
-          <text style={{ fg: 'cyan' }}>{'Provenance'}</text>
-          <text style={{ fg: 'white' }}>
+          <text style={{ fg: c.cyan }}>{'Provenance'}</text>
+          <text style={{ fg: c.textBright }}>
             {provenanceBar({
               author: p.author,
               aiDrafted: p.aiDrafted,
@@ -25,10 +26,10 @@ export function ProvenanceBar(props: { state: SidebarState }) {
               authorRevised: p.authorRevised,
             })}
           </text>
-          <text style={{ fg: 'green' }}>
+          <text style={{ fg: c.green }}>
             {`🟢 Author: ${String(p.author + p.authorRevised)} (${String(p.percentages.author)}%)`}
           </text>
-          <text style={{ fg: 'blue' }}>
+          <text style={{ fg: c.blue }}>
             {`🔵 AI: ${String(p.aiDrafted + p.aiRevised + p.aiEdited + p.aiModified)} (${String(p.percentages.ai)}%)`}
           </text>
         </box>

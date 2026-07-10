@@ -4,6 +4,7 @@
  */
 
 import { createTextAttributes } from '@opentui/core'
+import { c } from './colors.js'
 
 /** Truncates text to maxLen, appending ellipsis if truncated. */
 export function truncate(text: string, maxLen: number): string {
@@ -14,7 +15,7 @@ export function truncate(text: string, maxLen: number): string {
 /** Pads text to width with trailing spaces. */
 export function padRight(text: string, width: number): string {
   if (text.length >= width) return text
-  return text + ' '.repeat(width - text.length)
+  return text + ' '.repeat(width - width - text.length)
 }
 
 /** Pads text to width with leading spaces. */
@@ -79,11 +80,11 @@ export function statusIcon(status: 'pass' | 'block' | 'warn'): string {
   }
 }
 
-/** Returns the terminal color name for a gate status. */
+/** Returns the Sanatana color name for a gate status. */
 export function statusColor(status: 'pass' | 'block' | 'warn'): string {
   switch (status) {
-    case 'pass': return 'green'
-    case 'block': return 'red'
-    case 'warn': return 'yellow'
+    case 'pass': return c.pass
+    case 'block': return c.block
+    case 'warn': return c.warn
   }
 }
