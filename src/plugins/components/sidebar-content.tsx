@@ -1,29 +1,31 @@
 /** @jsxImportSource @opentui/solid */
-import { Show } from 'solid-js'
 import type { SidebarState } from '../hooks/use-project-state.js'
 import { DashboardTab } from './dashboard-tab.js'
 import { GatesTab } from './gates-tab.js'
 import { DiffTab } from './diff-tab.js'
 import { VizTab } from './viz-tab.js'
+import { c } from '../utils/colors.js'
 
-/** Renders the active tab content (Dashboard, Gates, Diff, or Viz). */
+/**
+ * Renders all four sidebar sections stacked vertically as a single scrollable
+ * column. No tabs, no keybinds. The user scrolls down to see everything.
+ *
+ * Sections (in order):
+ *   1. Project status (Dashboard)
+ *   2. Quality gates
+ *   3. Diff approval
+ *   4. Visualizations
+ */
 export function SidebarContent(props: { session_id: string; state: SidebarState }) {
-  const tab = props.state.activeTab
-
   return (
     <box flexDirection="column">
-      <Show when={tab() === 'dashboard'}>
-        <DashboardTab state={props.state} />
-      </Show>
-      <Show when={tab() === 'gates'}>
-        <GatesTab state={props.state} />
-      </Show>
-      <Show when={tab() === 'diff'}>
-        <DiffTab state={props.state} />
-      </Show>
-      <Show when={tab() === 'viz'}>
-        <VizTab state={props.state} />
-      </Show>
+      <DashboardTab state={props.state} />
+      <text style={{ fg: c.alt }}>{'─'}</text>
+      <GatesTab state={props.state} />
+      <text style={{ fg: c.alt }}>{'─'}</text>
+      <DiffTab state={props.state} />
+      <text style={{ fg: c.alt }}>{'─'}</text>
+      <VizTab state={props.state} />
     </box>
   )
 }

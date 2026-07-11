@@ -192,7 +192,36 @@ Save to \`./book/critique/round-N/\` where N increments. Include:
 - \`chapter-M.md\` — per-chapter critique for each chapter in batch
 - \`rejected-items.md\` — items that failed the specificity gate (for transparency)
 
-### 7. Batch Report
+### 7. Numeric Score (REQUIRED)
+
+Every critique round produces a **numeric score** (0-100) per chapter and a batch-level score. The score is not a vibe — it is computed deterministically from the issues found and the rubric below.
+
+#### Per-chapter score formula
+
+Score formula: start at 100, subtract 8 per critical issue, 3 per major, 1 per minor, 0.2 per observation.
+
+\`unsuppressed\` means the issue is still in the chapter. If the author has already fixed something, the score improves. The critique reports the score as found, before revision.
+
+#### Batch score
+
+\`\`\`
+batch_score = arithmetic_mean(chapter_scores)
+\`\`\`
+
+#### Score tiers
+
+| Score | Tier | Meaning |
+|-------|------|---------|
+| 95-100 | Excellent | Ready to revise (or publish) |
+| 85-94 | Good | Revisable with focused work |
+| 70-84 | Needs work | Significant revision required |
+| < 70 | Blocked | Structural problems — reconsider the chapter |
+
+**The revise phase will refuse to mark a batch complete if batch_score < 95.** This forces revision to actually fix the issues, not just acknowledge them.
+
+### 7b. Score in Batch Report
+
+The batch report must include the score:
 
 \`\`\`markdown
 ## Batch Critique Report
@@ -201,13 +230,14 @@ Save to \`./book/critique/round-N/\` where N increments. Include:
 **Scope**: Chapters [start]–[end] ([N] of [M] requested)
 **Specificity gate**: [N] items generated, [M] passed, [K] rejected for vagueness
 
-| Chapter | Critical | Major | Minor | Observation | Rejected |
-|---------|----------|-------|-------|-------------|----------|
-| 3 | 1 | 3 | 2 | 1 | 4 |
-| 4 | 0 | 2 | 4 | 2 | 3 |
-| 5 | 2 | 1 | 3 | 0 | 5 |
+| Chapter | Critical | Major | Minor | Score | Tier |
+|---------|----------|-------|-------|-------|------|
+| 3 | 1 | 3 | 2 | 78 | Needs work |
+| 4 | 0 | 2 | 4 | 87 | Good |
+| 5 | 2 | 1 | 3 | 76 | Needs work |
 
-**Remaining**: [K] chapters with status [FR]. Run \`/kombinat critique\` again for the next batch.
+**Batch score**: 80.3 / 100
+**Verdict**: Below 95 — revise phase must run before user is informed.
 \`\`\`
 
 ### 8. Next Steps (Auto-Handoff)

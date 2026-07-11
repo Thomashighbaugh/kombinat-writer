@@ -145,6 +145,97 @@ After all revisions are applied across all chapters in the batch, run the revisi
 
 **If gate fails: STOP. Report specific failures. Do not mark revisions complete.**
 
+### 5b. Post-Revision Score (REQUIRED — gates the cycle)
+
+After revisions are applied, **re-score every chapter in the batch** using the same formula as the critique phase:
+
+\`\`\`
+chapter_score = 100
+  - (remaining_critical_issues * 8)
+  - (remaining_major_issues * 3)
+  - (remaining_minor_issues * 1)
+  - (remaining_observations * 0.2)
+\`\`\`
+
+**The batch is not "done" until batch_score ≥ 95.** If below 95:
+
+1. List the specific issues that still lower the score
+2. Run another revision pass on those chapters
+3. Re-score
+4. Repeat up to 3 cycles
+
+If after 3 cycles the score is still below 95, **stop and report to the user** that the cycle is incomplete and the chapters need author intervention. Do not silently mark the cycle complete.
+
+#### Auto-revision loop (no user prompt)
+
+Critique and revision form a closed loop. After revision is complete:
+
+1. If batch_score ≥ 95 → proceed to Post-Cycle Gate (5c).
+2. If batch_score < 95 → re-run critique on the same batch, then revise, then re-score.
+3. Up to 3 cycles silently. After 3 cycles, surface the issue to the user.
+
+**The user does not see intermediate results. They only see the final report when the cycle is genuinely complete.**
+
+### 5c. Post-Cycle Gate (CONTINUITY + PROSE POLISH)
+
+When batch_score ≥ 95, run two final-pass checks **before reporting to the user**:
+
+1. **Continuity Check** (skill: \`consistency-checker\`)
+   - Run the consistency-checker skill against every chapter in the batch
+   - Produces: chronological, character behaviour, world rules, plot causality, knowledge state issues
+   - Any Critical or Major issue must be fixed via a final revision pass
+   - Re-score after each fix; if score drops below 95, re-revise
+
+2. **Prose Polishing Check** (skill: \`prose-polishing-check\`)
+   - Run the prose-polishing-check skill against every chapter in the batch
+   - Produces: sentence rhythm, sound/texture, AI-slop residual, word choice, punctuation issues
+   - Any Critical AI-slop residual must be removed
+   - Any Major issue should be addressed
+   - Polish score ≥ 95 required
+
+**Loop logic:**
+
+\`\`\`
+while batch_score < 95 OR continuity_blockers_exist OR polish_score < 95:
+  if batch_score < 95:
+    critique → revise → re-score
+  if continuity_blockers_exist:
+    apply targeted continuity fixes → re-run consistency-checker
+  if polish_score < 95:
+    apply targeted prose fixes → re-run prose-polishing-check
+
+  if loop_iteration > 3:
+    STOP and report incomplete cycle to user
+\`\`\`
+
+**Only when all three conditions are satisfied** (score ≥ 95, no continuity blockers, polish ≥ 95) does the revise phase report completion to the user.
+
+### 5d. User-Facing Report
+
+The final report the user sees:
+
+\`\`\`markdown
+## Cycle Complete — Batch: Chapters [start]–[end]
+
+| Gate | Result | Score |
+|------|--------|-------|
+| Critique (initial) | [Tier] | 78.3 |
+| Revision (final) | PASS | 96.1 |
+| Continuity check | PASS | N/A |
+| Prose polish | PASS | 97.2 |
+
+**Summary**:
+- [N] critique items addressed
+- [M] AI-slop instances removed
+- [K] continuity issues fixed
+- [L] prose issues fixed
+- [J] revision cycles total
+
+**The chapters are ready for the next phase.**
+\`\`\`
+
+The user does **not** see the intermediate work. They see the summary only when the cycle is genuinely complete.
+
 ### 6. Update Tracking and Tasks
 
 - Update \`./book/tracking/\` to reflect changes to character state, plot, timeline, or sources
@@ -212,7 +303,16 @@ None specific to this phase.
     { input: "/kombinat revise 1 3-8", approach: "Revises chapters 3-8 from critique round 1" },
     { input: "/kombinat revise Chapter 3", approach: "Single-chapter override — revises only chapter 3" }
   ],
-  warnings: ["Batch mode is the DEFAULT — single-chapter requires explicit chapter number", "Revision-verify gate is a HARD BLOCK — unaddressed Critical items or unverified applied revisions block completion", "Every revision log entry must cross-reference the critique item ID", "Declined items must have documented rationale", "Critique round is loaded ONCE for the entire batch"]
+  warnings: [
+    "Batch mode is the DEFAULT — single-chapter requires explicit chapter number",
+    "Revision-verify gate is a HARD BLOCK — unaddressed Critical items or unverified applied revisions block completion",
+    "Every revision log entry must cross-reference the critique item ID",
+    "Declined items must have documented rationale",
+    "Critique round is loaded ONCE for the entire batch",
+    "Batch score MUST be ≥ 95 before the cycle is reported complete. The revise phase must run a closed loop with critique until this is achieved (up to 3 cycles silently).",
+    "After batch_score ≥ 95, run continuity check and prose-polishing check. Both must pass before reporting to the user.",
+    "The user sees the final summary only when the cycle is genuinely complete. Do NOT prompt the user between critique and revise cycles."
+  ]
 }
 
 export default spec

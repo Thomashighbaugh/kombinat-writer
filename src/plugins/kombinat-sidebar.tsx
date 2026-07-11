@@ -3,20 +3,18 @@
  * Kombinat Writer Sidebar — TUI Plugin Entry Point
  *
  * Registers:
- *   - `/kombinat` slash command → instant DialogSelect menu (no LLM delay)
- *   - 3 sidebar slots (title, content, footer) with 4 tabs
- *
- * Uses @opentui/solid for terminal rendering.
- * Calls Kombinat's lib files directly as functions.
+ *   - `/kombinat` slash command → instant DialogSelect menu
+ *   - 3 sidebar slots (title, content, footer) — all four tabs (Dashboard,
+ *     Gates, Diff, Viz) are rendered as a single scrollable column. No tabs.
+ *     No keybinds. The user scrolls down through everything.
  */
 
 import type { TuiPlugin, TuiPluginApi, TuiPluginMeta, TuiDialogSelectOption } from '@opencode-ai/plugin/tui'
-import { createSignal, onMount } from 'solid-js'
+import { onMount } from 'solid-js'
 import { SidebarTitle } from './components/sidebar-title.js'
 import { SidebarContent } from './components/sidebar-content.js'
 import { SidebarFooter } from './components/sidebar-footer.js'
-import { useKeybinds } from './hooks/use-keybinds.js'
-import { useProjectState, setInjector, type Tab } from './hooks/use-project-state.js'
+import { useProjectState, setInjector } from './hooks/use-project-state.js'
 
 /** All 25 subcommands for the instant menu */
 const KOMBINAT_SUBCOMMANDS = [
@@ -50,30 +48,25 @@ const KOMBINAT_SUBCOMMANDS = [
 const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
   const projectRoot = api.state.path.directory
 
-  const [activeTab, setActiveTab] = createSignal<Tab>('dashboard')
-
-  // Wire command injector so sidebar can inject /kombinat commands into the prompt
+  // Wire command injector so sidebar can inject /kombinat commands into the prompt.
   setInjector((cmd: string) => {
     api.client.tui.appendPrompt({ text: cmd + ' ' }).catch(() => {})
   })
 
-  const sidebarState = useProjectState(projectRoot, activeTab, setActiveTab)
+  // Single sidebar state — no tab switching. All four sections stack vertically
+  // and the user scrolls through them. The signature still accepts activeTab for
+  // backward compatibility, but it's a no-op now.
+  const noopSet = () => {}
+  const sidebarState = useProjectState(projectRoot, () => 'dashboard', noopSet)
 
-  // Show a launch toast so the user knows the sidebar exists and how to use it.
-  // NOTE: OpenCode has no plugin API to open/focus the sidebar programmatically.
-  // The sidebar must be toggled with the built-in keybind (default <leader>b = Ctrl+X, B).
-  // Once visible, 1-4 switch tabs.
   onMount(() => {
     api.ui.toast({
       title: 'Kombinat Writer',
-      message: 'Ctrl+X,K cycles tabs · Ctrl+X,1-4 jumps · /kombinat for the menu',
-      duration: 8000,
+      message: 'Scroll sidebar for all sections · /kombinat for the menu',
+      duration: 6000,
       variant: 'info',
     })
   })
-
-  // Register keybinds for tab switching (<leader>k cycles, <leader>1-4 jumps)
-  useKeybinds(api, () => activeTab(), setActiveTab)
 
   // Register sidebar slots — slot renderers receive (ctx, props) where ctx has theme
   api.slots.register({
@@ -89,7 +82,7 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
     },
   })
 
-  // Register commands: instant /kombinat menu + sidebar focus
+  // Register commands: instant /kombinat menu only.
   if (api.command) {
     api.command.register(() => {
       const commands: Array<{
@@ -97,15 +90,9 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
         value: string
         description?: string
         category?: string
-        keybind?: string
         slash?: { name: string; aliases?: string[] }
         onSelect?: () => void
       }> = [
-        // ─── Instant /kombinat menu ────────────────────────────────────────
-        // Shows a DialogSelect immediately — no LLM processing delay.
-        // When the user picks a subcommand, it injects "/kombinat-router <subcommand> "
-        // into the prompt and submits it, so the agent processes it via the
-        // kombinat-router.md slash command (Case 2 — direct phase execution, no menu).
         {
           title: 'Kombinat: Phase Menu',
           value: 'kombinat',
@@ -126,37 +113,21 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
                 title: 'Kombinat Writer — Select Phase',
                 placeholder: 'Choose a phase...',
                 options,
-          onSelect: (sel: TuiDialogSelectOption<string>) => {
-            api.ui.dialog.clear()
-            const cmd = `/kombinat-router ${sel.value}`
-            api.ui.toast({ title: 'Kombinat', message: `Routing to ${sel.value}` })
-            // Inject the routing command into the prompt and submit.
-            // The kombinat-router.md slash command handles direct phase execution
-            // (Case 2), so the agent calls hubMenu route and executes the phase.
-            api.client.tui.appendPrompt({ text: cmd + ' ' }).then(() => {
-              // Auto-submit so the agent picks it up immediately
-              setTimeout(() => {
-                api.client.tui.appendPrompt({ text: '\n' }).catch(() => {})
-              }, 100)
-            }).catch(() => {})
-          },
+                onSelect: (sel: TuiDialogSelectOption<string>) => {
+                  api.ui.dialog.clear()
+                  const cmd = `/kombinat-router ${sel.value}`
+                  api.ui.toast({ title: 'Kombinat', message: `Routing to ${sel.value}` })
+                  api.client.tui.appendPrompt({ text: cmd + ' ' }).then(() => {
+                    setTimeout(() => {
+                      api.client.tui.appendPrompt({ text: '\n' }).catch(() => {})
+                    }, 100)
+                  }).catch(() => {})
+                },
               })
             )
           },
         },
-
-        // ─── Sidebar focus ─────────────────────────────────────────────────
-        {
-          title: 'Kombinat: Sidebar Help',
-          value: 'kombinat:focus-sidebar',
-          description: 'Show how to open and navigate the Kombinat Writer sidebar',
-          keybind: 'ctrl+k',
-          onSelect: () => {
-            api.ui.toast({ title: 'Kombinat', message: 'Ctrl+X,K cycles tabs · Ctrl+X,1-4 jumps · /kombinat for menu' })
-          },
-        },
       ]
-
       return commands
     })
   }

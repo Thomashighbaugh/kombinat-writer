@@ -12,7 +12,7 @@ export function SidebarFooter(props: { session_id: string; state: SidebarState }
     <box flexDirection="column">
       <box flexDirection="row" justifyContent="space-between">
         <text style={{ fg: c.textMuted }}>
-          {'1:Dash 2:Gates 3:Diff 4:Viz'}
+          {`${String(summary().total)} gates`}
         </text>
         <Show when={summary().total > 0}>
           <box flexDirection="row">
@@ -25,7 +25,7 @@ export function SidebarFooter(props: { session_id: string; state: SidebarState }
         </Show>
       </box>
       <text style={{ fg: c.textMuted }}>
-        {'Ctrl+X,K cycle · Ctrl+X,1-4 jump · /kombinat menu'}
+        {'Scroll for all sections · /kombinat menu'}
       </text>
     </box>
   )
