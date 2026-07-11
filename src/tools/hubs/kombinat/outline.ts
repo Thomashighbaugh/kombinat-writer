@@ -125,8 +125,15 @@ Run the outline gate. The gate checks:
 | Pacing tag | Declared per chapter | Hard |
 | Pacing distribution | Not lopsided (4+ chapters) | Hard |
 | Open threads | Declared for middle chapters | Warning |
+| \`./book/outline.md\` exists | File present on disk, non-empty | Hard |
+| \`./book/outline/chapter_NN.md\` per chapter | One file per chapter, non-empty | Hard |
+| \`./book/outline/_index.json\` valid | Parseable JSON, lists every chapter | Hard |
 
 **If the gate fails, STOP. Report each blocking issue with the specific chapter and field. Do not proceed to task-manager.**
+
+### 5b. Outline File Recovery (CRITICAL)
+
+If the outline files are missing or stale, the user must be informed explicitly. If the gate detects a missing \`outline.md\` but \`./book/outline/chapter_NN.md\` files exist, the agent can re-derive \`outline.md\` from the per-chapter files. Conversely, if \`outline.md\` exists but the per-chapter files are missing, re-derive them. Never silently treat a missing file as "fine, agent has it in memory" — the disk is the source of truth.
 
 ### 6. Revision Cycle (if gate fails)
 
@@ -153,9 +160,87 @@ After the gate passes, create \`./book/tracking/\` files from templates:
 - Non-fiction: \`source-tracker.json\`, \`argument-progression.json\`
 - Mixed: Both sets
 
-### 8. Save Outline
+### 8. Save Outline — Dual Format (CRITICAL for disaster recovery)
 
-Save to \`./book/outline.md\`. If exceeding ~500 lines, split to \`./book/outline/_main.md\` with per-arc/per-section shards. Each shard must contain complete chapter entries (not fragments) — the gate parses each shard independently.
+The outline is the **single source of truth** for the entire book. If anything in the generation process is lost (session crash, agent memory overflow, model change, restart from scratch), the outline on disk is what lets work resume without re-deriving the entire plot from scratch.
+
+For that reason the outline is saved in **TWO complementary formats**, both required:
+
+#### 8a. \`./book/outline.md\` — Human-editable single file
+
+The full outline as one markdown document. This is the file the user opens to read the whole book at a glance, make sweeping edits, or print out. Keep it under ~500 lines if possible; if it grows beyond that, see 8c.
+
+#### 8b. \`./book/outline/chapter_NN.md\` — Per-chapter files (REQUIRED)
+
+One file per chapter in \`./book/outline/\`. Each file contains the full chapter entry from the spec (pacing, timeline, characters, open threads, scene beats, setup/payoff, continuity anchors). The user can open any one of these in their editor to focus on a single chapter without scrolling through 500+ lines.
+
+Filenames are zero-padded: \`chapter_01.md\`, \`chapter_02.md\`, …, \`chapter_15.md\`. Each file is a complete, standalone chapter entry — never a fragment.
+
+Non-fiction: \`section_01.md\`, \`section_02.md\`, … (or \`chapter_NN.md\` if you prefer that naming).
+
+#### 8c. \`./book/outline/_index.json\` — Machine-readable index (REQUIRED)
+
+A JSON index the agent loads to know which file maps to which chapter. Schema:
+
+\`\`\`json
+{
+  "version": 1,
+  "generated_at": "2026-07-11T00:00:00Z",
+  "track": "fiction",
+  "total_chapters": 15,
+  "chapters": [
+    {
+      "number": 1,
+      "title": "The Cave",
+      "file": "chapter_01.md",
+      "pacing": "Calm",
+      "arc": "Survival",
+      "characters": ["Fubiki", "Hika"]
+    },
+    { "...": "..." }
+  ]
+}
+\`\`\`
+
+The drafting phase reads this index to load just one chapter's outline without parsing the whole document. The gate verifies this file exists and lists every chapter.
+
+#### 8d. File Existence Gate (HARD BLOCK)
+
+Before proceeding to task-manager, **verify all required files exist** on disk:
+
+| File | Existence | Content sanity |
+|------|-----------|----------------|
+| \`./book/outline.md\` | MUST exist | Non-empty, contains chapter headings |
+| \`./book/outline/\` directory | MUST exist | Directory present |
+| \`./book/outline/chapter_NN.md\` | MUST exist for every chapter (1..N) | Non-empty, contains scene beats |
+| \`./book/outline/_index.json\` | MUST exist | Valid JSON, every chapter listed |
+
+If any file is missing or malformed, do **not** proceed. Re-run the save step until every file is on disk. The outline is not "done" until the user can \`ls book/outline/\` and see one file per chapter plus the index.
+
+#### 8e. Disaster Recovery Contract
+
+The outline directory must be **regenerable from \`outline.md\` alone**. If the per-chapter files or index are ever lost, the user can run:
+
+\`\`\`
+# (Internal helper, see bin/scripts/split-outline.mjs)
+\`\`\`
+
+…or simply ask the agent: "Split book/outline.md into per-chapter files." The agent must re-derive \`./book/outline/chapter_NN.md\` and \`_index.json\` from the single source-of-truth file. This makes \`book/outline.md\` the canonical root, and the per-chapter files a derivable cache.
+
+#### 8f. \`./book/tracking/plot-tracker.json\` Cross-Reference
+
+The outline and the tracking system must agree. After saving the outline, write a cross-reference to \`./book/tracking/plot-tracker.json\` (or update the existing one) with:
+
+\`\`\`json
+{
+  "outline_file": "./book/outline.md",
+  "outline_index": "./book/outline/_index.json",
+  "chapter_count": 15,
+  "last_outline_update": "2026-07-11T00:00:00Z"
+}
+\`\`\`
+
+This makes the plot tracker know where to find the canonical outline.
 
 ### 9. Next Steps (Auto-Handoff)
 
@@ -200,7 +285,11 @@ The gate produces evidence, not just pass/fail. Each check reports what it found
     "Outline gate is a HARD BLOCK — task-manager phase will not proceed until the gate passes",
     "Revision cycle runs up to 3 times — persistent failures require manual review",
     "Each chapter must declare scene beats, setup/payoff chains, and continuity anchors — coarse summaries fail the gate",
-    "Setup/payoff chains must be bidirectional — Chapter A 'sets-up: ChB' requires Chapter B 'payoff-from: ChA'"
+    "Setup/payoff chains must be bidirectional — Chapter A 'sets-up: ChB' requires Chapter B 'payoff-from: ChA'",
+    "The outline MUST be persisted to disk in BOTH formats: ./book/outline.md AND ./book/outline/chapter_NN.md per chapter — the agent's memory is NOT a substitute for the file on disk",
+    "Per-chapter outline files are the user's primary editing surface — one file per chapter lets the user edit a single chapter without scrolling through the whole book",
+    "./book/outline/_index.json is REQUIRED — it is the machine-readable manifest the drafting phase uses to load just one chapter's outline at a time",
+    "The outline is the single source of truth for the entire book — if everything else is lost, ./book/outline.md is what lets work resume"
   ]
 }
 
