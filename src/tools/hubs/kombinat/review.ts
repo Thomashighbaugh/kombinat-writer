@@ -11,6 +11,18 @@ const spec: HubSubcommandSpec = {
 
 Assess the project's overall health before marking chapters complete or proceeding to publication. Review is the final quality gate before the publish phase. **Includes an automated continuity scan across all chapters that hard-blocks on contradictions.**
 
+## Step 0 (REQUIRED) — Generate Visualizations First
+
+Before running any review mode, the visualization dataset must be regenerated and current. The pacing curve, thread matrix, cognitive load, and escalation data inform the review's findings.
+
+1. Import the \`buildVizDataset\` function from \`./lib/viz-aggregator.ts\`
+2. Call it with the project root: \`buildVizDataset(projectRoot)\`
+3. Save to \`./book/visualizations/dataset.json\`
+4. Verify the dataset is fresh (within 5 minutes) and non-empty
+5. Report: "Visualization dataset regenerated: [N] chapters, [M] threads, [K] cognitive load points."
+
+**Do not proceed with framework, content, final, or factual analysis until the viz dataset is current.** The pacing curve reveals sagging chapters the prose-level review would miss; the thread matrix reveals dropped/orphaned threads; the cognitive load chart reveals overloaded chapters.
+
 ## Review Modes
 
 | Mode | When to Use | Scope |
@@ -21,6 +33,10 @@ Assess the project's overall health before marking chapters complete or proceedi
 | Factual (non-fiction) | Before publish | Validates all factual claims against sources |
 
 ## Execution Steps
+
+### 0. Visualization Pre-Generation (HARD BLOCK)
+
+Run step 0 above. Abort with clear error if \`buildVizDataset\` throws or the dataset is stale.
 
 ### 1. Framework Analysis
 

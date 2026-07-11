@@ -4,28 +4,27 @@ import { DashboardTab } from './dashboard-tab.js'
 import { GatesTab } from './gates-tab.js'
 import { DiffTab } from './diff-tab.js'
 import { VizTab } from './viz-tab.js'
-import { c } from '../utils/colors.js'
 
 /**
  * Renders all four sidebar sections stacked vertically as a single scrollable
- * column. No tabs, no keybinds. The user scrolls down to see everything.
+ * column. The Viz and Diff sections are HIDDEN entirely when there is no
+ * data to show — no garish empty placeholders.
  *
- * Sections (in order):
- *   1. Project status (Dashboard)
- *   2. Quality gates
- *   3. Diff approval
- *   4. Visualizations
+ * Sections:
+ *   1. Project status (Dashboard) — always shown
+ *   2. Quality gates — always shown (the run-all action is useful)
+ *   3. Diff approval — only when diffData() is non-null
+ *   4. Visualizations — only when vizData() has chapters
  */
 export function SidebarContent(props: { session_id: string; state: SidebarState }) {
   return (
     <box flexDirection="column">
       <DashboardTab state={props.state} />
-      <text style={{ fg: c.alt }}>{'─'}</text>
       <GatesTab state={props.state} />
-      <text style={{ fg: c.alt }}>{'─'}</text>
-      <DiffTab state={props.state} />
-      <text style={{ fg: c.alt }}>{'─'}</text>
-      <VizTab state={props.state} />
+      {props.state.diffData() ? <DiffTab state={props.state} /> : null}
+      {props.state.vizData() && props.state.vizData()!.chapters > 0 ? (
+        <VizTab state={props.state} />
+      ) : null}
     </box>
   )
 }

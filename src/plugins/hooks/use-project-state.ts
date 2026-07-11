@@ -1,6 +1,7 @@
 import { createSignal, createMemo, onMount } from 'solid-js'
 import { detectState, type ProjectState } from '../../lib/project-state.js'
 import { runGate, type GateResult } from '../../lib/quality-gates.js'
+import { buildVizDataset, type VizDataset } from '../../lib/viz-aggregator.js'
 
 /** Active sidebar tab identifier. */
 export type Tab = 'dashboard' | 'gates' | 'diff' | 'viz'
@@ -30,7 +31,7 @@ export interface SidebarState {
   refreshDiff: () => void
   provenanceData: () => ProvenanceSummary | null
   refreshProvenance: () => void
-  vizData: () => VizData | null
+  vizData: () => VizDataset | null
   refreshViz: () => void
   injectCommand: (cmd: string) => void
 }
@@ -75,6 +76,8 @@ export interface VizData {
   provenance: ProvenanceSummary | null
   cognitiveLoad: { chapter: number; load: number }[]
   escalation: { beat: number; tension: number }[]
+  generatedAt?: string
+  chapters?: number
 }
 
 // ─── Singleton state signals ─────────────────────────────────────────────────
@@ -83,7 +86,7 @@ const [project, setProject] = createSignal<ProjectState | null>(null)
 const [gateResults, setGateResults] = createSignal<Record<string, GateRunResult>>({})
 const [diffData, setDiffData] = createSignal<DiffData | null>(null)
 const [provenanceData, setProvenanceData] = createSignal<ProvenanceSummary | null>(null)
-const [vizData, setVizData] = createSignal<VizData | null>(null)
+const [vizData, setVizData] = createSignal<VizDataset | null>(null)
 
 // Reference to api.client.tui.appendPrompt — set by entry plugin
 let injectFn: ((cmd: string) => void) | null = null
@@ -111,6 +114,9 @@ export function useProjectState(
     try {
       const state = detectState(projectRoot)
       setProject(state)
+      // Auto-generate viz on every project refresh so it's ready before
+      // verify/review run.
+      refreshViz()
     } catch (e) {
       setProject(null)
     }
@@ -181,8 +187,9 @@ export function useProjectState(
 
   const refreshViz = () => {
     try {
-      setVizData(null)
-    } catch {
+      const dataset = buildVizDataset(projectRoot)
+      setVizData(dataset.chapters > 0 ? dataset : null)
+    } catch (e) {
       setVizData(null)
     }
   }

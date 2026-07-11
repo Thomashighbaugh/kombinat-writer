@@ -22,20 +22,7 @@ export function DiffTab(props: { state: SidebarState }) {
       <Show
         when={diff()}
         fallback={
-          <box flexDirection="column" marginTop={1}>
-            <text style={{ fg: c.textMuted }}>{'No pending diffs.'}</text>
-            <text style={{ fg: c.textMuted }}>
-              {'Run /kombinat revise to generate diffs.'}
-            </text>
-            <box marginTop={1}>
-              <text
-                style={{ fg: c.pass, attributes: BOLD }}
-                on:select={() => props.state.injectCommand('/kombinat revise')}
-              >
-                {'[Enter] Run /kombinat revise'}
-              </text>
-            </box>
-          </box>
+          <text style={{ fg: c.textMuted }}>{'No pending diffs.'}</text>
         }
         keyed
       >

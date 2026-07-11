@@ -16,6 +16,26 @@ Run quality gates independently of the drafting pipeline. Use this when you want
 - Enforce style sheet on a chapter
 - Run any specific gate on demand
 
+## Step 0 (REQUIRED) — Generate Visualizations First
+
+Before running ANY verify subcommand, the visualization data must be regenerated. The pacing, thread, cognitive-load, and escalation datasets inform what the gates look for.
+
+1. Import the \`buildVizDataset\` function from \`./lib/viz-aggregator.ts\`
+2. Call it with the project root: \`buildVizDataset(projectRoot)\`
+3. Save the result to \`./book/visualizations/dataset.json\` (overwriting the previous one)
+4. Report: "Visualization dataset regenerated: [N] chapters, [M] threads, [K] cognitive load points."
+
+**Do not run gates until the viz dataset is fresh.** Running continuity without first regenerating viz will miss thread dropouts and pacing regressions that the viz data would have surfaced.
+
+## Step 0b — Verify the dataset is current
+
+After regenerating, check that:
+- \`./book/visualizations/dataset.json\` exists
+- \`generatedAt\` timestamp is within the last 5 minutes
+- \`chapters > 0\` (otherwise there is nothing to verify)
+
+If any check fails, abort with: "Visualization dataset is stale or missing — run step 0 first."
+
 ## Sub-Commands
 
 ### \`/kombinat verify voice-init\`
@@ -25,6 +45,7 @@ Generate voice profiles from existing chapters.
 **Prerequisites:**
 - At least 3 chapters must exist in \`./book/content/\` (need enough data to fingerprint)
 - XML versions should exist in \`./book/drafts/\` (for accurate extraction)
+- **Visualization dataset must be current (step 0)**
 
 **Process:**
 1. Read all chapters and their XML versions
