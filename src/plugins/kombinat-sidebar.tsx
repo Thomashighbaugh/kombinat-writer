@@ -66,7 +66,7 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
   onMount(() => {
     api.ui.toast({
       title: 'Kombinat Writer',
-      message: 'Sidebar ready — <leader>k cycles tabs, <leader>1-4 jumps, or /kombinat for the menu',
+      message: 'Ctrl+X,K cycles tabs · Ctrl+X,1-4 jumps · /kombinat for the menu',
       duration: 8000,
       variant: 'info',
     })
@@ -152,7 +152,7 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
           description: 'Show how to open and navigate the Kombinat Writer sidebar',
           keybind: 'ctrl+k',
           onSelect: () => {
-            api.ui.toast({ title: 'Kombinat', message: '<leader>k cycles tabs · <leader>1-4 jumps · /kombinat for menu' })
+            api.ui.toast({ title: 'Kombinat', message: 'Ctrl+X,K cycles tabs · Ctrl+X,1-4 jumps · /kombinat for menu' })
           },
         },
       ]

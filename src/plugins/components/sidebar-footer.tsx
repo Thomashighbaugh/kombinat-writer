@@ -25,7 +25,7 @@ export function SidebarFooter(props: { session_id: string; state: SidebarState }
         </Show>
       </box>
       <text style={{ fg: c.textMuted }}>
-        {'<leader>k cycle · <leader>1-4 jump · /kombinat menu'}
+        {'Ctrl+X,K cycle · Ctrl+X,1-4 jump · /kombinat menu'}
       </text>
     </box>
   )
