@@ -32,7 +32,9 @@ for (const id of gates) {
 }
 ```
 
-Or via the TUI keybind `r` which fires the same code path inside the plugin.
+Or via the **Run All Gates** button in the sidebar.
+
+There is no global keybind. Single-letter bindings would block typing, modifier+letter pairs collide with OpenCode's built-ins, and leader-based bindings require expansion that wasn't worth the complexity. Use the button or the slash command.
 
 ## Output format
 
