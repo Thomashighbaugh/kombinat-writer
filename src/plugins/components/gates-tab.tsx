@@ -55,7 +55,7 @@ export function GatesTab(props: { state: SidebarState }) {
           style={{ fg: running() ? c.warn : c.pass, attributes: BOLD }}
           on:select={() => handleRunAll()}
         >
-          {running() ? '⟳ Running...' : '[R] Run All Gates'}
+          {running() ? '⟳ Running...' : '[R] Run All Gates  ·  /kombinat-gates'}
         </text>
       </box>
 
