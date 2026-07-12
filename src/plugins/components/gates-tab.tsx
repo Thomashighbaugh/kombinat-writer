@@ -15,7 +15,11 @@ const GATE_LIST = [
 
 const CATEGORIES = ['Structure', 'Drafting', 'Revision', 'Consistency', 'Constraints'] as const
 
-/** Renders the Quality Gates tab with per-category gate list, run-all control, and detail view. */
+/**
+ * Renders the Quality Gates section. Buttons are <box> elements with on:select
+ * — text-only elements are not clickable in OpenCode's TUI. The run-all box
+ * is at the top, per-gate boxes follow, grouped by category.
+ */
 export function GatesTab(props: { state: SidebarState }) {
   const [selectedGate, setSelectedGate] = createSignal<string | null>(null)
   const [running, setRunning] = createSignal(false)
@@ -28,6 +32,7 @@ export function GatesTab(props: { state: SidebarState }) {
   })
 
   const handleRunAll = async () => {
+    if (running()) return
     setRunning(true)
     try {
       await props.state.runAllGates()
@@ -37,6 +42,7 @@ export function GatesTab(props: { state: SidebarState }) {
   }
 
   const handleRunSingle = async (gateId: string) => {
+    if (running()) return
     setRunning(true)
     try {
       await props.state.runSingleGate(gateId)
@@ -50,15 +56,24 @@ export function GatesTab(props: { state: SidebarState }) {
     <box flexDirection="column">
       <text style={{ fg: c.header, attributes: BOLD }}>{'── Quality Gates ──'}</text>
 
-      <box marginTop={1}>
-        <text
-          style={{ fg: running() ? c.warn : c.pass, attributes: BOLD }}
-          on:select={() => handleRunAll()}
-        >
-          {running() ? '⟳ Running...' : '▶ Run All Gates  ·  /kombinat-gates'}
+      {/* ─── Run All button (a clickable box) ─────────────────────────── */}
+      <box
+        marginTop={1}
+        border={['top', 'bottom']}
+        borderColor={c.subheader}
+        paddingLeft={1}
+        paddingRight={1}
+        flexDirection="row"
+        on:select={handleRunAll}
+      >
+        <text style={{ fg: running() ? c.warn : c.pass, attributes: BOLD }}>
+          {running() ? '⟳ Running all gates...' : '▶ Run All Gates'}
         </text>
+        <text>{'   '}</text>
+        <text style={{ fg: c.textMuted }}>{'or /kombinat-gates'}</text>
       </box>
 
+      {/* ─── Per-gate boxes (each clickable) ──────────────────────────── */}
       <For each={CATEGORIES}>
         {(cat) => (
           <box flexDirection="column" marginTop={1}>
@@ -67,12 +82,16 @@ export function GatesTab(props: { state: SidebarState }) {
               {(gateDef) => {
                 const result = () => gateResults()[gateDef.id]
                 return (
-                  <text
-                    style={{ fg: result() ? statusColor(result()!.status) : c.alt }}
+                  <box
+                    flexDirection="row"
+                    paddingLeft={1}
                     on:select={() => handleRunSingle(gateDef.id)}
                   >
-                    {result() ? `${statusIcon(result()!.status)} ${gateDef.name}` : `○ ${gateDef.name}`}
-                  </text>
+                    <text style={{ fg: result() ? statusColor(result()!.status) : c.alt }}>
+                      {result() ? `${statusIcon(result()!.status)} ${gateDef.name}` : `○ ${gateDef.name}`}
+                    </text>
+                    <text style={{ fg: c.textMuted }}>{'   /kombinat verify gates ' + gateDef.id}</text>
+                  </box>
                 )
               }}
             </For>
@@ -80,7 +99,7 @@ export function GatesTab(props: { state: SidebarState }) {
         )}
       </For>
 
-      {/* ─── Detail View ─── */}
+      {/* ─── Detail View ──────────────────────────────────────────────── */}
       <Show when={selectedDetail()} keyed>
         {(detail: GateRunResult) => (
           <box marginTop={1} flexDirection="column">

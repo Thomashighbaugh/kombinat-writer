@@ -107,22 +107,40 @@ export function DashboardTab(props: { state: SidebarState }) {
         </box>
       </Show>
 
-      {/* ─── Quick Actions ─── */}
+      {/* ─── Quick Actions (clickable boxes) ─── */}
       <box marginTop={1}>
         <text style={{ fg: c.header, attributes: BOLD }}>{'── Actions ──'}</text>
       </box>
-      <text style={{ fg: c.textMuted }}>
-        {'Run /kombinat commands in prompt:'}
-      </text>
-      <text style={{ fg: c.blue }}>
-        {'/kombinat draft · /kombinat critique'}
-      </text>
-      <text style={{ fg: c.blue }}>
-        {'/kombinat revise · /kombinat edit'}
-      </text>
-      <text style={{ fg: c.blue }}>
-        {'/kombinat verify · /kombinat status'}
-      </text>
+      <box flexDirection="row" on:select={() => props.state.injectCommand('/kombinat draft')}>
+        <text style={{ fg: c.pass, attributes: BOLD }}>{'▶ '}</text>
+        <text style={{ fg: c.blue }}>{'/kombinat draft'}</text>
+        <text style={{ fg: c.textMuted }}>{'   batch draft pending chapters'}</text>
+      </box>
+      <box flexDirection="row" on:select={() => props.state.injectCommand('/kombinat critique')}>
+        <text style={{ fg: c.pass, attributes: BOLD }}>{'▶ '}</text>
+        <text style={{ fg: c.blue }}>{'/kombinat critique'}</text>
+        <text style={{ fg: c.textMuted }}>{'   batch critique with 95% score'}</text>
+      </box>
+      <box flexDirection="row" on:select={() => props.state.injectCommand('/kombinat revise')}>
+        <text style={{ fg: c.pass, attributes: BOLD }}>{'▶ '}</text>
+        <text style={{ fg: c.blue }}>{'/kombinat revise'}</text>
+        <text style={{ fg: c.textMuted }}>{'   batch revise to 95%'}</text>
+      </box>
+      <box flexDirection="row" on:select={() => props.state.injectCommand('/kombinat edit')}>
+        <text style={{ fg: c.pass, attributes: BOLD }}>{'▶ '}</text>
+        <text style={{ fg: c.blue }}>{'/kombinat edit'}</text>
+        <text style={{ fg: c.textMuted }}>{'   three-pass line/copy/proofread'}</text>
+      </box>
+      <box flexDirection="row" on:select={() => props.state.injectCommand('/kombinat verify')}>
+        <text style={{ fg: c.pass, attributes: BOLD }}>{'▶ '}</text>
+        <text style={{ fg: c.blue }}>{'/kombinat verify'}</text>
+        <text style={{ fg: c.textMuted }}>{'   run all quality gates'}</text>
+      </box>
+      <box flexDirection="row" on:select={() => props.state.injectCommand('/kombinat status')}>
+        <text style={{ fg: c.pass, attributes: BOLD }}>{'▶ '}</text>
+        <text style={{ fg: c.blue }}>{'/kombinat status'}</text>
+        <text style={{ fg: c.textMuted }}>{'   show project state'}</text>
+      </box>
     </box>
   )
 }
