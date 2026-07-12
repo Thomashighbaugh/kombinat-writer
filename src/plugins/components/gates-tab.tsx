@@ -59,10 +59,7 @@ export function GatesTab(props: { state: SidebarState }) {
       {/* ─── Run All button (a clickable box) ─────────────────────────── */}
       <box
         marginTop={1}
-        border={['top', 'bottom']}
-        borderColor={c.subheader}
         paddingLeft={1}
-        paddingRight={1}
         flexDirection="row"
         on:select={handleRunAll}
       >
