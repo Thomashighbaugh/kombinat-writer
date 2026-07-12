@@ -217,12 +217,13 @@ async function copySidebarPlugin(overwriteAll, skipAll) {
     return { overwriteAll: newOverwriteAll, skipAll: newSkipAll, copied };
 }
 
-// ─── Project tui.json + package.json (TUI plugin registration) ──────────────
-// OpenCode loads TUI plugins from tui.json, NOT from opencode.jsonc's plugin
-// array (that array is for server plugins that export { server() }).
-// tui.json is loaded from the global config dir AND per-project .opencode/
-// directories. We write .opencode/tui.json so the plugin is scoped to the
-// book project.
+// ─── Project tui.json + opencode.jsonc + package.json (plugin registration) ─
+// OpenCode requires the plugin to be registered in BOTH:
+//   1. .opencode/tui.json  — TUI keybind/theme config + TUI plugin paths
+//   2. .opencode/opencode.jsonc — main config whose "plugin" array loads plugins
+//
+// tui.json alone is NOT sufficient — the plugin won't appear in `opencode debug
+// info` and won't load. Both files must list the plugin path.
 //
 // The plugin's built bundle externalizes solid-js and @opentui/solid (they
 // are baked into the OpenCode bun runtime but need to be resolvable from
@@ -231,6 +232,7 @@ async function copySidebarPlugin(overwriteAll, skipAll) {
 async function ensureProjectConfig() {
     const projectRoot = process.cwd();
     const tuiJsonPath = path.join(DEST_DIR, 'tui.json');
+    const opencodeJsoncPath = path.join(DEST_DIR, 'opencode.jsonc');
     const pkgJsonPath = path.join(DEST_DIR, 'package.json');
     const PLUGIN_ENTRY = './plugins/kombinat-sidebar/index.js';
 
@@ -268,6 +270,40 @@ async function ensureProjectConfig() {
                 config.plugin = [...plugins, PLUGIN_ENTRY];
                 fs.writeFileSync(tuiJsonPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
                 success(`Added kombinat-sidebar to .opencode/tui.json plugin array`);
+            }
+        }
+    }
+
+    // ── opencode.jsonc: register the plugin so it actually loads ──
+    // tui.json alone is NOT sufficient — the plugin must also be in
+    // opencode.jsonc's "plugin" array or it won't appear in the TUI.
+    if (!fs.existsSync(opencodeJsoncPath)) {
+        const config = {
+            plugin: [PLUGIN_ENTRY],
+        };
+        fs.writeFileSync(opencodeJsoncPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
+        success('Created .opencode/opencode.jsonc with kombinat-sidebar plugin registered');
+    } else {
+        const raw = fs.readFileSync(opencodeJsoncPath, 'utf-8');
+        let config;
+        try {
+            // Strip JSONC comments before parsing
+            const stripped = raw.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+            config = JSON.parse(stripped);
+        } catch {
+            warn('Could not parse existing .opencode/opencode.jsonc — skipping plugin registration. Add this manually:');
+            log(`  "plugin": ["${PLUGIN_ENTRY}"]`);
+            config = null;
+        }
+        if (config) {
+            const plugins = Array.isArray(config.plugin) ? config.plugin : [];
+            const hasEntry = plugins.some(p => typeof p === 'string' && p.endsWith('kombinat-sidebar/index.js'));
+            if (hasEntry) {
+                log('.opencode/opencode.jsonc already registers kombinat-sidebar — skipping');
+            } else {
+                config.plugin = [...plugins, PLUGIN_ENTRY];
+                fs.writeFileSync(opencodeJsoncPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
+                success(`Added kombinat-sidebar to .opencode/opencode.jsonc plugin array`);
             }
         }
     }
@@ -547,12 +583,14 @@ async function main() {
     log(`    ${chalk.green('\u2713')} templates/`);
     log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (built bundle)`);
     log('');
-    log(`  ${chalk.green('\u2713')} tui.json — TUI plugin registered`);
+    log(`  ${chalk.green('\u2713')} tui.json — TUI keybinds + plugin path`);
+    log(`  ${chalk.green('\u2713')} opencode.jsonc — plugin registered (loads the sidebar)`);
     log(`  ${chalk.green('\u2713')} package.json — runtime deps (solid-js, @opentui/solid, fs-extra)`);
     log('');
     log('  Next steps:');
     log('    1. Open your project in OpenCode (restart if already open)');
-    log('    2. Type /kombinat to open the instant phase menu');
+    log('    2. Verify plugin loaded: opencode debug info should list kombinat-sidebar');
+    log('    3. Type /kombinat to open the instant phase menu');
     if (isSeries) {
         log(`    ✓ Series linked: ${seriesId}, book ${bookNumber}`);
     }
