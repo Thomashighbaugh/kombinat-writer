@@ -66,6 +66,11 @@ Load the shared context ONCE for the entire batch:
 - Constitution, specification/outline, knowledge, tracking
 - All chapters in the batch (read all at once — context window can handle it)
 - XML versions from \`./book/drafts/\` if available (metadata + tracking updates useful for critique)
+- **Relevant lore context**: Run the lore query script to retrieve only the lore most relevant to the chapters being critiqued:
+  \`\`\`bash
+  bun .opencode/tools/lib/scripts/lore-query.mjs --query "Critique context: characters, world rules, and terminology for chapters [range] of [book title]" --top 5 --rerank
+  \`\`\`
+  The script uses local Ollama models (pedrohml/mxbai-embed-large + hans-tech/bge-reranker-v2-m3) to find the most relevant lore. If unavailable, read \`./series/lorebook/\` and \`./book/knowledge/\* manually.
 
 ### 3. Generate Critique (with Specificity Gate)
 

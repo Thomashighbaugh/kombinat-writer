@@ -29,6 +29,34 @@ A coarse outline ("Chapter 5: They argue and reconcile") forces the LLM to impro
 | Tracking init | Character state, plot, timeline | Source index, argument status | Both |
 | Output | \`outline.md\` with per-chapter scene beats and anchor map | \`outline.md\` with per-section claim/evidence beats | \`outline.md\` with dual hierarchy |
 
+## Pre-Execution: Load Relevant Lore Context (CRITICAL)
+
+Before loading source documents, retrieve the most relevant lore context for this outlining task. The full lorebook may be large (hundreds of KB), but only a small subset is relevant to the current work.
+
+**Run the lore query script:**
+\`\`\`bash
+bun .opencode/tools/lib/scripts/lore-query.mjs \
+  --query "Outline for [book title] — characters, world, timeline, and terminology relevant to structuring a [N]-chapter [fiction/non-fiction] book" \
+  --top 5 --rerank
+\`\`\`
+
+This uses local Ollama models (pedrohml/mxbai-embed-large for embedding, hans-tech/bge-reranker-v2-m3 for reranking) to find the lore entries most relevant to this outlining task. Only the top 5 most relevant chunks are returned — this keeps the prompt lean while ensuring critical lore is present.
+
+**What the script checks:**
+- \`./series/lorebook/characters.md\` — Character profiles spanning all books
+- \`./series/lorebook/world.md\` — World-building, geography, history, rules
+- \`./series/lorebook/glossary.md\` — Terms, names, places, concepts
+- \`./series/lorebook/timeline.json\` — Series-wide timeline events
+- \`./series/lorebook/threads.md\` — Cross-book plot threads and arcs
+- \`./book/knowledge/character-profiles.md\` — This book's character profiles
+- \`./book/knowledge/voice-profiles.json\` — Character voice patterns
+- \`./book/knowledge/locations.md\` — Location descriptions
+- \`./book/knowledge/world-rules.md\` — This book's world rules
+
+If the script outputs nothing (no lore files exist, or all models are unavailable), proceed without lore context. In that case, also check for the older manual lore files listed below as a fallback.
+
+**Fallback (if script unavailable):** Read each lore file directly with \`bash\`/\`cat\`. The lorebook takes precedence over any conflicting outline details — if a character's lorebook profile says they're a trained soldier but the outline drafts them as a fumbling amateur, the lorebook wins.
+
 ## Prerequisites
 
 - Fiction: \`./book/specification.md\` must exist
@@ -39,7 +67,7 @@ A coarse outline ("Chapter 5: They argue and reconcile") forces the LLM to impro
 
 ### 1. Load Source Documents
 
-Read the constitution, specification (fiction) or research notes (non-fiction), and any existing knowledge files. Note the constitution's pacing strategy — the outline's pacing distribution will be checked against it.
+Read the constitution, specification (fiction) or research notes (non-fiction), the lorebook context loaded above, and any existing knowledge files. Note the constitution's pacing strategy — the outline's pacing distribution will be checked against it.
 
 ### 2. Determine Structure
 

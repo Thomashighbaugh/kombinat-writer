@@ -13,12 +13,12 @@ const GATE_LIST = [
   { id: 'non-negotiables', name: 'Non-Negotiables', category: 'Constraints' },
 ] as const
 
-const CATEGORIES = ['Structure', 'Drafting', 'Revision', 'Consistency', 'Constraints'] as const
-
 /**
- * Renders the Quality Gates section. Buttons are <box> elements with on:select
- * — text-only elements are not clickable in OpenCode's TUI. The run-all box
- * is at the top, per-gate boxes follow, grouped by category.
+ * Quality Gates tab. Uses a <select> dropdown for gate actions (which fires
+ * real ITEM_SELECTED events — unlike <box on:select> which is a dead listener).
+ *
+ * The <select> is styled as an inline action picker. The last run result for
+ * each gate is displayed below as a compact list.
  */
 export function GatesTab(props: { state: SidebarState }) {
   const [selectedGate, setSelectedGate] = createSignal<string | null>(null)
@@ -52,48 +52,57 @@ export function GatesTab(props: { state: SidebarState }) {
     }
   }
 
+  // Build select options: Run All + individual gates
+  const selectOptions = () => [
+    { name: '▶ Run All Gates', value: '__all__', description: 'Run all quality gates in sequence' },
+    ...GATE_LIST.map(g => {
+      const r = gateResults()[g.id]
+      const prefix = r ? statusIcon(r.status) + ' ' : '○ '
+      // Use status color if we have a result
+      return { name: prefix + g.name, value: g.id, description: g.category }
+    }),
+  ]
+
   return (
     <box flexDirection="column">
       <text style={{ fg: c.header, attributes: BOLD }}>{'── Quality Gates ──'}</text>
 
-      {/* ─── Run All button (a clickable box) ─────────────────────────── */}
-      <box
-        marginTop={1}
-        paddingLeft={1}
-        flexDirection="row"
-        on:select={handleRunAll}
-      >
-        <text style={{ fg: running() ? c.warn : c.pass, attributes: BOLD }}>
-          {running() ? '⟳ Running all gates...' : '▶ Run All Gates'}
-        </text>
-        <text>{'   '}</text>
-        <text style={{ fg: c.textMuted }}>{'or /kombinat-gates'}</text>
-      </box>
+      {/* ─── Gate action selector (actually clickable) ─────────────── */}
+      <select
+        options={selectOptions()}
+        onSelect={(_i: number, opt: { value?: string } | null) => {
+          if (!opt?.value) return
+          if (opt.value === '__all__') {
+            handleRunAll()
+          } else {
+            handleRunSingle(opt.value)
+          }
+        }}
+      />
 
-      {/* ─── Per-gate boxes (each clickable) ──────────────────────────── */}
-      <For each={CATEGORIES}>
-        {(cat) => (
-          <box flexDirection="column" marginTop={1}>
-            <text style={{ fg: c.subheader }}>{`─ ${cat} ─`}</text>
-            <For each={GATE_LIST.filter(g => g.category === cat)}>
-              {(gateDef) => {
-                const result = () => gateResults()[gateDef.id]
-                return (
-                  <box
-                    flexDirection="row"
-                    paddingLeft={1}
-                    on:select={() => handleRunSingle(gateDef.id)}
-                  >
-                    <text style={{ fg: result() ? statusColor(result()!.status) : c.alt }}>
-                      {result() ? `${statusIcon(result()!.status)} ${gateDef.name}` : `○ ${gateDef.name}`}
-                    </text>
-                    <text style={{ fg: c.textMuted }}>{'   /kombinat verify gates ' + gateDef.id}</text>
-                  </box>
-                )
-              }}
-            </For>
-          </box>
-        )}
+      {/* ─── Running indicator ──────────────────────────────────────── */}
+      <Show when={running()}>
+        <text style={{ fg: c.warn }}>{'⟳ Running...'}</text>
+      </Show>
+
+      {/* ─── Last result summary per gate ────────────────────────────── */}
+      <For each={GATE_LIST}>
+        {(gateDef) => {
+          const result = () => gateResults()[gateDef.id]
+          return (
+            <Show when={result()}>
+              <box flexDirection="row" paddingLeft={1} marginTop={1}>
+                <text style={{ fg: statusColor(result()!.status) }}>
+                  {statusIcon(result()!.status)}
+                </text>
+                <text style={{ fg: c.text }}>{' ' + result()!.gateName}</text>
+                <text style={{ fg: c.textMuted }}>
+                  {result()!.detail ? ' — ' + truncate(result()!.detail, 100) : ''}
+                </text>
+              </box>
+            </Show>
+          )
+        }}
       </For>
 
       {/* ─── Detail View ──────────────────────────────────────────────── */}

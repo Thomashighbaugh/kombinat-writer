@@ -254,6 +254,26 @@ book/series/lorebook/
 - `/kombinat series status` — Show series status and per-book progress
 - `/kombinat series import` — Import external lorebook (SillyTavern, JanitorAI, CharacterAI)
 
+### Semantic Lore Injection
+
+When generating content (outline, draft, critique, revise, review), Kombinat uses **semantic lore retrieval** to inject only the most relevant lore into the prompt — not the entire lorebook. This keeps the context window focused and reduces token usage.
+
+The retrieval pipeline uses local Ollama models:
+
+1. **Embedding** — `pedrohml/mxbai-embed-large:latest` — Chunks lore files by section (## headings) and embeds each chunk
+2. **Vector search** — Cosine similarity between the task query and lore chunks
+3. **Reranking** (optional) — `hans-tech/bge-reranker-v2-m3:260522` — Re-scores the top candidates for precision
+
+**Setup:** Pull the required models:
+```bash
+ollama pull pedrohml/mxbai-embed-large:latest
+ollama pull hans-tech/bge-reranker-v2-m3:260522
+```
+
+These models run locally — no data leaves your machine. The query script (`lore-query.mjs`) is installed as `.opencode/tools/lib/scripts/lore-query.mjs` and called automatically by the phase workflows.
+
+If Ollama is not running or the models are missing, the system falls back to reading lore files directly — no functionality is lost, only the selective retrieval optimization.
+
 External lorebook import supports:
 - **SillyTavern** character cards (PNG embedded JSON, JSON files)
 - **JanitorAI** character definitions

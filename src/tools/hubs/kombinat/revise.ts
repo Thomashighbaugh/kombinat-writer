@@ -21,6 +21,24 @@ Transform critique feedback into structured revisions, apply changes, and verify
 
 **Batch sizing:** When no range specified, read the latest critique round and collect all chapters that have critique items. Up to 6 per batch.
 
+## Pre-Execution: Load Relevant Lore Context
+
+Before planning revisions, retrieve the most relevant lore context. The lorebook is the authoritative reference — critique items that conflict with established lore should be flagged rather than blindly accepted.
+
+**Run the lore query script:**
+\`\`\`bash
+bun .opencode/tools/lib/scripts/lore-query.mjs \
+  --query "Revision context for [book title] — critique items about characters, world rules, consistency, and terminology that need cross-referencing against established lore" \
+  --top 5 --rerank
+\`\`\`
+
+This retrieves only the lore most relevant to the revision decisions. The lorebook directly informs:
+- **Consistency items** — is the critique correct, or does the critic misunderstand established lore?
+- **Character items** — does the critique contradict a character's established profile?
+- **World items** — does the critique flag something that's canonically correct?
+
+If the script produces no output (no lore files or Ollama unavailable), read \`./series/lorebook/\` and \`./book/knowledge/\* manually as a fallback.
+
 ## Prerequisites
 
 - At least one critique round must exist in \`./book/critique/round-N/\`

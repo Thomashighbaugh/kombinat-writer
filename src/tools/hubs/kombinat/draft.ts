@@ -20,6 +20,27 @@ Produce first-pass drafts using XML-structured intermediate representation. **Ba
 
 **Batch sizing:** When no range is specified, draft all chapters with status \`[ ]\` (Pending) in \`./book/tasks.md\`, up to 6 at a time. If more than 6 are pending, draft the first 6 and report: "6 of [N] chapters drafted. Run \`/kombinat draft\` again for the next batch."
 
+## Pre-Execution: Load Relevant Lore Context
+
+Before the pre-draft gate, retrieve the most relevant lore context for the chapters being drafted. The full lorebook may be large — only inject what's relevant.
+
+**Run the lore query script:**
+\`\`\`bash
+bun .opencode/tools/lib/scripts/lore-query.mjs \
+  --query "Draft context: [book title] — characters present in chapters [range], world rules, voice profiles, and terminology for drafting chapters [N-M]" \
+  --top 5 --rerank
+\`\`\`
+
+This uses local Ollama models (pedrohml/mxbai-embed-large + hans-tech/bge-reranker-v2-m3) to find the lore entries most relevant to the chapters being drafted. The output is a formatted markdown block with only the top 5 most relevant lore chunks.
+
+**What it checks:**
+- Series lorebook: characters, world, glossary, timeline, threads
+- Per-book knowledge: character profiles, voice profiles, locations, world rules
+
+**Why this matters:** The draft's XML tags include \`<characters-present>\`, voice-aware dialogue, world-consistent setting details, and terminology. The lore context directly informs all of these. Without it, the AI drafts in a vacuum.
+
+**Fallback:** If the script produces no output (no lore files or Ollama unavailable), read \`./series/lorebook/\` and \`./book/knowledge/\* manually. The lorebook takes precedence over any conflicting specification or outline details.
+
 ## Prerequisites
 
 - \`./book/outline.md\` and \`./book/tasks.md\` must exist

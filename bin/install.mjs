@@ -106,18 +106,33 @@ async function copyToolsAndLib(overwriteAll, skipAll) {
         }
     }
     await walkDir(srcTools);
-    // Copy lib/
+    // Copy lib/ (TypeScript modules + scripts/)
     const srcLib = path.join(SRC_DIR, 'lib');
     if (fs.existsSync(srcLib)) {
         const libDest = path.join(destTools, 'lib');
         fs.ensureDirSync(libDest);
-        for (const file of fs.readdirSync(srcLib).filter(f => f.endsWith('.ts'))) {
+        // Copy .ts modules
+        for (const file of fs.readdirSync(srcLib).filter(f => f.endsWith('.ts') && !f.endsWith('.d.ts'))) {
             const srcFile = path.join(srcLib, file);
             const destFile = path.join(libDest, file);
             if (newSkipAll) { skipped++; continue; }
             if (fs.existsSync(destFile) && !newOverwriteAll) { skipped++; continue; }
             fs.copySync(srcFile, destFile, { overwrite: true });
             copied++;
+        }
+        // Copy scripts/ directory (lore-query.mjs etc.)
+        const srcScripts = path.join(srcLib, 'scripts');
+        if (fs.existsSync(srcScripts)) {
+            const destScripts = path.join(libDest, 'scripts');
+            fs.ensureDirSync(destScripts);
+            for (const file of fs.readdirSync(srcScripts)) {
+                const srcFile = path.join(srcScripts, file);
+                const destFile = path.join(destScripts, file);
+                if (newSkipAll) { skipped++; continue; }
+                if (fs.existsSync(destFile) && !newOverwriteAll) { skipped++; continue; }
+                fs.copySync(srcFile, destFile, { overwrite: true });
+                copied++;
+            }
         }
     }
     success(`${copied} tools/lib files copied`);
@@ -314,6 +329,7 @@ async function ensureProjectConfig() {
     // OpenCode runs `bun install` on .opencode/package.json at startup.
     const REQUIRED_DEPS = {
         '@opencode-ai/plugin': '1.17.9',
+        '@opentui/core': '>=0.1.97',
         '@opentui/solid': '>=0.1.97',
         'solid-js': '^1.9.0',
         'fs-extra': '^11.0.0',

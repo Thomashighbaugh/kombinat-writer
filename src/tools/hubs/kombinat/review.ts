@@ -38,6 +38,18 @@ Before running any review mode, the visualization dataset must be regenerated an
 
 Run step 0 above. Abort with clear error if \`buildVizDataset\` throws or the dataset is stale.
 
+### 0a. Load Relevant Lore Context
+
+Before running any review mode, retrieve the most relevant lore context for this review:
+
+\`\`\`bash
+bun .opencode/tools/lib/scripts/lore-query.mjs \
+  --query "Review context for [book title] — continuity scan across all chapters, checking character profiles, world rules, timeline, glossary, and plot threads for consistency" \
+  --top 5 --rerank
+\`\`\`
+
+This retrieves the lore most relevant to continuity checking. If unavailable, read \`./series/lorebook/\` and \`./book/knowledge/\* manually.
+
 ### 1. Framework Analysis
 
 If no chapters are written yet, run **Framework Analysis**:
