@@ -15,7 +15,6 @@ import { SidebarTitle } from './components/sidebar-title.js'
 import { SidebarContent } from './components/sidebar-content.js'
 import { SidebarFooter } from './components/sidebar-footer.js'
 import { useProjectState, setInjector } from './hooks/use-project-state.js'
-import { useKeybinds } from './hooks/use-keybinds.js'
 
 /** All 25 subcommands for the instant menu */
 const KOMBINAT_SUBCOMMANDS = [
@@ -59,9 +58,6 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
   // backward compatibility, but it's a no-op now.
   const noopSet = () => {}
   const sidebarState = useProjectState(projectRoot, () => 'dashboard', noopSet)
-
-  // Register `r` as a global keybind to run all quality gates.
-  useKeybinds(api, () => sidebarState.runAllGates())
 
   onMount(() => {
     api.ui.toast({
