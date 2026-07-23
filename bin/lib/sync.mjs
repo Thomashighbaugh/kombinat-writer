@@ -310,7 +310,7 @@ const REQUIRED_DEPS = {
     '@opentui/solid': '>=0.1.97',
     'solid-js': '^1.9.0',
     'fs-extra': '^11.0.0',
-    'fast-xml-parser': '^4.5.0',
+    'fast-xml-parser': '^5.10.1',
 }
 
 /**
