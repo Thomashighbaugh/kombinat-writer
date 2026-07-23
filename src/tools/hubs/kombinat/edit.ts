@@ -24,7 +24,7 @@ Improve prose quality at the line level through three distinct passes, each with
 ## Prerequisites
 
 - Target chapters must be revised (task status \`[R]\` or beyond)
-- Style sheet modules should exist in \`./book/style-sheet/\`
+- Metadata modules should exist in \`./book/metadata/\`
 
 ## Execution Steps
 
@@ -42,7 +42,7 @@ Read ONCE for the entire batch:
 - The constitution (style principles)
 - Knowledge files (character voices for fiction)
 - Revision log entries affecting chapters in batch
-- **All style sheet modules** from \`./book/style-sheet/\`:
+- **All metadata modules** from \`./book/metadata/\`:
   - \`terminology.md\` — spelling, word choices, capitalization
   - \`character-voices.md\` — per-character speech decisions
   - \`formatting.md\` — punctuation, dialogue format, scene breaks
@@ -201,7 +201,7 @@ The edit phase integrates these HITL features:
 |-------|------|---------|
 | \`punctuation-emotional-effect\` | \`skills/fiction/writing-techniques/punctuation-emotional-effect/SKILL.md\` | Punctuation for rhythm and emphasis |
 | \`style-enforcer\` | \`skills/quality-assurance/style-enforcer/SKILL.md\` | Style consistency checking |
-| \`consistency-checker\` | \`skills/quality-assurance/consistency-checker/SKILL.md\` | Cross-reference consistency |
+| \`continuity-auditor\` | \`skills/quality-assurance/continuity-auditor/SKILL.md\` | Cross-reference consistency |
 | \`academic-writing\` | \`skills/non-fiction/academic-writing/SKILL.md\` | Academic register (non-fiction) |
 | \`subtext-analysis\` | \`src/lib/subtext-analysis.ts\` | On-the-nose dialogue detection |
 | \`purple-prose\` | \`src/lib/purple-prose.ts\` | Overwriting detection |
@@ -215,8 +215,11 @@ The edit phase integrates these HITL features:
 | \`feedback-memory\` | \`src/lib/feedback-memory.ts\` | Rejection reason memory |
 | \`creative-constraints\` | \`src/lib/creative-constraints.ts\` | Non-negotiables gate |
 | \`provenance\` | \`src/lib/provenance.ts\` | Change provenance tracking |`,
+  rules: [
+    "Whenever the user makes a decision that alters narrative context, metanarrative, formatting, or tracking states, you MUST proactively update the relevant files in ./book/metadata/ and ./book/tracking/ before completing the turn."
+  ],
   tools: ["loadSkill", "bash"],
-  relatedSkills: ["punctuation-emotional-effect", "style-enforcer", "consistency-checker", "academic-writing", "phase-preview", "authorial-intent", "diff-approval", "severity-tiers", "veto-system", "feedback-memory", "creative-constraints", "provenance"],
+  relatedSkills: ["punctuation-emotional-effect", "style-enforcer", "continuity-auditor", "academic-writing", "phase-preview", "authorial-intent", "diff-approval", "severity-tiers", "veto-system", "feedback-memory", "creative-constraints", "provenance"],
   examples: [
     { input: "/kombinat edit", approach: "Edits all [R] chapters (up to 6) with style sheet enforcement" },
     { input: "/kombinat edit 3-8", approach: "Edits chapters 3 through 8" },

@@ -198,14 +198,14 @@ Critique and revision form a closed loop. After revision is complete:
 
 When batch_score ≥ 95, run two final-pass checks **before reporting to the user**:
 
-1. **Continuity Check** (skill: \`consistency-checker\`)
-   - Run the consistency-checker skill against every chapter in the batch
+1. **Continuity Check** (skill: \`continuity-auditor\`)
+   - Run the continuity-auditor skill against every chapter in the batch
    - Produces: chronological, character behaviour, world rules, plot causality, knowledge state issues
    - Any Critical or Major issue must be fixed via a final revision pass
    - Re-score after each fix; if score drops below 95, re-revise
 
-2. **Prose Polishing Check** (skill: \`prose-polishing-check\`)
-   - Run the prose-polishing-check skill against every chapter in the batch
+2. **Prose Polishing Check** (skill: \`line-editor\`)
+   - Run the line-editor skill against every chapter in the batch
    - Produces: sentence rhythm, sound/texture, AI-slop residual, word choice, punctuation issues
    - Any Critical AI-slop residual must be removed
    - Any Major issue should be addressed
@@ -218,9 +218,9 @@ while batch_score < 95 OR continuity_blockers_exist OR polish_score < 95:
   if batch_score < 95:
     critique → revise → re-score
   if continuity_blockers_exist:
-    apply targeted continuity fixes → re-run consistency-checker
+    apply targeted continuity fixes → re-run continuity-auditor
   if polish_score < 95:
-    apply targeted prose fixes → re-run prose-polishing-check
+    apply targeted prose fixes → re-run line-editor
 
   if loop_iteration > 3:
     STOP and report incomplete cycle to user
@@ -313,8 +313,11 @@ None specific to this phase.
 | \`diff-approval\` | \`src/lib/diff-approval.ts\` | Diff-based approval gates |
 | \`creative-constraints\` | \`src/lib/creative-constraints.ts\` | Non-negotiables gate |
 | \`provenance\` | \`src/lib/provenance.ts\` | Change provenance tracking |`,
+  rules: [
+    "Whenever the user makes a decision that alters narrative context, metanarrative, formatting, or tracking states, you MUST proactively update the relevant files in ./book/metadata/ and ./book/tracking/ before completing the turn."
+  ],
   tools: ["bash"],
-  relatedSkills: ["consistency-checker", "forgotten-elements", "style-enforcer", "phase-preview", "authorial-intent", "diff-approval", "creative-constraints", "provenance"],
+  relatedSkills: ["continuity-auditor", "forgotten-elements", "style-enforcer", "phase-preview", "authorial-intent", "diff-approval", "creative-constraints", "provenance"],
   examples: [
     { input: "/kombinat revise", approach: "Loads latest critique round, revises all affected chapters (up to 6), runs revision-verify gate" },
     { input: "/kombinat revise 1", approach: "Loads critique round 1, revises all chapters with items from round 1" },

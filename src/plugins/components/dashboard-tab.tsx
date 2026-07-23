@@ -12,8 +12,8 @@ export function DashboardTab(props: { state: SidebarState }) {
     if (!project()) return []
     const track = project()!.track
     const phases = track === 'non-fiction'
-      ? ['constitute', 'specify', 'research', 'outline', 'draft', 'edit', 'review', 'publish']
-      : ['constitute', 'specify', 'clarify', 'outline', 'draft', 'critique', 'revise', 'edit', 'review', 'publish']
+      ? ['manifest', 'specify', 'research', 'outline', 'draft', 'edit', 'review', 'publish']
+      : ['manifest', 'specify', 'clarify', 'outline', 'draft', 'critique', 'revise', 'edit', 'review', 'publish']
     return phases
   })
 
@@ -58,8 +58,8 @@ export function DashboardTab(props: { state: SidebarState }) {
           <text style={{ fg: c.header, attributes: BOLD }}>{'── Documents ──'}</text>
         </box>
         <box flexDirection="row">
-          <text style={{ fg: statusColor(project()!.constitution) }}>
-            {`${statusMark(project()!.constitution)} Constitution`}
+          <text style={{ fg: statusColor(project()!.manifest) }}>
+            {`${statusMark(project()!.manifest)} Manifest`}
           </text>
           <text>{'  '}</text>
           <text style={{ fg: statusColor(project()!.specification) }}>

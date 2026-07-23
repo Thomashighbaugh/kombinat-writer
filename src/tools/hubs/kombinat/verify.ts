@@ -171,7 +171,7 @@ Run a specific quality gate on demand:
 
 For all verify sub-commands:
 1. Parse the sub-command from user input
-2. Load the relevant library (voice-profile, quality-gates, style-sheet, checkpoints)
+2. Load the relevant library (voice-profile, quality-gates, metadata, checkpoints)
 3. Run the check
 4. Report results in structured format
 5. Do NOT modify any files unless explicitly requested (voice-init generates profiles, but other checks are read-only)
@@ -181,14 +181,14 @@ For all verify sub-commands:
 | Skill | File | Purpose |
 |-------|------|---------|
 | \`pre-draft-checklist\` | \`skills/quality-assurance/pre-draft-checklist/SKILL.md\` | Pre-draft context verification |
-| \`consistency-checker\` | \`skills/quality-assurance/consistency-checker/SKILL.md\` | Cross-chapter consistency |
+| \`continuity-auditor\` | \`skills/quality-assurance/continuity-auditor/SKILL.md\` | Cross-chapter consistency |
 | \`forgotten-elements\` | \`skills/quality-assurance/forgotten-elements/SKILL.md\` | Dropped thread/element detection |
 | \`style-enforcer\` | \`skills/quality-assurance/style-enforcer/SKILL.md\` | Style sheet enforcement |
 | \`fact-checker\` | \`skills/quality-assurance/fact-checker/SKILL.md\` | Factual accuracy (non-fiction) |
 | \`citation-validator\` | \`skills/quality-assurance/citation-validator/SKILL.md\` | Citation verification (non-fiction) |
 | \`voice-profile\` | \`src/lib/voice-profile.ts\` | Voice fingerprinting engine |
 | \`quality-gates\` | \`src/lib/quality-gates.ts\` | Gate runner |
-| \`style-sheet\` | \`src/lib/style-sheet.ts\` | Style sheet enforcement |
+| \`metadata\` | \`src/lib/metadata.ts\` | Style sheet enforcement |
 | \`checkpoints\` | \`src/lib/checkpoints.ts\` | Checkpoint system |
 | \`prose-quality\` | \`src/lib/prose-quality.ts\` | Prose quality scorecard |
 | \`echo-detection\` | \`src/lib/echo-detection.ts\` | Echo & repetition detection |
@@ -218,7 +218,7 @@ For all verify sub-commands:
 | \`provenance\` | \`src/lib/provenance.ts\` | Change provenance tracking |
 | \`phase-preview\` | \`src/lib/phase-preview.ts\` | Phase pre-execution confirmation |`,
   tools: ["bash"],
-  relatedSkills: ["pre-draft-checklist", "consistency-checker", "forgotten-elements", "style-enforcer", "fact-checker", "citation-validator"],
+  relatedSkills: ["pre-draft-checklist", "continuity-auditor", "forgotten-elements", "style-enforcer", "fact-checker", "citation-validator"],
   examples: [
     { input: "/kombinat verify voice-init", approach: "Generates voice profiles from all existing chapters" },
     { input: "/kombinat verify voice-check Chapter 5", approach: "Checks voice drift on chapter 5 against profiles" },

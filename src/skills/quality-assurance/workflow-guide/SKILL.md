@@ -15,21 +15,21 @@ Reference for the Kombinat Writer phase methodology. The process varies by track
 | **Non-Fiction** | Research → Source Notes → Outline → Draft → Fact Check → Cite → Revise → Edit (3-pass) → Review → Publish |
 | **Hybrid** | Context Setup → Research → Outline → Draft → Fact Check → Cite → Critique → Revise → Edit → Review → Read-Through → Publish |
 | **Rewrite** | Load Original → Gap Analysis → Rewrite Spec → Draft → Compare → Critique → Revise → Edit → Review → Publish |
-| **Series** | Series Lorebook Init → Constitute (inherit) → Specify → Outline → [per-book cycle] → Series Audit → Sync Lorebook |
+| **Series** | Series Lorebook Init → Manifest (inherit) → Specify → Outline → [per-book cycle] → Series Audit → Sync Lorebook |
 
 ## Subcommand Reference
 
 | Subcommand | Phase | Purpose |
 |------------|-------|---------|
 | `guided` | Utility | Automatic state detection — recommends next phase |
-| `constitute` | 1 | Establish creative or intellectual principles + thematic statement (hard block) + series lorebook inheritance |
+| `manifest` | 1 | Establish creative or intellectual principles + thematic statement (hard block) + series lorebook inheritance |
 | `specify` | 2 | Build story specification + premise stress-test (6 criteria, hard block) |
 | `clarify` | 3 | Resolve specification ambiguities |
 | `research` | 2/4 | Active research: sources, annotation, literature review |
 | `outline` | 4/5 | Fine-grained chapter structure with scene beats, setup/payoff chains, continuity anchors + quality gate (3 revision cycles) |
 | `task-manager` | 5/6 | Break outline into tracked tasks with per-chapter sub-status lifecycle |
 | `draft` | 6/7 | Batch XML drafting with awareness map, prose quality, echo detection, beat arc check |
-| `critique` | 7/8 | 8 modes: alpha, beta, peer, sensitivity, cold-read, comprehensive, adversarial, personas |
+| \`critique\` | 7/8 | 8 modes: developmental, audience, domain, cultural, cold-read, comprehensive, adversarial, personas |
 | `revise` | 8/9 | Batch revision with verify gate + `--depth full` (structural→language→pacing) |
 | `edit` | 9/10 | Three-pass: line-edit (craft) → copy-edit (mechanics) → proofread (typos) + linguistic gates |
 | `review` | 10/11 | Continuity scan + Phase 2 structural analyses (7 analyses + 2 visualization outputs) |
@@ -76,7 +76,7 @@ project-root/
 │   └── templates/        # Track templates (fiction/non-fiction/series)
 ├── book/                  # All book content
 │   ├── track.json         # Track selection: fiction | non-fiction | mixed
-│   ├── constitution.md    # Core narrative/style rules + thematic statement
+│   ├── manifest.md    # Core narrative/style rules + thematic statement
 │   ├── specification.md   # Story specification (with premise stress-test)
 │   ├── research/          # Sources, bibliography, interviews
 │   ├── outline/           # Fine-grained chapter structure (scene beats, setup/payoff)
@@ -86,7 +86,7 @@ project-root/
 │   ├── revisions/         # Revision tracking + verify gate results
 │   ├── knowledge/         # Character profiles, locations, glossary
 │   ├── tracking/          # State tracking (character, plot, timeline JSON)
-│   ├── style-sheet/       # Modular style sheets (5 modules)
+│   ├── metadata/       # Modular style sheets (5 modules)
 │   ├── checkpoints/       # JSON checkpoint state for resume
 │   ├── series/            # Series lorebook (if series project)
 │   ├── creative-constraints.json  # Non-negotiables (author's red lines)
@@ -122,10 +122,10 @@ Kombinat integrates 8 HITL features to keep the author in control:
 | Feature | How It Works |
 |---------|-------------|
 | **Phase Preview** | Before any phase executes, shows scope (chapters, word count), estimated duration, context to load, gates to run. Author confirms before execution. |
-| **Authorial Intent** | Author states intent in 1-2 sentences before each phase. Generic fallback ("best output consistent with outline and constitution") if author is unsure. Post-phase verification checks intent was honored. |
+| **Authorial Intent** | Author states intent in 1-2 sentences before each phase. Generic fallback ("best output consistent with outline and manifest") if author is unsure. Post-phase verification checks intent was honored. |
 | **Diff-Based Approval** | After revise/edit, shows structured before/after diff. Author approves line-by-line, rejects specific hunks, or accepts all. Rejected hunks preserve original text. |
 | **Suggestion Severity Tiers** | Suggestions classified: must-fix (blocks), should-consider (warning), your-call (preference), FYI (observation). Author controls filter level. |
 | **Veto System** | Author types `|` to veto any suggestion. Silent veto (`|`) or with reason (`| keeping this rhythm for effect`). Vetoed items never re-suggested. |
 | **Feedback Memory** | Rejection reasons logged as avoidance patterns. AI checks preferences before making future suggestions. |
-| **Non-Negotiables** | Author declares creative constraints at constitution (plot, character, tone, content, structure, world). Non-negotiables gate checks all content against constraints. |
+| **Non-Negotiables** | Author declares creative constraints at manifest (plot, character, tone, content, structure, world). Non-negotiables gate checks all content against constraints. |
 | **Provenance Tracking** | Every line tagged with origin: author, ai-drafted, ai-revised, ai-edited, ai-modified, author-revised. Manuscript-level statistics show author vs AI percentage. |

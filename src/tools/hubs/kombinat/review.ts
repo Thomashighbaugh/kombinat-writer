@@ -27,7 +27,7 @@ Before running any review mode, the visualization dataset must be regenerated an
 
 | Mode | When to Use | Scope |
 |------|-------------|-------|
-| Framework | Before writing begins | Validates constitution, specification, outline, tracking structure |
+| Framework | Before writing begins | Validates manifest, specification, outline, tracking structure |
 | Content | During/after drafting | Validates written chapters against all reference documents |
 | Final | Before publish | Full project audit: all content, tracking, citations, metadata |
 | Factual (non-fiction) | Before publish | Validates all factual claims against sources |
@@ -50,24 +50,30 @@ bun .opencode/tools/lib/scripts/lore-query.mjs \
 
 This retrieves the lore most relevant to continuity checking. If unavailable, read \`./series/lorebook/\` and \`./book/knowledge/\* manually.
 
+### Lore as Canonical Truth (Doctrine)
+
+The lorebook — \`series/lorebook/*\`, \`book/knowledge/*\`, \`book/manifest.md\`, \`book/specification.md\`, and the project \`series/outline.md\` / \`book/outline.md\` — is the **absolute source of truth** for this project. A review that flags a chapter for contradicting the lorebook is a *flag about the chapter*, not about the lorebook. Only the human user can alter lore.
+
+**If you find lorebook contradictions in the draft, flag them as chapter-level issues, never as lore-level changes.**
+
 ### 1. Framework Analysis
 
 If no chapters are written yet, run **Framework Analysis**:
 
-- Constitution completeness and internal consistency
+- Manifest completeness and internal consistency
 - Specification clarity (no unresolved \`[Needs Clarification]\` markers)
 - Outline coherence (pacing distribution, arc completeness)
 - Knowledge file quality (character profiles, world-setting, source notes)
 - Tracking structure initialised correctly
 - Voice profiles exist (if chapter > 3, \`./book/knowledge/voice-profiles.json\` should exist)
-- Style sheet modules exist (\`./book/style-sheet/\`)
+- Style sheet modules exist (\`./book/metadata/\`)
 
 ### 2. Content Analysis
 
 If chapters exist, run **Content Analysis**:
 
 For each written chapter, check against:
-- **Constitution**: Does the chapter respect the quality baseline and style principles?
+- **Manifest**: Does the chapter respect the quality baseline and style principles?
 - **Specification**: Does the chapter follow the blueprint? Are established character voices, world rules, and plot constraints respected?
 - **Outline**: Does the chapter match its assigned pacing tag and purpose?
 - **Knowledge**: Are characters consistent with their profiles? Are locations accurate?
@@ -135,7 +141,7 @@ Run the following cross-chapter structural analyses:
 
 3. **Question/answer accounting** — track every narrative question (mystery, goal, implicit) through to resolution. Unanswered questions are flagged. Uses \`src/lib/qa-accounting.ts\`.
 
-4. **Promise keeping audit** — verify genre, tone, structural, and thematic promises declared in the constitution and opening chapter are fulfilled by the book's end. Broken promises block. Uses \`src/lib/promise-audit.ts\`.
+4. **Promise keeping audit** — verify genre, tone, structural, and thematic promises declared in the manifest and opening chapter are fulfilled by the book's end. Broken promises block. Uses \`src/lib/promise-audit.ts\`.
 
 5. **Escalation curve verification** — verify stakes/intensity increase from act to act. Plateaus (3+ chapters at same intensity) and descending stretches are flagged. Uses \`src/lib/escalation-curve.ts\`.
 
@@ -171,7 +177,7 @@ Checklist:
 2. All \`[CitationNeeded]\` markers resolved
 3. All tracking files up to date
 4. No \`[Needs Clarification]\` markers remain in specification
-5. Constitution followed throughout
+5. Manifest followed throughout
 6. Knowledge files comprehensive and consistent
 7. Critical/Critique feedback addressed in revision log
 8. Metadata recorded (\`./book/meta.json\`)
@@ -234,7 +240,7 @@ If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat
 
 | Skill | File | Purpose |
 |-------|------|---------|
-| \`consistency-checker\` | \`skills/quality-assurance/consistency-checker/SKILL.md\` | Cross-chapter consistency |
+| \`continuity-auditor\` | \`skills/quality-assurance/continuity-auditor/SKILL.md\` | Cross-chapter consistency |
 | \`forgotten-elements\` | \`skills/quality-assurance/forgotten-elements/SKILL.md\` | Dropped threads detection |
 | \`fact-checker\` | \`skills/quality-assurance/fact-checker/SKILL.md\` | Factual verification (non-fiction) |
 | \`citation-validator\` | \`skills/quality-assurance/citation-validator/SKILL.md\` | Citation correctness (non-fiction) |
@@ -249,7 +255,7 @@ If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat
 | \`thread-matrix\` | \`src/lib/thread-matrix.ts\` | Thread tracking matrix |
 | \`dependency-graph\` | \`src/lib/dependency-graph.ts\` | Chapter dependency graph |`,
   tools: ["loadSkill", "bash"],
-  relatedSkills: ["consistency-checker", "forgotten-elements", "fact-checker", "citation-validator", "style-enforcer"],
+  relatedSkills: ["continuity-auditor", "forgotten-elements", "fact-checker", "citation-validator", "style-enforcer"],
   examples: [{ input: "/kombinat review final", approach: "Runs final readiness assessment with continuity scan before publication" }],
   warnings: ["Continuity scan is a HARD BLOCK — contradictions between chapters (character state, timeline, plot threads, location, relationships, objects, knowledge, voice) must be resolved before publication", "Forgotten threads (dormant for 5+ chapters) and voice drift are warnings, not blocks"]
 }

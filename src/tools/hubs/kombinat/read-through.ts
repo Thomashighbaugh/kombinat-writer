@@ -177,10 +177,10 @@ If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat
 
 | Skill | File | Purpose |
 |-------|------|---------|
-| \`alpha-reader\` | \`skills/critique/alpha-reader/SKILL.md\` | Structural reader perspective |
-| \`beta-reader\` | \`skills/critique/beta-reader/SKILL.md\` | Experience reader perspective |`,
+| \`developmental-editor\` | \`skills/critique/developmental-editor/SKILL.md\` | Structural reader perspective |
+| \`audience-surrogate\` | \`skills/critique/audience-surrogate/SKILL.md\` | Experience reader perspective |`,
   tools: ["bash"],
-  relatedSkills: ["alpha-reader", "beta-reader"],
+  relatedSkills: ["developmental-editor", "audience-surrogate"],
   examples: [
     { input: "/kombinat read-through", approach: "Sequential read-through of all chapters as a reader" },
     { input: "/kombinat read-through 1-5", approach: "Read-through of chapters 1 through 5" }

@@ -125,6 +125,23 @@ When any document exceeds ~500 lines, split into a folder with `_main.md` as the
 
 ---
 
+## Plugin Maintenance: Refresh & Index
+
+The kombinat-writer plugin evolves. To sync an installed project with the latest plugin source without overwriting your project work, use:
+
+```bash
+npx kombinat-refresh        # idempotent: syncs plugin assets, rebuilds index, preserves local edits
+npx kombinat-index          # rebuild only the lore semantic index
+```
+
+`kombinat-refresh` writes a manifest at `.opencode/.kombinat-install-manifest.json` that records every file it installed (with per-file SHA256) so subsequent refreshes are diff-based — your HTML-comment overrides in phase specs are preserved across refreshes. Run `--force` to overwrite them (destructive).
+
+The semantic lore index lives at `.opencode/cache/lore-index/index.json` and is consulted on every phase invocation. The index is built incrementally — re-running on an up-to-date index is a no-op. Index coverage includes: series lorebook, series outline, per-book knowledge, constitution, specification, book outline (whole + per-chapter), and XML drafts (chunked by `<metadata>`, `<awareness-map>`, and per-`<scene>`). See the README for full details.
+
+Phase specs that need continuity (`draft`, `critique`, `revise`) use `--pin-chapter N --pin-side previous|both` to include the entire adjacent chapter(s) verbatim in the context, regardless of semantic score.
+
+---
+
 ## Phase Detail Summary
 
 ### Phase 1: Constitute (all tracks)

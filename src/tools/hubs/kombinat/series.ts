@@ -44,7 +44,7 @@ Sync knowledge from the current book to the series lorebook. Run this after comp
 4. Sync from \`./book/tracking/timeline.json\` → \`./series/lorebook/timeline.json\`:
    - New timeline entries added with book number
    - Duplicates skipped
-5. Sync from \`./book/style-sheet/terminology.md\` → \`./series/lorebook/glossary.md\`:
+5. Sync from \`./book/metadata/terminology.md\` → \`./series/lorebook/glossary.md\`:
    - Terms extracted and added under "Book N Terms" heading
 6. Report what was synced: "[N] characters, [M] timeline entries, [K] glossary terms synced from book [bookNumber]."
 
@@ -75,7 +75,7 @@ Register a new book in an existing series. Use this when starting book 2+.
 2. Ask for book number and title
 3. Update \`./series/meta.json\` books array
 4. Link current book: update \`./book/track.json\` with \`seriesId\` and \`bookNumber\`
-5. Report: "Book [N] '[title]' registered in series '[series title]'. Run \`/kombinat constitute\` and choose 'inherit from series lorebook' to bootstrap the constitution."
+5. Report: "Book [N] '[title]' registered in series '[series title]'. Run \`/kombinat manifest\` and choose 'inherit from series lorebook' to bootstrap the manifest."
 
 ### \`/kombinat series status\`
 

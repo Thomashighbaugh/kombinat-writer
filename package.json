@@ -5,14 +5,17 @@
   "type": "module",
   "main": "bin/install.mjs",
   "bin": {
-    "kombinat-writer": "bin/install.mjs"
+    "kombinat-writer": "bin/install.mjs",
+    "kombinat-refresh": "bin/refresh.mjs",
+    "kombinat-index": "bin/build-lore-index.mjs"
   },
   "scripts": {
     "build": "tsc && npm run build:sidebar",
     "build:sidebar": "bun build src/plugins/kombinat-sidebar.tsx --outdir dist/plugins/kombinat-sidebar --target bun --minify --external '@opentui/*' --external '@opencode-ai/*' --external 'solid-js' --external 'fs-extra' && cp src/plugins/index.js dist/plugins/kombinat-sidebar/index.js && cp src/plugins/package.json dist/plugins/kombinat-sidebar/package.json",
     "typecheck": "tsc --noEmit && tsc --noEmit -p src/plugins/tsconfig.json",
     "prepublishOnly": "npm run build",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "postinstall": "node bin/refresh.mjs --postinstall || true"
   },
   "keywords": [
     "opencode",
@@ -56,6 +59,7 @@
     "@opentui/core": ">=0.1.97",
     "@opentui/solid": ">=0.1.97",
     "chalk": "^5.3.0",
+    "fast-xml-parser": "^4.5.0",
     "fs-extra": "^11.2.0"
   },
   "devDependencies": {

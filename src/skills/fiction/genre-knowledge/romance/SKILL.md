@@ -53,7 +53,7 @@ The best romance integrates both: external barriers trigger internal wounds, and
 
 ## Tropes
 
-**Enemies-to-Lovers.** The highest tension-to-resolution ratio. Requires genuine antagonism that transforms through forced proximity into understanding, respect, then desire. The transition must feel earned — one argument does not constitute enemies.
+**Enemies-to-Lovers.** The highest tension-to-resolution ratio. Requires genuine antagonism that transforms through forced proximity into understanding, respect, then desire. The transition must feel earned — one argument does not manifest enemies.
 
 **Forced Proximity.** Characters who would not choose each other must share space (cabin, road trip, workplace, survival situation). Strips away avoidance as a strategy and accelerates intimacy.
 

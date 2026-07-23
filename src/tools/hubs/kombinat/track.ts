@@ -19,7 +19,7 @@ Maintain the project's structured tracking data. Tracking files live in \`./book
 | \`plot-tracker.json\` | Plot threads and resolution status | N/A | Plot tracker |
 | \`timeline.json\` | Chronological story events | Chapter completion timeline | Both |
 | \`relationships.json\` | Character relationship dynamics | Source cross-references | Character relationships + source refs |
-| \`validation-rules.json\` | Custom rules from constitution | Custom rules from constitution | Both |
+| \`validation-rules.json\` | Custom rules from manifest | Custom rules from manifest | Both |
 | \`source-tracker.json\` | N/A | Source ingestion and verification status | Source tracker |
 | \`argument-progression.json\` | N/A | Argument/thesis progression per chapter | Argument progression |
 

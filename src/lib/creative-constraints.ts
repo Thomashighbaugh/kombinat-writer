@@ -1,7 +1,7 @@
 /**
  * Creative Constraints — Non-Negotiables System
  *
- * At constitution, the author declares elements that must not be changed
+ * At manifest, the author declares elements that must not be changed
  * by any AI pass. These become hard constraints that the non-negotiables
  * gate checks against.
  *

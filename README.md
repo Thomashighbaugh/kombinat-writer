@@ -280,6 +280,166 @@ External lorebook import supports:
 - **CharacterAI** character exports
 - Heuristic classification of entries into characters, locations, items, concepts
 
+#### On-disk Index (v3)
+
+Lore retrieval is fast because Kombinat maintains an on-disk embedding index at:
+
+```
+.opencode/cache/lore-index/index.json
+```
+
+The index is built once and reused on every phase invocation. Without the index, `lore-query.mjs` re-embeds every chunk on every call (slow for multi-book series). With the index, query time is O(chunks) cosine comparisons in memory + one Ollama call for the query embedding.
+
+**Index coverage** — these source files are scanned:
+
+| Path | Chunked by | Notes |
+|------|-----------|-------|
+| `series/lorebook/*` | Markdown headings | characters, world, glossary, timeline.json, threads |
+| `series/outline.md` | Markdown headings | Cross-book condensed outline (series-level beats) |
+| `book/knowledge/*` | Markdown headings | character-profiles, voice-profiles, locations, world-rules, character-voices |
+| `book/constitution.md` | Markdown headings | Project canon — highest priority |
+| `book/specification.md` | Markdown headings | Book specification |
+| `book/outline.md`, `book/outline/chapter_*.md` | Markdown headings / one-per-file | Whole-book + per-chapter outline |
+| `book/drafts/chapter_*.xml` | **XML chunker** (see below) | Drafted chapters |
+
+**Build / refresh the index:**
+```bash
+# Build or incrementally update the index
+npx kombinat-index
+
+# Or from the lore-query script itself
+bun .opencode/tools/lib/scripts/lore-query.mjs --build
+
+# Check status (chunk count, age, embedder version)
+bun .opencode/tools/lib/scripts/lore-query.mjs --status
+```
+
+The index build is **incremental**: re-running on an up-to-date index is a no-op. Only source files whose content has changed since the last build are re-chunked and re-embedded. `npx kombinat-refresh` (see below) rebuilds the index automatically when source files have changed.
+
+**Set `EMBED_MODEL` and `RERANK_MODEL` env vars** to override the default model names. Defaults:
+- `EMBED_MODEL=pedrohml/mxbai-embed-large:latest`
+- `RERANK_MODEL=hans-tech/bge-reranker-v2-m3:260522`
+
+#### Pinned Adjacent Chapters
+
+For draft, critique, and revise phases, the lore query can **pin** specific chapters to be included **verbatim** in the context, regardless of semantic score. This is critical for continuity — the agent drafting chapter N needs the exact last scene of N-1.
+
+```bash
+# /kombinat draft Chapter 5 → include the entire prior chapter (4) verbatim
+bun .opencode/tools/lib/scripts/lore-query.mjs \
+  --query "Draft context for chapter 5" \
+  --pin-chapter 5 --pin-side previous --top 5 --rerank
+
+# /kombinat critique Chapter 5 → include both N-1 and N+1 verbatim
+bun .opencode/tools/lib/scripts/lore-query.mjs \
+  --query "Critique context for chapter 5" \
+  --pin-chapter 5 --pin-side both --top 5 --rerank
+```
+
+- `--pin-side previous` → pin chapter N-1
+- `--pin-side next` → pin chapter N+1
+- `--pin-side both` → pin both N-1 and N+1
+
+The pinned chapter is loaded from disk directly (bypassing the index). It's emitted in the context block as raw XML, clearly marked as `PINNED — verbatim for continuity`.
+
+#### XML Draft Chunker
+
+`book/drafts/chapter_*.xml` files use a **separate chunker** that understands the draft schema:
+
+```xml
+<chapter number="N" title="...">
+  <metadata>...</metadata>              <!-- 1 chunk: who/where/when -->
+  <awareness-map>
+    <sets-up ref="ChM: ...">...</sets-up>
+    <payoff-from ref="ChM: ...">...</payoff-from>
+    <continuity-anchors>
+      <anchor name="...">...</anchor>
+    </continuity-anchors>
+  </awareness-map>                     <!-- 1 chunk: cross-chapter refs -->
+  <scene number="K" type="..." goal="..." conflict="...">
+    <narration>...</narration>
+    <interiority .../>
+    <sensory-inject .../>
+  </scene>                              <!-- 1 chunk per <scene> -->
+  <scene continuation="true" ...>       <!-- continuation scenes get inferred numbers -->
+</chapter>
+```
+
+Emits four chunk kinds per file: `metadata`, `awareness`, `scene` (one per `<scene>`), and `whole-chapter` (used only by the pinned path). Continuation scenes (`<scene continuation="true">` with no `number=` attribute) get an inferred sequential number so a 7-scene chapter always produces 7 scene chunks.
+
+The chunker is permissive: missing `<metadata>` or `<awareness-map>` blocks are skipped silently; unknown `<scene>` children are flattened to text. The markdown chunker handles the lore, outline, canon, and spec sources; the XML chunker handles only the drafts.
+
+### Lore as Canonical Truth (Doctrine)
+
+The lorebook — `series/lorebook/*`, `book/knowledge/*`, `book/constitution.md`, `book/specification.md`, and the project `series/outline.md` / `book/outline.md` — is the **absolute source of truth** for a project. Between agents (outline, draft, critique, revise, review), the lorebook is taken as literal, beyond-reproach canon. Only the human user's explicit direction can alter lore; agents must work hard to make internally-consistent sense of canon before suggesting any change.
+
+**If you believe a lore entry is wrong, do NOT silently rewrite it.** Flag it in the critique report (`./book/critique/chapter_NN.md`) and ask the user. If a draft would substantially contradict established lore, halt and ask the user before proceeding.
+
+This doctrine is restated in each phase spec (`outline`, `draft`, `critique`, `revise`, `review`) so every agent invocation sees it.
+
+### Local Overrides via HTML Comments
+
+Kombinat ships a set of phase specs (`src/tools/hubs/kombinat/{outline,draft,critique,revise,review}.ts`) that you may want to customize for your project. Because the `npx kombinat-refresh` command preserves locally-modified files (see below), a common workflow is:
+
+1. Run `npx kombinat-refresh` once after install to set up the baseline.
+2. Edit a phase spec (e.g. `.opencode/tools/hubs/kombinat/outline.ts`) to add a custom instruction wrapped in HTML comments for clarity.
+3. Subsequent refreshes leave your edit alone — the file appears in the `locallyModified[]` list in the refresh summary.
+
+Example:
+```ts
+// .opencode/tools/hubs/kombinat/draft.ts
+// <!-- kombinat:override -->
+// Custom: always end chapters on a sensory beat, not a dialogue beat.
+// <!-- /kombinat:override -->
+```
+
+The override survives refreshes because `npx kombinat-refresh` diffs your file against the source and skips the copy when the SHA differs. Use `--force` to override (destructive).
+
+### Per-project Install Model
+
+Kombinat-writer installs **per-project**, not globally. Each book project has its own `.opencode/` directory containing its own copy of the plugin's skills, tools, templates, slash commands, and TUI sidebar plugin. This mirrors the Nix/dependency-isolation pattern: pinning per project means a project created today will build the same way a year from now on a different machine.
+
+The install writes `.opencode/opencode.jsonc`, `.opencode/tui.json`, and `.opencode/package.json` to register the kombinat-sidebar plugin as a project-local plugin. It does **not** touch your global opencode config, `~/.config/opencode`, or your global `node_modules`. Plugin-owned subtrees are: `skills/`, `tools/`, `templates/`, `commands/`, `plugins/`, plus the three config files. Everything else under `.opencode/` (and the project-root `book/`, `memory/`, `output/`, `series/` directories) is project-owned and never touched by install or refresh.
+
+The first time you install, the installer prints an acknowledgement screen explaining the per-project model and asks you to confirm before proceeding. The acknowledgement is not recorded — you re-acknowledge on every fresh install.
+
+### Refreshing an Existing Install
+
+Once a project is installed, use `npx kombinat-refresh` to sync updates:
+
+```bash
+# Default: sync changed/new files, preserve your local edits
+npx kombinat-refresh
+
+# Also remove files that disappeared from source
+npx kombinat-refresh --prune
+
+# Overwrite locally-modified files (destructive)
+npx kombinat-refresh --force
+
+# Skip the sidebar TypeScript build (faster, for iteration)
+npx kombinat-refresh --skip-build
+
+# Skip the lore index rebuild
+npx kombinat-refresh --skip-index
+
+# For postinstall / CI: skip prompts, defaults track='fiction'
+npx kombinat-refresh --postinstall
+```
+
+`kombinat-refresh`:
+- Always rebuilds the TypeScript-derived sidebar bundle (`npm run build:sidebar` in the package).
+- Always rebuilds the lore index (incrementally).
+- Preserves files you've locally modified (HTML-comment override workflow).
+- Never touches project-owned paths.
+
+The `postinstall` script in `package.json` calls `node bin/refresh.mjs --postinstall || true` so `npm install kombinat-writer` from a consumer project also triggers a sync. This is idempotent — re-running on an up-to-date project is a no-op.
+
+Exit codes:
+- `0` — success, no drift
+- `1` — success, but locally-modified files were preserved (drift detected; review the `locallyModified[]` list)
+- `2` — refresh failed
+
 ---
 
 ## Voice & Style System

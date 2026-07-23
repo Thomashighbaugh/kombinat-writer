@@ -6,7 +6,7 @@
  *
  * If the author doesn't know or doesn't want to specify, a generic intent
  * is used: "Produce the best possible output consistent with the outline
- * and constitution."
+ * and manifest."
  *
  * Intents stored at ./book/intents/
  */
@@ -31,7 +31,7 @@ export interface AuthorialIntent {
 }
 
 /** Fallback intent used when the author provides no explicit direction. */
-export const GENERIC_INTENT = 'Produce the best possible output consistent with the outline and constitution.';
+export const GENERIC_INTENT = 'Produce the best possible output consistent with the outline and manifest.';
 
 // ─── Capture ────────────────────────────────────────────────────────────────
 
@@ -60,7 +60,7 @@ export function captureIntent(
 
 /**
  * Check whether produced content honors the stated intent.
- * For generic intents, always passes (the constitution and outline are the check).
+ * For generic intents, always passes (the manifest and outline are the check).
  * For specific intents, the agent performs semantic verification.
  *
  * This function provides structural checks the agent can use:
@@ -71,7 +71,7 @@ export function verifyIntent(
   intent: AuthorialIntent,
   content: string
 ): { honored: boolean; driftNotes?: string } {
-  // Generic intents always pass — they delegate to constitution/outline
+  // Generic intents always pass — they delegate to manifest/outline
   if (intent.isGeneric) {
     return { honored: true };
   }
@@ -172,7 +172,7 @@ export function formatIntentForDisplay(intent: AuthorialIntent): string {
     '',
     `**Phase**: ${intent.phase}${intent.chapter ? ` — Chapter ${intent.chapter}` : ''}`,
     `**Intent**: ${intent.intent}`,
-    `**Type**: ${intent.isGeneric ? 'Generic (delegates to constitution/outline)' : 'Author-specified'}`,
+    `**Type**: ${intent.isGeneric ? 'Generic (delegates to manifest/outline)' : 'Author-specified'}`,
     `**Captured**: ${intent.timestamp}`,
   ];
 

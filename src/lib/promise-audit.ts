@@ -23,39 +23,39 @@ export interface ReaderPromise {
   id: string;
   type: 'genre' | 'tone' | 'structural' | 'thematic' | 'mystery' | 'romantic' | 'content-warning';
   promise: string;
-  declaredIn: string;       // constitution, opening chapter, genre convention
+  declaredIn: string;       // manifest, opening chapter, genre convention
   keptInChapter?: number;
   kept: boolean;
   evidence: string;
 }
 
-/** Scan the book's constitution and content for declared and fulfilled reader promises. */
+/** Scan the book's manifest and content for declared and fulfilled reader promises. */
 export function auditPromises(
   projectRoot: string
 ): PromiseReport {
   const evidence: string[] = [];
   const promises: ReaderPromise[] = [];
 
-  // Load constitution for declared promises
-  const constitutionPath = path.join(projectRoot, 'book', 'constitution.md');
-  if (fs.existsSync(constitutionPath)) {
-    const constitution = fs.readFileSync(constitutionPath, 'utf-8');
+  // Load manifest for declared promises
+  const manifestPath = path.join(projectRoot, 'book', 'manifest.md');
+  if (fs.existsSync(manifestPath)) {
+    const manifest = fs.readFileSync(manifestPath, 'utf-8');
 
     // Extract thematic statement
-    const thematicMatch = constitution.match(/##\s*Thematic Statement\s*\n([^\n]+)/i);
+    const thematicMatch = manifest.match(/##\s*Thematic Statement\s*\n([^\n]+)/i);
     if (thematicMatch) {
       promises.push({
         id: 'P-thematic',
         type: 'thematic',
         promise: `Thematic argument: ${thematicMatch[1].trim()}`,
-        declaredIn: 'constitution',
+        declaredIn: 'manifest',
         kept: false,
         evidence: 'Must be verified in final chapter resolution',
       });
     }
 
     // Extract genre promises from Reader Contract
-    const contractMatch = constitution.match(/##\s*Reader Contract\s*\n([\s\S]*?)(?=\n##|\Z)/i);
+    const contractMatch = manifest.match(/##\s*Reader Contract\s*\n([\s\S]*?)(?=\n##|\Z)/i);
     if (contractMatch) {
       const contract = contractMatch[1];
       const lines = contract.split('\n').filter(l => l.trim().startsWith('-') || l.trim().startsWith('*'));
@@ -66,7 +66,7 @@ export function auditPromises(
             id: `P-genre-${promises.length}`,
             type: text.match(/warning|content/i) ? 'content-warning' : 'genre',
             promise: text,
-            declaredIn: 'constitution reader contract',
+            declaredIn: 'manifest reader contract',
             kept: false,
             evidence: 'Genre convention — must be fulfilled',
           });
@@ -75,18 +75,18 @@ export function auditPromises(
     }
 
     // Extract pacing promise
-    const pacingMatch = constitution.match(/pacing.*?(Relentless|Balanced|Literary|Rollercoaster|Custom)/i);
+    const pacingMatch = manifest.match(/pacing.*?(Relentless|Balanced|Literary|Rollercoaster|Custom)/i);
     if (pacingMatch) {
       promises.push({
         id: 'P-pacing',
         type: 'structural',
         promise: `Pacing: ${pacingMatch[1]}`,
-        declaredIn: 'constitution',
+        declaredIn: 'manifest',
         kept: false,
         evidence: 'Pacing distribution should match declared strategy',
       });
     }
-    evidence.push(`✓ Extracted ${promises.length} declared promises from constitution`);
+    evidence.push(`✓ Extracted ${promises.length} declared promises from manifest`);
   }
 
   // Load first chapter for tone promises

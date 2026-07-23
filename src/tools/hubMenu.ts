@@ -44,7 +44,9 @@ export default tool({
           description: hub.description,
           options: hub.subcommands.map(s => ({
             label: s.label,
-            description: s.description
+            description: s.description,
+            command: s.command || null,
+            inline: s.inline || false
           }))
         })
       }
@@ -65,6 +67,7 @@ export default tool({
           subcommand: spec.label,
           subDescription: spec.description,
           reminder: spec.reminder,
+          command: spec.command || null,
           detailedDescription: spec.detailedDescription,
           tools: spec.tools || null,
           rules: spec.rules || null,

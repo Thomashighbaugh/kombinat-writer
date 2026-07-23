@@ -17,14 +17,14 @@ If \`{userInput}\` begins with a recognised subcommand or alias, dispatch immedi
 
 | Subcommand | Aliases | Route to |
 |-----------|---------|----------|
-| \`constitute\` | \`const\` | \`/kombinat constitute\` |
+| \`manifest\` | \`const\` | \`/kombinat manifest\` |
 | \`specify\` | \`spec\` | \`/kombinat specify\` |
 | \`clarify\` | \`clar\` | \`/kombinat clarify\` |
 | \`research\` | \`rsrc\`, \`ingest\` | \`/kombinat research\` |
 | \`outline\` | \`plan\`, \`structure\` | \`/kombinat outline\` |
 | \`task-manager\` | \`tasks\`, \`task\` | \`/kombinat task-manager\` |
 | \`draft\` | \`write\`, \`chapter\` | \`/kombinat draft\` |
-| \`critique\` | \`alpha\`, \`beta\` | \`/kombinat critique\` |
+| \`critique\` | \`developmental\`, \`audience\` | \`/kombinat critique\` |
 | \`revise\` | \`revision\` | \`/kombinat revise\` |
 | \`edit\` | \`editor\`, \`line\` | \`/kombinat edit\` |
 | \`review\` | \`qa\`, \`audit\` | \`/kombinat review\` |
@@ -51,7 +51,7 @@ Check \`./book/track.json\`:
 Check for the presence and status of phase output documents. The detection follows the track-specific phase order.
 
 **Fiction track detection order:**
-1. \`./book/constitution.md\` exists? → Past Phase 1
+1. \`./book/manifest.md\` exists? → Past Phase 1
 2. \`./book/specification.md\` or \`./book/specification/\` exists? → Past Phase 2
 3. \`./book/specification/\` has \`[Needs Clarification]\` markers? → Phase 3 needed
 4. \`./book/research/\` has source files or \`research-plan.md\`? → Past Phase 4 (or skipped)
@@ -63,7 +63,7 @@ Check for the presence and status of phase output documents. The detection follo
 10. Any chapters with \`[Done]\` in task tracking? → Phases 10-11 reached
 
 **Non-fiction track detection order:**
-1. \`./book/constitution.md\` exists? → Past Phase 1
+1. \`./book/manifest.md\` exists? → Past Phase 1
 2. \`./book/research/\` has sources or research plan? → Past Phase 2
 3. Sources annotated and bibliography started? → Past Phase 3
 4. \`./book/outline.md\` exists? → Past Phase 4
@@ -77,7 +77,7 @@ Check for the presence and status of phase output documents. The detection follo
 
 | State | Meaning | Recommended Next |
 |-------|---------|-----------------|
-| \`not-started\` | No phase documents exist | Phase 1: \`/kombinat constitute\` |
+| \`not-started\` | No phase documents exist | Phase 1: \`/kombinat manifest\` |
 | \`in-progress\` | Some phases complete, current phase identified | Current phase subcommand |
 | \`active-writing\` | Drafting phase, chapters exist | Phase 7: \`/kombinat draft\` or \`/kombinat critique\` |
 | \`revision-cycle\` | Critique or revision artifacts exist | Phase 8-9: \`/kombinat critique\` or \`/kombinat revise\` |
@@ -86,11 +86,11 @@ Check for the presence and status of phase output documents. The detection follo
 | \`publishing\` | All content approved, ready to export | Phase 12: \`/kombinat publish\` |
 | \`complete\` | Everything finalised | Celebrate the achievement |
 
-**IMPORTANT — Do not belabor the obvious.** When the state is \`not-started\`, simply state "New project — starting from Phase 1" and recommend \`/kombinat constitute\`. Do NOT repeatedly mention that the project is blank, empty, or has no documents — the user knows, they just created it. Be concise. One sentence of context, then the recommendation.
+**IMPORTANT — Do not belabor the obvious.** When the state is \`not-started\`, simply state "New project — starting from Phase 1" and recommend \`/kombinat manifest\`. Do NOT repeatedly mention that the project is blank, empty, or has no documents — the user knows, they just created it. Be concise. One sentence of context, then the recommendation.
 
 **Also check for imported files.** Before reporting state, check for:
-- \`./imported-lorebook.json\` — if present, mention "Lorebook import detected — run \`/kombinat constitute\` to convert it into series lorebook and pre-fill your constitution."
-- \`./premise.md\` — if present, mention "Premise document detected — run \`/kombinat constitute\` to use it as a starting point."
+- \`./imported-lorebook.json\` — if present, mention "Lorebook import detected — run \`/kombinat manifest\` to convert it into series lorebook and pre-fill your manifest."
+- \`./premise.md\` — if present, mention "Premise document detected — run \`/kombinat manifest\` to use it as a starting point."
 
 ### 4. Build Contextualised Roadmap
 
@@ -108,7 +108,7 @@ Present a roadmap that:
 Track: Fiction  |  State: Planning
 
 Phase Workflow:
-  [DONE]   1. Constitute   — Creative principles established
+  [DONE]   1. Manifest   — Creative principles established
   [DONE]   2. Specify      — Story specification created
   [NEXT]   3. Clarify      — Resolve ambiguities in the specification
   [PENDING] 4. Research     — Gather contextual reference material
@@ -137,7 +137,7 @@ Draft files go in \`./book/drafts/\` (relative to project root). The \`/kombinat
 
 ### 6. Track-Specific Guidance
 
-**Fiction**: Emphasise the constitution → specification → outline → draft pipeline. The critical path is consistent character and plot tracking.
+**Fiction**: Emphasise the manifest → specification → outline → draft pipeline. The critical path is consistent character and plot tracking.
 
 **Non-fiction**: Emphasise the research → outline → draft-with-citations pipeline. The critical path is source integrity and citation accuracy.
 

@@ -10,7 +10,7 @@ import { HubSubcommand, HubSubcommandSpec } from "../../hub-data.js"
 
 // Import all spec files
 import guided from "./guided.js"
-import constitute from "./constitute.js"
+import manifest from "./manifest.js"
 import specify from "./specify.js"
 import clarify from "./clarify.js"
 import research from "./research.js"
@@ -34,11 +34,13 @@ import pacingAudit from "./pacing-audit.js"
 import hookReview from "./hook-review.js"
 import readThrough from "./read-through.js"
 import series from "./series.js"
+import refreshIndex from "./refresh-index.js"
+import refresh from "./refresh.js"
 
 // All specs — full detail available via hubMenu 'route'
 export const specs: HubSubcommandSpec[] = [
   guided,
-  constitute,
+  manifest,
   specify,
   clarify,
   research,
@@ -62,6 +64,8 @@ export const specs: HubSubcommandSpec[] = [
   hookReview,
   readThrough,
   series,
+  refreshIndex,
+  refresh,
 ]
 
 // Identity slice for the TUI menu

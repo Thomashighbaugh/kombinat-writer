@@ -361,17 +361,20 @@ The draft phase integrates these HITL features:
 | Skill | File | Purpose |
 |-------|------|---------|
 | \`pre-draft-checklist\` | \`skills/quality-assurance/pre-draft-checklist/SKILL.md\` | Checklist reference (now enforced by gate) |
-| \`scene-structure\` | \`skills/fiction/writing-techniques/scene-structure/SKILL.md\` | Scene framework (fiction) |
+| \`scene-architecture\` | \`skills/fiction/writing-techniques/scene-architecture/SKILL.md\` | Scene framework (fiction) |
 | \`dialogue-techniques\` | \`skills/fiction/writing-techniques/dialogue-techniques/SKILL.md\` | Dialogue quality (fiction) |
-| \`emotional-interiority\` | \`skills/fiction/writing-techniques/emotional-interiority/SKILL.md\` | Internal reactions (fiction) |
+| \`psychological-interiority\` | \`skills/fiction/writing-techniques/psychological-interiority/SKILL.md\` | Internal reactions (fiction) |
 | \`argument-structure\` | \`skills/non-fiction/argument-structure/SKILL.md\` | Evidence presentation (non-fiction) |
 | \`academic-writing\` | \`skills/non-fiction/academic-writing/SKILL.md\` | Academic register (non-fiction) |
 | \`phase-preview\` | \`src/lib/phase-preview.ts\` | Pre-execution confirmation showing scope/time/changes |
 | \`authorial-intent\` | \`src/lib/authorial-intent.ts\` | Authorial intent capture before drafting |
 | \`creative-constraints\` | \`src/lib/creative-constraints.ts\` | Non-negotiables gate check |
 | \`provenance\` | \`src/lib/provenance.ts\` | Change provenance tracking |`,
+  rules: [
+    "Whenever the user makes a decision that alters narrative context, metanarrative, formatting, or tracking states, you MUST proactively update the relevant files in ./book/metadata/ and ./book/tracking/ before completing the turn."
+  ],
   tools: ["loadSkill", "bash"],
-  relatedSkills: ["pre-draft-checklist", "scene-structure", "dialogue-techniques", "emotional-interiority", "argument-structure", "academic-writing", "phase-preview", "authorial-intent", "creative-constraints", "provenance"],
+  relatedSkills: ["pre-draft-checklist", "scene-architecture", "dialogue-techniques", "psychological-interiority", "argument-structure", "academic-writing", "phase-preview", "authorial-intent", "creative-constraints", "provenance"],
   examples: [
     { input: "/kombinat draft", approach: "Drafts all pending chapters (up to 6) in one batch with shared context loaded once" },
     { input: "/kombinat draft 3-8", approach: "Drafts chapters 3 through 8 in one batch" },

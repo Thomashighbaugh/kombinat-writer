@@ -1,6 +1,6 @@
 ---
 name: pre-draft-checklist
-description: "Enforces the 13-item pre-draft checklist — ensures constitution, specification, outline, knowledge, tracking, previous chapter, and research context are loaded before every draft session."
+description: "Enforces the 13-item pre-draft checklist — ensures manifest, specification, outline, knowledge, tracking, previous chapter, and research context are loaded before every draft session."
 ---
 
 # Pre-Draft Checklist
@@ -9,8 +9,8 @@ Every draft session **must** begin by loading all 13 context items below. Skippi
 
 ## Mandatory Items
 
-### 1. Constitution
-The `.opencode/context/constitution.md` file defining voice, register, POV, tense, world rules, and quality bars. **Without it**, the assistant cannot distinguish intentional style from error.
+### 1. Manifest
+The `.opencode/context/manifest.md` file defining voice, register, POV, tense, world rules, and quality bars. **Without it**, the assistant cannot distinguish intentional style from error.
 
 ### 2. Track Metadata
 Track identifier (fiction/non-fiction/hybrid/rewrite), word-count targets, and section boundaries. **Without it**, output cannot be validated against the project's structural requirements.

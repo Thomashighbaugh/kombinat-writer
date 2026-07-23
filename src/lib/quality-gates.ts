@@ -57,7 +57,7 @@ export interface GateResult {
 //      Mismatched pairs are a hard block — they indicate a broken setup
 //      chain that will surface as a continuity error in drafting.
 //   5. Pacing distribution — The set of pacing tags across all chapters
-//      must roughly match the constitution's declared pacing strategy.
+//      must roughly match the manifest's declared pacing strategy.
 //      A lopsided distribution (e.g. all Rising, no Calm) is a hard block.
 //
 // The gate is structural — it does not evaluate literary quality, only
@@ -323,10 +323,10 @@ export function outlineGate(
 
     if (totalChapters >= 4) {
       if (actionCount === totalChapters) {
-        blocking.push(`Pacing distribution: All ${totalChapters} chapters are action/rising — no calm/resolution beats. Add breathing room per constitution's pacing strategy.`);
+        blocking.push(`Pacing distribution: All ${totalChapters} chapters are action/rising — no calm/resolution beats. Add breathing room per manifest's pacing strategy.`);
       }
       if (calmCount === totalChapters) {
-        blocking.push(`Pacing distribution: All ${totalChapters} chapters are calm/resolution — no rising action. Verify this matches the constitution's pacing strategy.`);
+        blocking.push(`Pacing distribution: All ${totalChapters} chapters are calm/resolution — no rising action. Verify this matches the manifest's pacing strategy.`);
       }
     }
   }
@@ -348,7 +348,7 @@ function parseChapterRef(ref: string): number | null {
 // ─── Pre-Draft Gate ──────────────────────────────────────────────────────
 
 const REQUIRED_CONTEXT_ITEMS = [
-  { id: 'constitution', path: './book/constitution.md', description: 'Creative/intellectual principles' },
+  { id: 'manifest', path: './book/manifest.md', description: 'Creative/intellectual principles' },
   { id: 'track', path: './book/track.json', description: 'Track and project metadata' },
   { id: 'specification', path: './book/specification.md', description: 'Story blueprint (fiction) — may be ./book/specification/_main.md' },
   { id: 'outline', path: './book/outline.md', description: 'Chapter structural context' },
@@ -889,7 +889,7 @@ export function nonNegotiablesGate(
       passed: true,
       blocking: [],
       warnings: [],
-      evidence: ['No creative constraints file found — gate passes by default. Declare constraints via /kombinat constitute.'],
+      evidence: ['No creative constraints file found — gate passes by default. Declare constraints via /kombinat manifest.'],
     };
   }
 

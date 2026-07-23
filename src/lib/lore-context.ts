@@ -4,7 +4,7 @@
  * Reads all available lorebook and knowledge files and returns a formatted
  * context block that phase specs can reference. The executing AI subagent
  * should load this context at the start of any content-generating phase
- * (outline, draft, critique, revise, review, specify, clarify, constitute).
+ * (outline, draft, critique, revise, review, specify, clarify, manifest).
  *
  * Lore sources (checked in order, all that exist are included):
  *   1. Series lorebook  → ./series/lorebook/*
@@ -36,10 +36,16 @@ const LORE_PATHS: Array<{ prefix: string; pattern: string }> = [
   { prefix: 'series/lorebook', pattern: 'glossary.md' },
   { prefix: 'series/lorebook', pattern: 'timeline.json' },
   { prefix: 'series/lorebook', pattern: 'threads.md' },
+  { prefix: 'series',          pattern: 'outline.md' },           // NEW: series-wide condensed outline
   { prefix: 'book/knowledge',  pattern: 'character-profiles.md' },
   { prefix: 'book/knowledge',  pattern: 'voice-profiles.json' },
   { prefix: 'book/knowledge',  pattern: 'locations.md' },
   { prefix: 'book/knowledge',  pattern: 'world-rules.md' },
+  { prefix: 'book/knowledge',  pattern: 'character-voices.md' },
+  { prefix: 'book',            pattern: 'manifest.md' },      // NEW: project canon
+  { prefix: 'book',            pattern: 'specification.md' },     // NEW: book spec
+  { prefix: 'book',            pattern: 'outline.md' },           // NEW: whole-book outline
+  { prefix: 'book/outline',    pattern: '*.md' },                 // NEW: per-chapter outline details
 ]
 
 /**
@@ -51,6 +57,45 @@ export function loadLoreContext(projectRoot: string): LoreContextResult {
   const warnings: string[] = []
 
   for (const entry of LORE_PATHS) {
+    // Expand wildcards in pattern (e.g. '*.md') by listing the prefix directory
+    if (entry.pattern.includes('*')) {
+      const prefixDir = path.join(projectRoot, entry.prefix)
+      if (!fs.existsSync(prefixDir)) continue
+      let matches: string[]
+      try {
+        matches = fs.readdirSync(prefixDir).filter(f =>
+          entry.pattern.startsWith('*.')
+            ? f.endsWith(entry.pattern.slice(1))
+            : entry.pattern.startsWith('*')
+              ? f.endsWith(entry.pattern)
+              : f === entry.pattern
+        )
+      } catch {
+        continue
+      }
+      for (const match of matches) {
+        const fullPath = path.join(prefixDir, match)
+        const relativePath = `${entry.prefix}/${match}`
+        if (!fs.statSync(fullPath).isFile()) continue
+        try {
+          const stat = fs.statSync(fullPath)
+          if (stat.size === 0) {
+            warnings.push(`${relativePath} exists but is empty`)
+            continue
+          }
+          const content = fs.readFileSync(fullPath, 'utf-8').trim()
+          if (!content) {
+            warnings.push(`${relativePath} exists but is empty after trimming`)
+            continue
+          }
+          files[relativePath] = content
+        } catch (err) {
+          warnings.push(`${relativePath}: could not read — ${(err as Error).message}`)
+        }
+      }
+      continue
+    }
+
     const fullPath = path.join(projectRoot, entry.prefix, entry.pattern)
     const relativePath = `${entry.prefix}/${entry.pattern}`
     if (!fs.existsSync(fullPath)) continue

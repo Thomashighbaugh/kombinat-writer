@@ -24,9 +24,9 @@ Read \`./book/specification.md\` (or \`./book/specification/_main.md\` and relev
 - \`[Core Requirement]\` — verify these are sufficiently specific
 - \`[Optional Feature]\` — note these but do not block on them
 
-### 2. Load Knowledge and Constitution
+### 2. Load Knowledge and Manifest
 
-Read \`./book/constitution.md\` and \`./book/knowledge/\` files for additional context that may reveal gaps.
+Read \`./book/manifest.md\` and \`./book/knowledge/\` files for additional context that may reveal gaps.
 
 ### 3. Identify Ambiguities
 

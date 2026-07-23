@@ -39,7 +39,7 @@ export const DIM = createTextAttributes({ dim: true })
 export function phaseLabel(phase: string): string {
   const labels: Record<string, string> = {
     'not-started': 'Not Started',
-    constitute: 'Constitute',
+    manifest: 'Manifest',
     specify: 'Specify',
     clarify: 'Clarify',
     research: 'Research',

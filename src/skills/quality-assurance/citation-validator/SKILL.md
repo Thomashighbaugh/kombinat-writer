@@ -13,7 +13,7 @@ For non-fiction and mixed-track projects, every factual assertion must be tracea
 Every `[Source: key]` marker in the draft must correspond to a source note in the project's source registry. **Scan**: extract all markers via regex `\[Source:\s*([^\]]+)\]`, then verify each `key` exists in the source notes index. Orphan markers are errors.
 
 ### 2. Format Consistency
-Markers must match the citation style declared in the constitution (Chicago author-date, MLA, APA, or custom `[Source: key]` convention). **Scan**: check for mixed styles — e.g., a Chicago footnoted project should not contain inline `[Source: key]` markers unless explicitly permitted.
+Markers must match the citation style declared in the manifest (Chicago author-date, MLA, APA, or custom `[Source: key]` convention). **Scan**: check for mixed styles — e.g., a Chicago footnoted project should not contain inline `[Source: key]` markers unless explicitly permitted.
 
 ### 3. No Dangling `[CitationNeeded]`
 Placeholder markers inserted during drafting as reminders. **Scan**: locate every `[CitationNeeded]` or `[citation needed]` instance. Each must be resolved to a real citation before the draft is considered complete. Zero tolerance.
@@ -29,7 +29,7 @@ Every source cited in the text must appear in the bibliography or source notes a
 3. Diff A - B → orphan markers (errors)
 4. Diff B - A → unused sources (warnings, may be intentional)
 5. Search for /\[CitationNeeded\]/i → unresolved placeholders (blocking)
-6. Check style registry in constitution → ensure single style throughout
+6. Check style registry in manifest → ensure single style throughout
 ```
 
 ## Common Citation Errors
@@ -38,7 +38,7 @@ Every source cited in the text must appear in the bibliography or source notes a
 |-------|-----------|-----|
 | Typo in key (e.g., `[Source: Smtih2023]`) | Key does not resolve | Correct the key |
 | Stale placeholder left behind | `[CitationNeeded]` present | Find source or remove claim |
-| Mixed citation styles | Inline markers + footnotes in same chapter | Normalise to constitution style |
+| Mixed citation styles | Inline markers + footnotes in same chapter | Normalise to manifest style |
 | Source key in draft but missing from bibliography | Key resolves but no bib entry | Add entry |
 | Bibliography entry never cited | Entry present but no draft marker | Either cite it or remove entry |
 

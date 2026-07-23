@@ -17,7 +17,7 @@
  *
  * Per-book integration:
  *   - track.json gains seriesId and bookNumber fields
- *   - constitute can inherit from series lorebook for book 2+
+ *   - manifest can inherit from series lorebook for book 2+
  *   - Series-level continuity scan checks across all books
  *   - Series lorebook syncs from per-book knowledge files
  */
@@ -310,7 +310,7 @@ export function syncFromBook(projectRoot: string): { synced: string[]; warnings:
   }
 
   // Sync glossary terms (from style sheet terminology)
-  const terminologyPath = path.join(projectRoot, 'book', 'style-sheet', 'terminology.md');
+  const terminologyPath = path.join(projectRoot, 'book', 'metadata', 'terminology.md');
   if (fs.existsSync(terminologyPath)) {
     const terminology = fs.readFileSync(terminologyPath, 'utf-8');
     const seriesGlossaryPath = path.join(lorebookDir, 'glossary.md');

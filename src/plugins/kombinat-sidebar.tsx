@@ -19,7 +19,7 @@ import { useProjectState, setInjector } from './hooks/use-project-state.js'
 /** All 25 subcommands for the instant menu */
 const KOMBINAT_SUBCOMMANDS = [
   { label: 'guided',          description: 'Assess project state and recommend next phase' },
-  { label: 'constitute',     description: 'Establish creative or intellectual principles' },
+  { label: 'manifest',     description: 'Establish creative or intellectual principles' },
   { label: 'specify',        description: 'Build story specification with premise stress-test' },
   { label: 'clarify',        description: 'Resolve specification ambiguities' },
   { label: 'research',       description: 'Active research — sources, annotation, literature review' },
@@ -133,5 +133,5 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
   }
 }
 
-const plugin = { id: 'kombinat-sidebar', tui }
+const plugin = { id: 'kombinat-sidebar', tui, server: tui }
 export default plugin

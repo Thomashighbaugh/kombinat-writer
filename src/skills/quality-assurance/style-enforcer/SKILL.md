@@ -1,25 +1,25 @@
 ---
 name: style-enforcer
-description: "Enforces the chosen prose style from the constitution — checks register, sentence patterns, atmosphere, and voice consistency across chapters."
+description: "Enforces the chosen prose style from the manifest — checks register, sentence patterns, atmosphere, and voice consistency across chapters."
 ---
 
 # Style Enforcer
 
-Compares draft prose against the style specification in the constitution. Flags deviations that constitute authorial style drift versus intentional character voice variation.
+Compares draft prose against the style specification in the manifest. Flags deviations that manifest authorial style drift versus intentional character voice variation.
 
 ## Style Dimensions
 
 ### Register
-Formal-to-informal axis as defined by the constitution. **Check**: vocabulary tier (technical vs everyday), contraction usage, sentence-initial conjunctions, colloquialism density. **Drift signal**: register shifts that lack in-world justification.
+Formal-to-informal axis as defined by the manifest. **Check**: vocabulary tier (technical vs everyday), contraction usage, sentence-initial conjunctions, colloquialism density. **Drift signal**: register shifts that lack in-world justification.
 
 ### Sentence Length Distribution
-The constitution specifies a target rhythm (e.g., "predominantly short declarative sentences" or "varied with periodic long sentences"). **Check**: mean sentence length, length standard deviation, proportion of sentences exceeding the constitution's max. **Drift signal**: sustained deviation across 3+ consecutive paragraphs.
+The manifest specifies a target rhythm (e.g., "predominantly short declarative sentences" or "varied with periodic long sentences"). **Check**: mean sentence length, length standard deviation, proportion of sentences exceeding the manifest's max. **Drift signal**: sustained deviation across 3+ consecutive paragraphs.
 
 ### Figurative Language Density
-Target frequency of metaphor, simile, analogy, personification. **Check**: instances per 500 words. **Drift signal**: density exceeds or falls below the constitution range for an entire chapter section.
+Target frequency of metaphor, simile, analogy, personification. **Check**: instances per 500 words. **Drift signal**: density exceeds or falls below the manifest range for an entire chapter section.
 
 ### Sensory Emphasis
-The constitution may prioritise specific senses (e.g., "emphasise tactile and auditory over visual"). **Check**: sensory verb/adjective ratios by sense modality. **Drift signal**: a non-priority sense dominates a scene without narrative justification.
+The manifest may prioritise specific senses (e.g., "emphasise tactile and auditory over visual"). **Check**: sensory verb/adjective ratios by sense modality. **Drift signal**: a non-priority sense dominates a scene without narrative justification.
 
 ## Detection of Style Drift
 

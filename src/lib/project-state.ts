@@ -18,7 +18,7 @@ export type Track = 'fiction' | 'non-fiction' | 'mixed';
 /** Workflow phase in the book-writing pipeline. */
 export type Phase =
   | 'not-started'
-  | 'constitute'
+  | 'manifest'
   | 'specify'
   | 'clarify'
   | 'research'
@@ -48,7 +48,7 @@ export interface ProjectState {
   track: Track;
   phase: Phase;
   state: State;
-  constitution: boolean;
+  manifest: boolean;
   specification: boolean;
   clarificationNeeded: boolean;
   research: boolean;
@@ -84,15 +84,15 @@ export function detectTrack(projectRoot: string): Track {
 /** Return the ordered list of phases appropriate for the given track. */
 export function getPhaseOrder(track: Track): Phase[] {
   const fiction: Phase[] = [
-    'constitute', 'specify', 'clarify', 'research', 'outline',
+    'manifest', 'specify', 'clarify', 'research', 'outline',
     'task-manager', 'draft', 'critique', 'revise', 'edit', 'review', 'publish',
   ];
   const nonfiction: Phase[] = [
-    'constitute', 'research', 'outline', 'task-manager',
+    'manifest', 'research', 'outline', 'task-manager',
     'draft', 'critique', 'revise', 'edit', 'review', 'publish',
   ];
   const mixed: Phase[] = [
-    'constitute', 'specify', 'clarify', 'research', 'outline',
+    'manifest', 'specify', 'clarify', 'research', 'outline',
     'task-manager', 'draft', 'critique', 'revise', 'edit', 'review', 'publish',
   ];
 
@@ -111,7 +111,7 @@ export function detectState(projectRoot: string): ProjectState {
   const critiqueDir = path.join(bookDir, 'critique');
   const revisionsDir = path.join(bookDir, 'revisions');
 
-  const constitution = fs.existsSync(path.join(bookDir, 'constitution.md'));
+  const manifest = fs.existsSync(path.join(bookDir, 'manifest.md'));
   const specification = fs.existsSync(path.join(bookDir, 'specification.md')) ||
     fs.existsSync(path.join(bookDir, 'specification'));
   const outline = fs.existsSync(path.join(bookDir, 'outline.md')) ||
@@ -158,12 +158,12 @@ export function detectState(projectRoot: string): ProjectState {
   let currentPhaseIdx = 0;
 
   const phaseExists: Record<string, boolean> = {
-    constitution, specification, outline, tasks, research,
+    manifest, specification, outline, tasks, research,
   };
 
   for (let i = phases.length - 1; i >= 0; i--) {
     const p = phases[i];
-    if (p === 'constitute' && constitution) { currentPhaseIdx = i; break; }
+    if (p === 'manifest' && manifest) { currentPhaseIdx = i; break; }
     if (p === 'specify' && specification) { currentPhaseIdx = i; break; }
     if (p === 'outline' && outline) { currentPhaseIdx = i; break; }
     if (p === 'task-manager' && tasks) { currentPhaseIdx = i; break; }
@@ -176,7 +176,7 @@ export function detectState(projectRoot: string): ProjectState {
   // If in a later phase but earlier phases are missing, report the first missing
   for (let i = 0; i < phases.length; i++) {
     const p = phases[i];
-    if (p === 'constitute' && !constitution) { currentPhaseIdx = i; break; }
+    if (p === 'manifest' && !manifest) { currentPhaseIdx = i; break; }
     if ((p === 'specify' || p === 'clarify') && !specification) { currentPhaseIdx = i; break; }
     if (p === 'outline' && !outline && specification) { currentPhaseIdx = i; break; }
     if (p === 'task-manager' && !tasks && outline) { currentPhaseIdx = i; break; }
@@ -186,7 +186,7 @@ export function detectState(projectRoot: string): ProjectState {
 
   // Determine state category
   let state: State = 'not-started';
-  if (constitution || specification) state = 'in-progress';
+  if (manifest || specification) state = 'in-progress';
   if (chapters > 0 && critiqueRounds === 0) state = 'active-writing';
   if (critiqueRounds > 0) state = 'revision-cycle';
   if (revisions > 0 && chapters > 0) state = 'editing';
@@ -200,7 +200,7 @@ export function detectState(projectRoot: string): ProjectState {
     track,
     phase,
     state,
-    constitution,
+    manifest,
     specification,
     clarificationNeeded: false,
     research,

@@ -158,14 +158,14 @@ If the user selects, call \`hubMenu\` with \`action: "route"\`, \`hub: "kombinat
 
 Uses skills from draft, critique, revise, edit, and verify phases.`,
   tools: ["loadSkill", "bash"],
-  relatedSkills: ["alpha-reader", "beta-reader", "peer-review", "sensitivity-reader", "pre-draft-checklist", "consistency-checker", "forgotten-elements", "style-enforcer"],
+  relatedSkills: ["developmental-editor", "audience-surrogate", "domain-expert", "cultural-consultant", "pre-draft-checklist", "continuity-auditor", "forgotten-elements", "style-enforcer"],
   examples: [
     { input: "/kombinat cycle", approach: "Runs full editorial cycle for all pending chapters (up to 6): draft→critique→revise→edit→continuity→done" },
     { input: "/kombinat cycle 3-8", approach: "Cycles chapters 3 through 8 through full pipeline" },
     { input: "/kombinat cycle Chapter 5", approach: "Single-chapter override — cycles only chapter 5" },
     { input: "/kombinat cycle all", approach: "Cycles ALL pending chapters regardless of batch limit" }
   ],
-  warnings: ["Batch mode is the DEFAULT — single-chapter requires explicit chapter number", "Gates between each step are HARD BLOCKS — failures stop the entire batch", "Cycle auto-applies Clarity and Error edit suggestions but NOT subjective suggestions", "Shared context (constitution, style sheet, tracking) is loaded ONCE per phase, not per chapter", "Batch stops on first gate failure — fix the failed chapter before continuing the batch"]
+  warnings: ["Batch mode is the DEFAULT — single-chapter requires explicit chapter number", "Gates between each step are HARD BLOCKS — failures stop the entire batch", "Cycle auto-applies Clarity and Error edit suggestions but NOT subjective suggestions", "Shared context (manifest, style sheet, tracking) is loaded ONCE per phase, not per chapter", "Batch stops on first gate failure — fix the failed chapter before continuing the batch"]
 }
 
 export default spec

@@ -298,12 +298,15 @@ The gate produces evidence, not just pass/fail. Each check reports what it found
 
 | Skill | File | Purpose |
 |-------|------|---------|
-| \`scene-structure\` | \`skills/fiction/writing-techniques/scene-structure/SKILL.md\` | Scene framework per chapter (fiction) |
+| \`scene-architecture\` | \`skills/fiction/writing-techniques/scene-architecture/SKILL.md\` | Scene framework per chapter (fiction) |
 | \`pacing-rhythm\` | \`skills/fiction/writing-techniques/pacing-rhythm/SKILL.md\` | Pacing archetype enforcement |
 | \`argument-structure\` | \`skills/non-fiction/argument-structure/SKILL.md\` | Argument flow and evidence placement |
 | \`strategic-reversal\` | \`skills/fiction/writing-techniques/strategic-reversal/SKILL.md\` | Reversal setup planning (fiction) |`,
+  rules: [
+    "Whenever the user makes a decision that alters narrative context, metanarrative, formatting, or tracking states, you MUST proactively update the relevant files in ./book/metadata/ and ./book/tracking/ before completing the turn."
+  ],
   tools: ["loadSkill", "bash", "question"],
-  relatedSkills: ["scene-structure", "pacing-rhythm", "argument-structure", "strategic-reversal"],
+  relatedSkills: ["scene-architecture", "pacing-rhythm", "argument-structure", "strategic-reversal"],
   examples: [
     { input: "/kombinat outline 3 acts, 12 chapters each", approach: "Builds a 36-chapter outline with scene beats, setup/payoff chains, and continuity anchors per chapter. Gate runs — if it fails, revises up to 3 cycles." },
     { input: "/kombinat outline", approach: "Interviews for structure (arcs, chapters, pacing), then builds fine-grained chapter map. Gate enforces scene beats, setup/payoff bidirectionality, and continuity anchors before proceeding." },

@@ -134,6 +134,9 @@ If the user selects a phase, call \`hubMenu\` with \`action: "route"\`, \`hub: "
 | \`scene-structure\` | \`skills/fiction/writing-techniques/scene-structure/SKILL.md\` | Scene framework reference |
 | \`character-depth\` | \`skills/fiction/writing-techniques/character-depth/SKILL.md\` | Character profiling guidance |
 | \`namecraft\` | \`skills/fiction/writing-techniques/namecraft/SKILL.md\` | Character and location naming |`,
+  rules: [
+    "Whenever the user makes a decision that alters narrative context, metanarrative, formatting, or tracking states, you MUST proactively update the relevant files in ./book/metadata/ and ./book/tracking/ before completing the turn."
+  ],
   tools: ["loadSkill", "bash", "question"],
   relatedSkills: ["scene-structure", "character-depth", "namecraft"],
   examples: [

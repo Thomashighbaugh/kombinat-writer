@@ -33,7 +33,8 @@ Simulate structured external feedback on chapters. **Batch mode is the default**
 | \`comprehensive\` | All perspectives | Combined alpha + beta + sensitivity + peer | Final pre-edit pass |
 | \`cold-read\` | Zero-context reader | Simulates a reader encountering the text with NO prior context — flags passages that rely on information the reader doesn't have | Catching author-knowledge blind spots |
 | \`adversarial\` | Two-agent dialectic | One agent argues for strengths, one argues against, third synthesizes — surfaces blind spots single-pass critique misses | Stress-testing before revision |
-| \`personas\` | Multi-perspective beta | 3-5 reader personas (Genre Fan, Casual Reader, Literary Critic, Subject Expert, Skeptical Reviewer) react with focused responses | Diverse reader reception |
+| \`personas\` | Multi-perspective beta |
+| \`swarm\` | Multi-Agent Pipeline | Parallel dispatch of 4 subagents (Structure, Prose, Continuity, Hooks) for deep analysis | High-value chapters, major revisions | 3-5 reader personas (Genre Fan, Casual Reader, Literary Critic, Subject Expert, Skeptical Reviewer) react with focused responses | Diverse reader reception |
 
 **Auto-selection** (when mode not specified):
 - All chapters in batch are early drafts (< 3 chapters exist) → alpha
@@ -182,6 +183,17 @@ When mode is \`personas\`, simulate 3-5 reader personas reacting to each chapter
 
 Each persona produces focused feedback from their lens. The consolidated report shows where personas agree (likely real issues) vs. where they disagree (matter of taste).
 
+### 4d. Swarm Mode Execution
+
+When mode is \`swarm\`, execute the **Three-Phase Multi-Agent Swarm** pattern:
+1. **Parallel Dispatch**: Use the \`task\` tool to launch four subagents concurrently:
+   - \`@deep-thinker\` loaded with \`developmental-editor\` (Structural Analyst)
+   - \`@code-reviewer\` loaded with \`line-editor\` (Prose Reviewer)
+   - \`@refactoring\` loaded with \`continuity-auditor\` (Continuity Auditor)
+   - \`@deep-thinker\` loaded with \`hook-and-transition-analyst\` (Momentum Analyst)
+2. **Consolidation**: Reconcile their reports, removing duplicates and formatting into the master Priority Matrix.
+3. **Verification**: Confirm no hallucinations or violations of project metadata before saving.
+
 ### 5. Build Priority Matrix (per chapter, then consolidated)
 
 After all chapter critiques in the batch, produce a consolidated priority matrix:
@@ -281,7 +293,7 @@ The critique phase integrates these HITL features:
 | \`severity-tiers\` | \`src/lib/severity-tiers.ts\` | Suggestion severity tiers |
 | \`veto-system\` | \`src/lib/veto-system.ts\` | Veto with \`|\` key |
 | \`feedback-memory\` | \`src/lib/feedback-memory.ts\` | Rejection reason memory |`,
-  tools: ["loadSkill", "bash"],
+  tools: ["loadSkill", "bash", "task"],
   relatedSkills: ["alpha-reader", "beta-reader", "peer-review", "sensitivity-reader", "phase-preview", "severity-tiers", "veto-system", "feedback-memory"],
   examples: [
     { input: "/kombinat critique", approach: "Critiques all [FR] chapters (up to 6) with auto-selected mode" },
