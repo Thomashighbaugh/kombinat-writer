@@ -92,12 +92,13 @@ export function copyToolsAndLib(destDir, mode, manifestFiles = null) {
         else skipped++
     })
     // Copy lib/ (.ts modules + .mjs runtime modules)
-    // In the source tree, lib/ is a sibling of tools/ (src/lib/, src/tools/).
-    // To preserve relative-import paths like `../lib/foo` from `src/tools/*.ts`,
-    // we put lib at <destDir>/lib/ in the consumer (mirroring the source layout).
+    // lib/ is placed at <destDir>/plugins/lib/ to mirror the source layout
+    // where src/lib/ is a sibling of src/plugins/. This keeps the plugin's
+    // relative imports (../../lib/) working in both the source tree and the
+    // installed consumer project.
     const srcLib = path.join(SRC_DIR, 'lib')
     if (fs.existsSync(srcLib)) {
-        const libDest = path.join(destDir, 'lib')
+        const libDest = path.join(destDir, 'plugins', 'lib')
         fs.ensureDirSync(libDest)
         // Copy .ts modules + .mjs runtime modules (chunker, index-builder, etc.)
         for (const file of fs.readdirSync(srcLib).filter(f => (f.endsWith('.ts') && !f.endsWith('.d.ts')) || f.endsWith('.mjs'))) {
@@ -105,7 +106,7 @@ export function copyToolsAndLib(destDir, mode, manifestFiles = null) {
                 path.join(srcLib, file),
                 path.join(libDest, file),
                 mode,
-                manifestFiles ? manifestFiles.get(`lib/${file}`) : null,
+                manifestFiles ? manifestFiles.get(`plugins/lib/${file}`) : null,
             )
             if (result === 'copied') copied++
             else skipped++
@@ -120,7 +121,7 @@ export function copyToolsAndLib(destDir, mode, manifestFiles = null) {
                     path.join(srcScripts, file),
                     path.join(destScripts, file),
                     mode,
-                    manifestFiles ? manifestFiles.get(`lib/scripts/${file}`) : null,
+                    manifestFiles ? manifestFiles.get(`plugins/lib/scripts/${file}`) : null,
                 )
                 if (result === 'copied') copied++
                 else skipped++
@@ -199,46 +200,104 @@ export function copyTemplates(destDir, track) {
     }
 }
 
-// ─── Sidebar Plugin (built bundle) ──────────────────────────────────────────
+// ─── Sidebar Plugin ─────────────────────────────────────────────────────────
 
+/**
+ * Copy the kombinat-sidebar TUI plugin from source into the consumer project.
+ *
+ * Source of truth: src/plugins/ (TSX + TS, runs natively under bun — no
+ * build step needed in the consumer). The TSX tree has subdirectories
+ * (components/, hooks/, utils/) that MUST be copied intact; the legacy
+ * dist/ bundle collapses everything into a single minified file and is no
+ * longer used.
+ *
+ * Plugin entry point in the consumer: .opencode/plugins/kombinat-sidebar/index.js
+ * which re-exports from ./kombinat-sidebar.tsx (the .tsx extension is
+ * required because the index.js in src/plugins/ points to it directly).
+ */
 export function copySidebarPlugin(destDir, mode, manifestFiles = null) {
-    const builtDir = path.join(PACKAGE_ROOT, 'dist', 'plugins', 'kombinat-sidebar')
+    const srcDir = path.join(SRC_DIR, 'plugins')
     const destDir2 = path.join(destDir, 'plugins', 'kombinat-sidebar')
+    if (!fs.existsSync(srcDir)) return { copied: 0, skipped: 0, source: 'none' }
 
-    if (fs.existsSync(builtDir)) {
-        fs.ensureDirSync(destDir2)
-        let copied = 0, skipped = 0
-        for (const file of fs.readdirSync(builtDir)) {
+    fs.ensureDirSync(destDir2)
+    let copied = 0, skipped = 0
+
+    // Copy top-level files (entry point, package.json, tsconfig.json, index.js).
+    // Skip the lib/ symlink — it's resolved when we copy subdirectories below.
+    for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+        const srcPath = path.join(srcDir, entry.name)
+        const destPath = path.join(destDir2, entry.name)
+        if (entry.isSymbolicLink()) continue // resolved below
+        if (entry.isDirectory()) continue // handled below
+        if (
+            entry.name.endsWith('.tsx') ||
+            entry.name.endsWith('.ts') ||
+            entry.name.endsWith('.js') ||
+            entry.name === 'package.json' ||
+            entry.name === 'tsconfig.json'
+        ) {
             const result = smartCopyFile(
-                path.join(builtDir, file),
-                path.join(destDir2, file),
+                srcPath,
+                destPath,
                 mode,
-                manifestFiles ? manifestFiles.get(`plugins/kombinat-sidebar/${file}`) : null,
+                manifestFiles ? manifestFiles.get(`plugins/kombinat-sidebar/${entry.name}`) : null,
             )
             if (result === 'copied') copied++
             else skipped++
         }
-        return { copied, skipped, source: 'built' }
     }
 
-    // Dev fallback: copy raw .tsx source
-    const srcDir = path.join(SRC_DIR, 'plugins')
-    if (!fs.existsSync(srcDir)) return { copied: 0, skipped: 0, source: 'none' }
-    fs.ensureDirSync(destDir2)
-    let copied = 0, skipped = 0
+    // Copy subdirectories (components/, hooks/, utils/, lib/) recursively.
+    // Symlinks are followed (dereference: true) so the installed plugin
+    // contains real files, not links back into the package source.
     for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
-        const srcPath = path.join(srcDir, entry.name)
-        const destPath = path.join(destDir2, entry.name)
+        if (!entry.isDirectory() && !entry.isSymbolicLink()) continue
+        const subSrc = path.join(srcDir, entry.name)
+        const subDest = path.join(destDir2, entry.name)
+        if (entry.isSymbolicLink()) {
+            // Resolve the symlink target and copy the real directory contents.
+            const realSrc = fs.realpathSync(subSrc)
+            if (!fs.existsSync(realSrc) || !fs.statSync(realSrc).isDirectory()) continue
+            fs.ensureDirSync(subDest)
+            copyDirDereferenced(realSrc, subDest, mode, manifestFiles)
+            copied++
+            continue
+        }
+        const result = smartCopyDir(
+            subSrc,
+            subDest,
+            mode,
+            manifestFiles
+                ? new Map(
+                      [...manifestFiles.entries()]
+                          .filter(([k]) => k.startsWith(`plugins/kombinat-sidebar/${entry.name}/`))
+                          .map(([k, v]) => [k.slice(`plugins/kombinat-sidebar/`.length), v])
+                  )
+                : null,
+        )
+        if (result === 'copied') copied++
+        else if (result === 'skipped') skipped++
+    }
+
+    return { copied, skipped, source: 'source' }
+}
+
+/**
+ * Copy a directory tree following symlinks (dereferencing them to real files).
+ * Used for the plugin's lib/ symlink which points into src/lib/.
+ */
+function copyDirDereferenced(srcDir, destDir, mode, manifestFiles) {
+    for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+        const sp = path.join(srcDir, entry.name)
+        const dp = path.join(destDir, entry.name)
         if (entry.isDirectory()) {
-            fs.copySync(srcPath, destPath, { overwrite: mode === 'overwrite' })
-            copied += fs.readdirSync(srcPath).length
-        } else if (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts') || entry.name.endsWith('.js') || entry.name === 'package.json' || entry.name === 'tsconfig.json') {
-            const result = smartCopyFile(srcPath, destPath, mode, manifestFiles ? manifestFiles.get(`plugins/kombinat-sidebar/${entry.name}`) : null)
-            if (result === 'copied') copied++
-            else skipped++
+            fs.ensureDirSync(dp)
+            copyDirDereferenced(sp, dp, mode, manifestFiles)
+        } else if (entry.isFile() || entry.isSymbolicLink()) {
+            fs.copySync(sp, dp, { overwrite: true, dereference: true })
         }
     }
-    return { copied, skipped, source: 'source' }
 }
 
 // ─── Project Config (tui.json, opencode.jsonc, package.json) ────────────────

@@ -1,1 +1,1 @@
-export { default } from "./kombinat-sidebar.js"
+export { default } from "./kombinat-sidebar.tsx"

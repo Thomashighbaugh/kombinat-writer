@@ -192,23 +192,15 @@ async function main() {
     log(`  Tools:     ${toolsResult.copied} copied, ${toolsResult.skipped} unchanged`)
     log(`  Commands:  ${cmdsResult.copied} copied, ${cmdsResult.skipped} unchanged`)
 
-    // ── Sidebar build ──
+    // ── Sidebar sync ──
+    // No build step needed: the plugin is installed source-direct (TSX/TS)
+    // and runs natively under bun in the consumer project.
     if (args.skipBuild) {
-        log(colorize('gray', '  Build:     skipped (--skip-build)'))
+        log(colorize('gray', '  Sync:      skipped (--skip-build)'))
     } else {
-        header('Rebuilding sidebar bundle')
-        try {
-            // Use the npm script in the package root
-            const cmd = `cd "${PACKAGE_ROOT}" && npm run build:sidebar`
-            log(colorize('gray', `  Running: ${cmd}`))
-            execSync(cmd, { stdio: 'inherit' })
-            // Copy the freshly built bundle
-            const pluginResult = copySidebarPlugin(destDir, 'overwrite', manifestFiles)
-            log(`  Plugin:    ${pluginResult.copied} copied (${pluginResult.source})`)
-        } catch (err) {
-            error(`Sidebar build failed: ${err.message}`)
-            process.exit(2)
-        }
+        header('Syncing sidebar plugin')
+        const pluginResult = copySidebarPlugin(destDir, 'overwrite', manifestFiles)
+        log(`  Plugin:    ${pluginResult.copied} copied (${pluginResult.source})`)
     }
 
     // ── Lore index ──

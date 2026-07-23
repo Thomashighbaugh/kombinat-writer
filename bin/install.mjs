@@ -170,10 +170,12 @@ async function copyToolsAndLib(overwriteAll, skipAll) {
         }
     }
     await walkDir(srcTools);
-    // Copy lib/ (TypeScript modules + scripts/)
+    // Copy lib/ (TypeScript modules + scripts/) at <destDir>/plugins/lib/
+    // to mirror the source layout where src/lib/ is a sibling of src/plugins/.
+    // This keeps the plugin's relative imports (../../lib/) working.
     const srcLib = path.join(SRC_DIR, 'lib');
     if (fs.existsSync(srcLib)) {
-        const libDest = path.join(destTools, 'lib');
+        const libDest = path.join(DEST_DIR, 'plugins', 'lib');
         fs.ensureDirSync(libDest);
         // Copy .ts modules
         for (const file of fs.readdirSync(srcLib).filter(f => f.endsWith('.ts') && !f.endsWith('.d.ts'))) {
@@ -823,7 +825,7 @@ async function main() {
     log(`    ${chalk.green('\u2713')} tools/ (incl. hubs/kombinat/ + lib/)`);
     log(`    ${chalk.green('\u2713')} commands/kombinat-router.md`);
     log(`    ${chalk.green('\u2713')} templates/`);
-    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (built bundle)`);
+    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (TSX source)`);
     log('');
     log(`  ${chalk.green('\u2713')} tui.json — TUI keybinds + plugin path`);
     log(`  ${chalk.green('\u2713')} opencode.jsonc — plugin registered (loads the sidebar)`);
