@@ -158,22 +158,13 @@ function walkAndCopy(srcDir, destDir, mode, manifestFiles, callback) {
 // ─── Slash Commands ─────────────────────────────────────────────────────────
 
 export function copySlashCommands(destDir, mode, manifestFiles = null) {
-    const srcDir = path.join(SRC_DIR, 'commands')
-    const destDir2 = path.join(destDir, 'commands')
-    if (!fs.existsSync(srcDir)) return { copied: 0, skipped: 0 }
-    fs.ensureDirSync(destDir2)
-    let copied = 0, skipped = 0
-    for (const file of fs.readdirSync(srcDir).filter(f => f.endsWith('.md'))) {
-        const result = smartCopyFile(
-            path.join(srcDir, file),
-            path.join(destDir2, file),
-            mode,
-            manifestFiles ? manifestFiles.get(`commands/${file}`) : null,
-        )
-        if (result === 'copied') copied++
-        else skipped++
-    }
-    return { copied, skipped }
+    // Slash commands are no longer installed. The /kombinat instant menu is
+    // registered by the sidebar plugin via api.keymap.registerLayer(). The
+    // internal routing/utility commands (kombinat-router, kombinat-gates,
+    // kombinat-split-outline) were fallback paths that polluted the user's
+    // / command list. The plugin's DialogSelect → appendPrompt flow handles
+    // all phase routing internally.
+    return { copied: 0, skipped: 0 }
 }
 
 // ─── Templates ──────────────────────────────────────────────────────────────

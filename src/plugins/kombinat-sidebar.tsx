@@ -82,54 +82,51 @@ const tui: TuiPlugin = async (api: TuiPluginApi, _o, _meta: TuiPluginMeta) => {
     },
   })
 
-  // Register commands: instant /kombinat menu only.
-  if (api.command) {
-    api.command.register(() => {
-      const commands: Array<{
-        title: string
-        value: string
-        description?: string
-        category?: string
-        slash?: { name: string; aliases?: string[] }
-        onSelect?: () => void
-      }> = [
-        {
-          title: 'Kombinat: Phase Menu',
-          value: 'kombinat',
-          description: 'Open the instant Kombinat phase selection menu',
-          category: 'Kombinat Writer',
-          slash: { name: 'kombinat', aliases: ['kom'] },
-          onSelect: () => {
-            const DS = api.ui.DialogSelect
-            const options: TuiDialogSelectOption<string>[] = KOMBINAT_SUBCOMMANDS.map(s => ({
-              title: s.label,
-              value: s.label,
-              description: s.description,
-            }))
+  // Register the /kombinat slash command via the keymap layer API.
+  // (api.command.register() is deprecated and silently fails in current OpenCode.)
+  if (api.keymap) {
+    const keymap = api.keymap as any
+    if (typeof keymap.registerLayer === 'function') {
+      keymap.registerLayer({
+        commands: [
+          {
+            title: 'Kombinat: Phase Menu',
+            value: 'kombinat',
+            description: 'Open the instant Kombinat phase selection menu',
+            category: 'Kombinat Writer',
+            slash: { name: 'kombinat', aliases: ['kom'] },
+            onSelect: () => {
+              const DS = api.ui.DialogSelect
+              const options: TuiDialogSelectOption<string>[] = KOMBINAT_SUBCOMMANDS.map(s => ({
+                title: s.label,
+                value: s.label,
+                description: s.description,
+              }))
 
-            api.ui.dialog.setSize('large')
-            api.ui.dialog.replace(() =>
-              DS({
-                title: 'Kombinat Writer — Select Phase',
-                placeholder: 'Choose a phase...',
-                options,
-                onSelect: (sel: TuiDialogSelectOption<string>) => {
-                  api.ui.dialog.clear()
-                  const cmd = `/kombinat-router ${sel.value}`
-                  api.ui.toast({ title: 'Kombinat', message: `Routing to ${sel.value}` })
-                  api.client.tui.appendPrompt({ text: cmd + ' ' }).then(() => {
-                    setTimeout(() => {
-                      api.client.tui.appendPrompt({ text: '\n' }).catch(() => {})
-                    }, 100)
-                  }).catch(() => {})
-                },
-              })
-            )
+              api.ui.dialog.setSize('large')
+              api.ui.dialog.replace(() =>
+                DS({
+                  title: 'Kombinat Writer — Select Phase',
+                  placeholder: 'Choose a phase...',
+                  options,
+                  onSelect: (sel: TuiDialogSelectOption<string>) => {
+                    api.ui.dialog.clear()
+                    const cmd = `/kombinat-router ${sel.value}`
+                    api.ui.toast({ title: 'Kombinat', message: `Routing to ${sel.value}` })
+                    api.client.tui.appendPrompt({ text: cmd + ' ' }).then(() => {
+                      setTimeout(() => {
+                        api.client.tui.appendPrompt({ text: '\n' }).catch(() => {})
+                      }, 100)
+                    }).catch(() => {})
+                  },
+                })
+              )
+            },
           },
-        },
-      ]
-      return commands
-    })
+        ],
+        bindings: [],
+      })
+    }
   }
 }
 

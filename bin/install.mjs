@@ -207,22 +207,12 @@ async function copyToolsAndLib(overwriteAll, skipAll) {
 
 // ─── Slash Commands ─────────────────────────────────────────────────────────
 async function copySlashCommands(overwriteAll, skipAll) {
-    const srcDir = path.join(SRC_DIR, 'commands');
-    const destDir = path.join(DEST_DIR, 'commands');
-    if (!fs.existsSync(srcDir)) { warn('Slash commands source not found — skipping'); return { overwriteAll, skipAll, copied: 0, skipped: 0 }; }
-    fs.ensureDirSync(destDir);
-    let copied = 0, skipped = 0, newOverwriteAll = overwriteAll, newSkipAll = skipAll;
-    const files = fs.readdirSync(srcDir).filter(f => f.endsWith('.md'));
-    for (const file of files) {
-        const src = path.join(srcDir, file);
-        const dest = path.join(destDir, file);
-        
-        // Idempotent sync: always overwrite core workflow assets
-        fs.copySync(src, dest, { overwrite: true });
-        copied++;
-    }
-    success(`${copied} slash commands synchronized`);
-    return { overwriteAll: true, skipAll: false, copied, skipped: 0 };
+    // Slash commands are no longer installed. The /kombinat instant menu is
+    // registered by the sidebar plugin via api.keymap.registerLayer(). The
+    // internal routing/utility commands (kombinat-router, kombinat-gates,
+    // kombinat-split-outline) were fallback paths that polluted the user's
+    // / command list.
+    return { overwriteAll, skipAll, copied: 0, skipped: 0 };
 }
 
 // ─── Templates ──────────────────────────────────────────────────────────────
@@ -823,9 +813,8 @@ async function main() {
     log('  Installed to .opencode/:');
     log(`    ${chalk.green('\u2713')} skills/`);
     log(`    ${chalk.green('\u2713')} tools/ (incl. hubs/kombinat/ + lib/)`);
-    log(`    ${chalk.green('\u2713')} commands/kombinat-router.md`);
     log(`    ${chalk.green('\u2713')} templates/`);
-    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (TSX source)`);
+    log(`    ${chalk.green('\u2713')} plugins/kombinat-sidebar/ (TSX source — registers /kombinat menu)`);
     log('');
     log(`  ${chalk.green('\u2713')} tui.json — TUI keybinds + plugin path`);
     log(`  ${chalk.green('\u2713')} opencode.jsonc — plugin registered (loads the sidebar)`);
